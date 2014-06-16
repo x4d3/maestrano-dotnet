@@ -48,5 +48,15 @@ namespace Maestrano.Tests
             Assert.AreEqual(expected, Maestrano.App.Host);
             Assert.AreEqual(expected, Maestrano.Sso.Idm);
         }
+
+        [TestMethod]
+        public void itSetsTheApiTokenProperly()
+        {
+            Maestrano.Environment = "production";
+            Maestrano.Api.Id = "app-1";
+            Maestrano.Api.Key = "bla";
+
+            Assert.AreEqual("app-1:bla", Maestrano.Api.Token);
+        }
     }
 }

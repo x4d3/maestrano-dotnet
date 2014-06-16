@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Maestrano
 {
-    public class Class1
+    public static class Maestrano
     {
     }
 }

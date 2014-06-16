@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Maestrano.Tests
 {
@@ -10,8 +11,20 @@ namespace Maestrano.Tests
         {
             Maestrano.Environment = "test";
 
-            Assert.AreEqual("http://api-sandbox.maestrano.io", Maestrano.Sso.Idp);
+            // App
             Assert.AreEqual("localhost", Maestrano.App.Host);
+
+            // API
+            Assert.AreEqual("C#", Maestrano.Api.Lang);
+            Assert.AreEqual(Maestrano.Version, Maestrano.Api.Version);
+            Assert.AreEqual(Environment.OSVersion.ToString() + " - " + Environment.Version.ToString(), Maestrano.Api.LangVersion);
+
+            // Webhook
+            Assert.AreEqual("/maestrano/account/groups/:id", Maestrano.Webhook.Account.GroupsPath);
+            Assert.AreEqual("/maestrano/account/groups/:group_id/users/:id", Maestrano.Webhook.Account.GroupUsersPath);
+
+            // SSO
+            Assert.AreEqual("http://api-sandbox.maestrano.io", Maestrano.Sso.Idp);
             Assert.AreEqual("localhost", Maestrano.Sso.Idm);
             Assert.AreEqual("virtual", Maestrano.Sso.CreationMode);
             Assert.AreEqual("/maestrano/auth/saml/init", Maestrano.Sso.InitPath);
@@ -26,8 +39,20 @@ namespace Maestrano.Tests
         {
             Maestrano.Environment = "production";
 
-            Assert.AreEqual("https://maestrano.com", Maestrano.Sso.Idp);
+            // App
             Assert.AreEqual("localhost", Maestrano.App.Host);
+
+            // API
+            Assert.AreEqual("C#", Maestrano.Api.Lang);
+            Assert.AreEqual(Maestrano.Version, Maestrano.Api.Version);
+            Assert.AreEqual(Environment.OSVersion.ToString() + " - " + Environment.Version.ToString(), Maestrano.Api.LangVersion);
+
+            // Webhook
+            Assert.AreEqual("/maestrano/account/groups/:id", Maestrano.Webhook.Account.GroupsPath);
+            Assert.AreEqual("/maestrano/account/groups/:group_id/users/:id", Maestrano.Webhook.Account.GroupUsersPath);
+
+            // SSO
+            Assert.AreEqual("https://maestrano.com", Maestrano.Sso.Idp);
             Assert.AreEqual("localhost", Maestrano.Sso.Idm);
             Assert.AreEqual("virtual", Maestrano.Sso.CreationMode);
             Assert.AreEqual("/maestrano/auth/saml/init", Maestrano.Sso.InitPath);

@@ -161,7 +161,5 @@ namespace Maestrano.Configuration
             set { _509certificate = value; }
         }
 
-
-
     }
 }

@@ -15,11 +15,13 @@ namespace Maestrano
         public static Configuration.Sso Sso { get; private set; }
         public static Configuration.App App { get; private set; }
         public static Configuration.Api Api { get; private set; }
+        public static Configuration.Webhook Webhook { get; private set; }
 
         static Maestrano()
         {
             App = new Configuration.App();
             Api = new Configuration.Api();
+            Webhook = new Configuration.Webhook();
             Sso = new Configuration.Sso();
         }
     }

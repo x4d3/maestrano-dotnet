@@ -8,5 +8,14 @@ namespace Maestrano
 {
     public static class Maestrano
     {
+        public static string Environment { get; set; }
+        public static Configuration.Sso Sso { get; private set; }
+        public static Configuration.App App { get; private set; }
+
+        static Maestrano()
+        {
+            App = new Configuration.App();
+            Sso = new Configuration.Sso();
+        }
     }
 }

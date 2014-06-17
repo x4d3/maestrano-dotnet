@@ -57,22 +57,23 @@ namespace Maestrano.Saml
                     xw.WriteAttributeString("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
                     xw.WriteAttributeString("AssertionConsumerServiceURL", settings.AssertionConsumerServiceUrl);
 
-                    xw.WriteStartElement("saml", "Issuer", "urn:oasis:names:tc:SAML:2.0:assertion");
-                    xw.WriteString(settings.Issuer);
-                    xw.WriteEndElement();
+                        xw.WriteStartElement("saml", "Issuer", "urn:oasis:names:tc:SAML:2.0:assertion");
+                            xw.WriteString(settings.Issuer);
+                        xw.WriteEndElement();
 
-                    xw.WriteStartElement("samlp", "NameIDPolicy", "urn:oasis:names:tc:SAML:2.0:protocol");
-                    xw.WriteAttributeString("Format", settings.NameIdentifierFormat);
-                    xw.WriteAttributeString("AllowCreate", "true");
-                    xw.WriteEndElement();
+                        xw.WriteStartElement("samlp", "NameIDPolicy", "urn:oasis:names:tc:SAML:2.0:protocol");
+                        xw.WriteAttributeString("Format", settings.NameIdentifierFormat);
+                        xw.WriteAttributeString("AllowCreate", "true");
+                        xw.WriteEndElement();
 
-                    xw.WriteStartElement("samlp", "RequestedAuthnContext", "urn:oasis:names:tc:SAML:2.0:protocol");
-                    xw.WriteAttributeString("Comparison", "exact");
-                    xw.WriteEndElement();
+                        xw.WriteStartElement("samlp", "RequestedAuthnContext", "urn:oasis:names:tc:SAML:2.0:protocol");
+                        xw.WriteAttributeString("Comparison", "exact");
 
-                    xw.WriteStartElement("saml", "AuthnContextClassRef", "urn:oasis:names:tc:SAML:2.0:assertion");
-                    xw.WriteString("urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
-                    xw.WriteEndElement();
+                            xw.WriteStartElement("saml", "AuthnContextClassRef", "urn:oasis:names:tc:SAML:2.0:assertion");
+                                xw.WriteString("urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport");
+                            xw.WriteEndElement();
+
+                        xw.WriteEndElement();
 
                     xw.WriteEndElement();
                 }

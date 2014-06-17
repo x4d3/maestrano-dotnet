@@ -161,5 +161,70 @@ namespace Maestrano.Configuration
             set { _509certificate = value; }
         }
 
+        /// <summary>
+        /// Return the IDP url to be used for SSO handshake
+        /// </summary>
+        /// <returns></returns>
+        public string IdpUrl()
+        {
+            return Idp + "/api/v1/auth/saml";
+        }
+
+        /// <summary>
+        /// Return the complete SSO init url for this application
+        /// </summary>
+        /// <returns></returns>
+        public string InitUrl()
+        {
+            return Idm + InitPath;
+        }
+
+        /// <summary>
+        /// Return the complete SSO consume url for this application
+        /// </summary>
+        /// <returns></returns>
+        public string ConsumeUrl()
+        {
+            return Idm + ConsumePath;
+        }
+
+        /// <summary>
+        /// Return the Maestrano logout url to be used for
+        /// redirecting a user after logout
+        /// </summary>
+        /// <returns></returns>
+        public string LogoutUrl()
+        {
+            return Idp + "/app_logout";
+        }
+
+        /// <summary>
+        /// Return the Maestrano unauthorized page url to
+        /// be used when a user is denied access to the application.
+        /// Should not need to be used as Maestrano evaluates access
+        /// permissions during SSO handshake.
+        /// </summary>
+        /// <returns></returns>
+        public string UnauthorizedUrl()
+        {
+            return Idp + "/app_access_unauthorized";
+        }
+
+        /// <summary>
+        /// Return the SAML Settings to be used by the SAML Request
+        /// and Response classes
+        /// </summary>
+        /// <returns></returns>
+        public Saml.Settings SamlSettings()
+        {
+            Saml.Settings settings = new Saml.Settings();
+            settings.AssertionConsumerServiceUrl = ConsumeUrl();
+            settings.IdpSsoTargetUrl = IdpUrl();
+            settings.IdpCertificate = X509Certificate;
+            settings.Issuer = Maestrano.Api.Id;
+            settings.NameIdentifierFormat = NameIdFormat;
+
+            return settings;
+        }
     }
 }

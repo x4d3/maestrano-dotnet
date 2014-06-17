@@ -1,4 +1,5 @@
 ﻿using System;
+using Maestrano.Saml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 
@@ -78,6 +79,68 @@ namespace Maestrano.Tests
             );
 
             Assert.AreEqual(expected.ToString(), Maestrano.ToMetadata().ToString());
+        }
+
+        [TestMethod]
+        public void Sso_IdpUrl_ItsReturnsTheRightUrl()
+        {
+            Maestrano.Environment = "production";
+            Maestrano.App.Host = "https://mysuperapp.com";
+
+            Assert.AreEqual(Maestrano.Sso.Idp + "/api/v1/auth/saml", Maestrano.Sso.IdpUrl());
+        }
+
+        [TestMethod]
+        public void Sso_InitUrl_ItReturnsTheRightUrl()
+        {
+            Maestrano.Environment = "production";
+            Maestrano.App.Host = "https://mysuperapp.com";
+
+            Assert.AreEqual(Maestrano.Sso.Idm + Maestrano.Sso.InitPath, Maestrano.Sso.InitUrl());
+        }
+        
+
+        [TestMethod]
+        public void Sso_ConsumeUrl_ItReturnsTheRightUrl()
+        {
+            Maestrano.Environment = "production";
+            Maestrano.App.Host = "https://mysuperapp.com";
+
+            Assert.AreEqual(Maestrano.Sso.Idm + Maestrano.Sso.ConsumePath, Maestrano.Sso.ConsumeUrl());
+        }
+
+        [TestMethod]
+        public void Sso_LogoutUrl_ItReturnsTheRightUrl()
+        {
+            Maestrano.Environment = "production";
+            Maestrano.App.Host = "https://mysuperapp.com";
+
+            Assert.AreEqual(Maestrano.Sso.Idp + "/app_logout", Maestrano.Sso.LogoutUrl());
+        }
+
+        [TestMethod]
+        public void Sso_UnauthorizedUrl_ItReturnsTheRightUrl()
+        {
+            Maestrano.Environment = "production";
+            Maestrano.App.Host = "https://mysuperapp.com";
+
+            Assert.AreEqual(Maestrano.Sso.Idp + "/app_access_unauthorized", Maestrano.Sso.UnauthorizedUrl());
+        }
+
+        [TestMethod]
+        public void Sso_SamlSettings_ItReturnsTheRightSamlSettings()
+        {
+            Maestrano.Environment = "production";
+            Maestrano.App.Host = "https://mysuperapp.com";
+            Maestrano.Api.Id = "app-1";
+
+            Settings settings = Maestrano.Sso.SamlSettings();
+
+            Assert.AreEqual("https://maestrano.com/api/v1/auth/saml", settings.IdpSsoTargetUrl);
+            Assert.AreEqual(Maestrano.Api.Id, settings.Issuer);
+            Assert.AreEqual(Maestrano.Sso.NameIdFormat, settings.NameIdentifierFormat);
+            Assert.AreEqual(Maestrano.Sso.Idm + Maestrano.Sso.ConsumePath, settings.AssertionConsumerServiceUrl);
+            Assert.AreEqual(Maestrano.Sso.X509Certificate, settings.IdpCertificate);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace Maestrano.Saml
         public string id;
         private string issue_instant;
         private Settings _settings;
+        private NameValueCollection _parameters;
 
         public enum RequestFormat
         {
@@ -23,9 +25,10 @@ namespace Maestrano.Saml
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="samlSettings">Saml Settings defining the issuer, idp, return url etc.</param>
-        public Request()
+        /// <param name="parameters">The request GET parameters typically obtained via HttpRequest.Params</param>
+        public Request(NameValueCollection parameters = null)
         {
+            this._parameters = parameters;
             this._settings = Maestrano.Sso.SamlSettings();
 
             id = "_" + Guid.NewGuid().ToString();
@@ -87,9 +90,15 @@ namespace Maestrano.Saml
         /// <returns>String URL</returns>
         public string RedirectUrl()
         {
+            // Build the base url
             string url = _settings.IdpSsoTargetUrl;
             url += "?SAMLRequest=";
-            url += System.Web.HttpUtility.UrlDecode(this.GetRequest());
+            url += HttpUtility.UrlEncode(this.GetRequest());
+
+            // Add query parameters
+            if (_parameters.HasKeys())
+                foreach (String k in _parameters.AllKeys)
+                    url += "&" + k + HttpUtility.UrlEncode(_parameters[k]);
 
             return url;
         }

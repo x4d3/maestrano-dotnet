@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Saml
 {
-    class Settings
+    public class Settings
     {
+        public string AssertionConsumerServiceUrl { get; set; }
+        public string Issuer { get; set; }
+        public string IdpSsoTargetUrl { get; set; }
+        public string IdpCertificate { get; set; }
+        public string NameIdentifierFormat { get; set; }
     }
 }

@@ -71,6 +71,10 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="MaestranoMethodsTests.cs" />
+    <Compile Include="Saml\SettingsTests.cs" />
+    <Compile Include="Saml\RequestTests.cs" />
+    <Compile Include="Saml\ResponseTests.cs" />
+    <Compile Include="Saml\CertificateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

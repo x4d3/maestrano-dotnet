@@ -65,10 +65,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Maestrano.cs" />
+    <Compile Include="MaestranoConfigurationTests.cs" />
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="MaestranoMethodsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

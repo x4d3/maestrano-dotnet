@@ -24,5 +24,59 @@ namespace Maestrano
             Webhook = new Configuration.Webhook();
             Sso = new Configuration.Sso();
         }
+
+        /// <summary>
+        /// Check that ID and Key passed in argument match
+        /// the ones configured at the API level.
+        /// Used for remote authentication from Maestrano.
+        /// </summary>
+        /// <param name="apiId">An application ID</param>
+        /// <param name="apiKey">An API Key</param>
+        /// <returns>true if the authentication is successful, false otherwise</returns>
+        public static bool Authenticate(string apiId, string apiKey)
+        {
+            return Api.Id == apiId && Api.Key == apiKey;
+        }
+
+        /// <summary>
+        /// Take a user uid (either real like 'usr-1' or virtual like
+        /// 'usr-1.cld-3') and return the real uid part
+        /// </summary>
+        /// <param name="userUid">A real or virtual uid</param>
+        /// <returns>Real user uid</returns>
+        public static string UnmaskUser(string userUid)
+        {
+            string[] words = userUid.Split('.');
+            if (words.Length > 0)
+            {
+                return words.First();
+            }
+            return userUid;
+        }
+
+        /// <summary>
+        /// Take a user uid (either real or virtual) and a group uid
+        /// and return the user uid that should be used within the app
+        /// based on the Sso.CreationMode parameter
+        /// </summary>
+        /// <param name="userUid">a real or virtual user uid</param>
+        /// <param name="groupUid">a group uid</param>
+        /// <returns>
+        /// The real user uid (usr-1) if Sso.CreationMode is set to "real"
+        /// The virtual user uid (user-1.cld-2) if Sso.CreationMode is set to "virtual"
+        /// </returns>
+        public static string MaskUser(string userUid, string groupUid)
+        {
+            string sanitizedUserUid = UnmaskUser(userUid);
+
+            if (Sso.CreationMode == "virtual")
+            {
+                return sanitizedUserUid + '.' + groupUid;
+            }
+            else
+            {
+                return sanitizedUserUid;
+            }
+        }
     }
 }

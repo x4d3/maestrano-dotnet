@@ -77,6 +77,10 @@
     <Compile Include="Saml\RequestTests.cs" />
     <Compile Include="Saml\ResponseTests.cs" />
     <Compile Include="Saml\CertificateTests.cs" />
+    <Compile Include="Sso\BaseUserTests.cs" />
+    <Compile Include="Sso\BaseGroupTests.cs" />
+    <Compile Include="Sso\BaseMembershipTests.cs" />
+    <Compile Include="Sso\SessionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -14,6 +14,7 @@ namespace Maestrano.Saml
         public XmlDocument XmlDoc { get; private set; }
         public Settings settings { get; private set; }
         public Certificate Cert { get; private set; }
+        protected NameValueCollection _cachedAttributes;
 
         public Response()
         {
@@ -105,7 +106,12 @@ namespace Maestrano.Saml
 
         public NameValueCollection GetAttributes()
         {
-            NameValueCollection attributes = new NameValueCollection();
+            if (_cachedAttributes != null)
+            {
+                return _cachedAttributes;
+            }
+
+            _cachedAttributes = new NameValueCollection();
 
             XmlNamespaceManager manager = new XmlNamespaceManager(XmlDoc.NameTable);
             manager.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
@@ -131,12 +137,12 @@ namespace Maestrano.Saml
                             attrValue = attrValueNode.InnerText;
                         }
 
-                        attributes.Add(attrName, attrValue);
+                        _cachedAttributes.Add(attrName, attrValue);
                     }
                 }
             }
 
-            return attributes;
+            return _cachedAttributes;
         }
     }
 }

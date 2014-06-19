@@ -134,8 +134,6 @@ namespace Maestrano.Saml
                         attributes.Add(attrName, attrValue);
                     }
                 }
-
-                
             }
 
             return attributes;

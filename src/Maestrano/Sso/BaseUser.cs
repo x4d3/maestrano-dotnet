@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -68,6 +69,40 @@ namespace Maestrano.Sso
                 return Email;
             else
                 return VirtualEmail;
+        }
+
+        /// <summary>
+        /// Return a serializable dictionary describing the resource
+        /// </summary>
+        /// <returns></returns>
+        public JObject ToHash()
+        {
+            return new JObject(
+                new JProperty("provider", "maestrano"),
+                new JProperty("uid", Uid),
+                new JProperty("info", new JObject(
+                    new JProperty("email", Email),
+                    new JProperty("first_name", FirstName),
+                    new JProperty("last_name", LastName),
+                    new JProperty("country", Country),
+                    new JProperty("company_name", CompanyName))),
+                new JProperty("extra", new JObject(
+                    new JProperty("uid", Email),
+                    new JProperty("virtual_uid", FirstName),
+                    new JProperty("real_email", LastName),
+                    new JProperty("virtual_email", Country),
+                    new JProperty("group", JObject(
+                        new JProperty("uid", GroupUid),
+                        new JProperty("role", GroupRole))),
+                    new JProperty("session", JObject(
+                        new JProperty("uid", Uid),
+                        new JProperty("token", SsoSession),
+                        new JProperty("recheck", SsoSessionRecheck),
+                        new JProperty("group_uid", GroupUid)))
+                        )
+                )
+             );
+               
         }
     }
 }

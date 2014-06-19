@@ -51,5 +51,61 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(att["country"], user.Country);
             Assert.AreEqual(att["company_name"], user.CompanyName);
         }
+
+        [TestMethod]
+        public void ToUid_WhenReal_ShouldReturnTheRightUid()
+        {
+            // Configure environment
+            Maestrano.Environment = "production";
+            Maestrano.Sso.CreationMode = "real";
+
+            // Build user
+            ResponseStub samlResp = new ResponseStub();
+            var user = new BaseUser(samlResp);
+
+            Assert.AreEqual(user.Uid, user.ToUid());
+        }
+
+        [TestMethod]
+        public void ToUid_WhenVirtual_ShouldReturnTheRightUid()
+        {
+            // Configure environment
+            Maestrano.Environment = "production";
+            Maestrano.Sso.CreationMode = "virtual";
+
+            // Build user
+            ResponseStub samlResp = new ResponseStub();
+            var user = new BaseUser(samlResp);
+
+            Assert.AreEqual(user.VirtualUid, user.ToUid());
+        }
+
+        [TestMethod]
+        public void ToEmail_WhenReal_ShouldReturnTheRightEmail()
+        {
+            // Configure environment
+            Maestrano.Environment = "production";
+            Maestrano.Sso.CreationMode = "real";
+
+            // Build user
+            ResponseStub samlResp = new ResponseStub();
+            var user = new BaseUser(samlResp);
+
+            Assert.AreEqual(user.Email, user.ToEmail());
+        }
+
+        [TestMethod]
+        public void ToEmail_WhenVirtual_ShouldReturnTheRightEmail()
+        {
+            // Configure environment
+            Maestrano.Environment = "production";
+            Maestrano.Sso.CreationMode = "virtual";
+
+            // Build user
+            ResponseStub samlResp = new ResponseStub();
+            var user = new BaseUser(samlResp);
+
+            Assert.AreEqual(user.VirtualEmail, user.ToEmail());
+        }
     }
 }

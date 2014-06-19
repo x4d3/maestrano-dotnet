@@ -23,6 +23,11 @@ namespace Maestrano.Sso
         public string Country { get; set; }
         public string CompanyName { get; set; }
 
+
+        /// <summary>
+        /// Constructor loading user attributes from a Saml.Response
+        /// </summary>
+        /// <param name="samlResponse"></param>
         public BaseUser(Saml.Response samlResponse)
         {
             NameValueCollection att = samlResponse.GetAttributes();
@@ -39,6 +44,30 @@ namespace Maestrano.Sso
             Country = att["country"];
             CompanyName = att["company_name"];
 
+        }
+
+        /// <summary>
+        /// Return the real Uid if Maestrano.Sso.CreationMode is set
+        /// to "real" and the VirtualUid otherwise ("virtual" mode)
+        /// </summary>
+        public string ToUid()
+        {
+            if (Maestrano.Sso.CreationMode.Equals("real"))
+                return Uid;
+            else
+                return VirtualUid;
+        }
+
+        /// <summary>
+        /// Return the real Email if Maestrano.Sso.CreationMode is set
+        /// to "real" and the VirtualEmail otherwise ("virtual" mode)
+        /// </summary>
+        public string ToEmail()
+        {
+            if (Maestrano.Sso.CreationMode.Equals("real"))
+                return Email;
+            else
+                return VirtualEmail;
         }
     }
 }

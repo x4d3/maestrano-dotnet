@@ -46,13 +46,14 @@ namespace Maestrano.Tests.Saml
         }
 
         [TestMethod]
-        public void ItShouldLoadResponse2ButConsiderItAsInvalid()
+        public void ItShouldLoadResponseWithSpecialNewlineCharacters()
         {
             // Response2 contains \n and \r characters that should break base64.decode usually
 
             Maestrano.Environment = "production";
-            string samlResponse = ReadSamlSupportFiles("Responses/response2.xml.base64");
 
+            // Prepare response
+            string samlResponse = ReadSamlSupportFiles("Responses/response2.xml.base64");
             Response resp = new Response();
             resp.Cert.LoadCertificate(ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);
@@ -64,11 +65,9 @@ namespace Maestrano.Tests.Saml
         [TestMethod]
         public void ItShouldLoadResponse4Properly()
         {
-            // Response4 is valid and formatted the way a web app
-            // would do it
-
             Maestrano.Environment = "production";
 
+            // Prepare response
             string samlResponse = ReadSamlSupportFiles("Responses/response4.xml.base64");
             Response resp = new Response();
             resp.Cert.LoadCertificate(ReadSamlSupportFiles("Certificates/certificate1"));
@@ -76,6 +75,22 @@ namespace Maestrano.Tests.Saml
 
             Assert.IsTrue(resp.IsValid());
             Assert.AreEqual("bogus@onelogin.com", resp.GetNameID());
+        }
+
+
+        [TestMethod]
+        public void ItShouldLoadTheResponseAttributesProperly()
+        {
+            Maestrano.Environment = "production";
+
+            // Prepare response
+            string samlResponse = ReadSamlSupportFiles("Responses/response1.xml.base64");
+            Response resp = new Response();
+            resp.Cert.LoadCertificate(ReadSamlSupportFiles("Certificates/certificate1"));
+            resp.LoadXmlFromBase64(samlResponse);
+
+            Assert.AreEqual("demo", resp.GetAttributes().Get("uid"));
+            Assert.AreEqual("value", resp.GetAttributes().Get("another_value"));
         }
     }
 }

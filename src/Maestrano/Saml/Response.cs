@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Security.Cryptography.Xml;
+using System.Collections.Specialized;
 
 namespace Maestrano.Saml
 {
@@ -53,7 +54,8 @@ namespace Maestrano.Saml
 
             // Decode the response and load the XML document
             System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
-            LoadXml( enc.GetString(Convert.FromBase64String(base64Response)));
+            Console.WriteLine(enc.GetString(Convert.FromBase64String(base64Response)));
+            LoadXml(enc.GetString(Convert.FromBase64String(base64Response)));
         }
 
         /// <summary>
@@ -99,6 +101,44 @@ namespace Maestrano.Saml
 
             XmlNode node = XmlDoc.SelectSingleNode("/samlp:Response/saml:Assertion/saml:Subject/saml:NameID", manager);
             return node.InnerText;
+        }
+
+        public NameValueCollection GetAttributes()
+        {
+            NameValueCollection attributes = new NameValueCollection();
+
+            XmlNamespaceManager manager = new XmlNamespaceManager(XmlDoc.NameTable);
+            manager.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
+            manager.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
+            manager.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
+
+            XmlNodeList nodeList = XmlDoc.SelectNodes("/samlp:Response/saml:Assertion/saml:AttributeStatement/saml:Attribute", manager);
+
+            foreach (XmlNode node in nodeList)
+            {
+                if (node.Attributes != null)
+                {
+                    var nameAttribute = node.Attributes["Name"];
+                    
+                    if (nameAttribute != null)
+                    {
+                        string attrName = node.Attributes["Name"].Value;
+                        string attrValue = null;
+
+                        var attrValueNode = node.SelectSingleNode("saml:AttributeValue",manager);
+                        if (attrValueNode != null)
+                        {
+                            attrValue = attrValueNode.InnerText;
+                        }
+
+                        attributes.Add(attrName, attrValue);
+                    }
+                }
+
+                
+            }
+
+            return attributes;
         }
     }
 }

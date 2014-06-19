@@ -8,7 +8,7 @@ using System.Security.Cryptography.Xml;
 
 namespace Maestrano.Saml
 {
-    class Response
+    public class Response
     {
         public XmlDocument XmlDoc { get; private set; }
         public Settings settings { get; private set; }
@@ -22,6 +22,10 @@ namespace Maestrano.Saml
             Cert.LoadCertificate(strCert);
         }
 
+        /// <summary>
+        /// Load a XML document in string format
+        /// </summary>
+        /// <param name="xml"></param>
         public void LoadXml(string xml)
         {
             XmlDoc = new XmlDocument();
@@ -30,12 +34,34 @@ namespace Maestrano.Saml
             XmlDoc.LoadXml(xml);
         }
 
+        /// <summary>
+        /// Load a base64 encoded XML document
+        /// </summary>
+        /// <param name="response"></param>
         public void LoadXmlFromBase64(string response)
         {
+            //Sanitize the response
+            string base64Response = response;
+
+            // Remove newline characters
+            base64Response = base64Response.Replace("\n", String.Empty).Replace("\r", String.Empty).Replace("\t", String.Empty);
+            
+            // Pad the string with '=' to make sure the length is right
+            int mod4 = base64Response.Length % 4;
+            if (mod4 > 0)
+                base64Response += new String('=', 4 - mod4);
+
+            // Decode the response and load the XML document
             System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
-            LoadXml(enc.GetString(Convert.FromBase64String(response)));
+            LoadXml( enc.GetString(Convert.FromBase64String(base64Response)));
         }
 
+        /// <summary>
+        /// Check whether the response is valid or not based on the
+        /// response certificate value and certificate used by the Response
+        /// object
+        /// </summary>
+        /// <returns></returns>
         public bool IsValid()
         {
             bool status = false;
@@ -47,14 +73,23 @@ namespace Maestrano.Saml
             SignedXml signedXml = new SignedXml(XmlDoc);
             foreach (XmlNode node in nodeList)
             {
-                signedXml.LoadXml((XmlElement)node);
-                status = signedXml.CheckSignature(Cert.cert, true);
+                try {
+                    signedXml.LoadXml((XmlElement)node);
+                    status = signedXml.CheckSignature(Cert.cert, true);
+                } catch (System.FormatException){
+                    status = false;
+                }
+                
                 if (!status)
                     return false;
             }
             return status;
         }
 
+        /// <summary>
+        /// Retrieve the user nameid from the response
+        /// </summary>
+        /// <returns></returns>
         public string GetNameID()
         {
             XmlNamespaceManager manager = new XmlNamespaceManager(XmlDoc.NameTable);

@@ -90,6 +90,20 @@
       <Name>Maestrano</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Support\Saml\Responses\response1.xml.base64" />
+    <None Include="Support\Saml\Responses\response2.xml.base64" />
+    <None Include="Support\Saml\Responses\response3.xml.base64" />
+    <None Include="Support\Saml\Responses\response4.xml.base64" />
+    <None Include="Support\Saml\Responses\response5.xml.base64" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Support\Saml\Certificates\TextFile1.txt" />
+    <None Include="Support\Saml\Certificates\certificate2" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Support\Saml\Certificates\certificate1" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

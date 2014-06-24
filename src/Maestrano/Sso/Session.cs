@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.SessionState;
 
 namespace Maestrano.Sso
 {
-    class Session
+    public class Session
     {
+
+        public Session(HttpSessionState httpSession)
+        {
+
+        }
     }
 }

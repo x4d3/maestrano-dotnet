@@ -29,14 +29,14 @@ namespace Maestrano.Tests.Sso
     }
 
     [TestClass]
-    public class BaseUserTests
+    public class UserTests
     {
         [TestMethod]
         public void ItShouldExtractTheRightAttributesFromTheSamlResponse()
         {
             ResponseStub samlResp = new ResponseStub();
             var att = samlResp.GetAttributes();
-            var user = new BaseUser(samlResp);
+            var user = new User(samlResp);
 
             Assert.AreEqual(att["mno_session"], user.SsoSession);
             Assert.AreEqual(DateTime.Parse(att["mno_session_recheck"]), user.SsoSessionRecheck);
@@ -61,7 +61,7 @@ namespace Maestrano.Tests.Sso
 
             // Build user
             ResponseStub samlResp = new ResponseStub();
-            var user = new BaseUser(samlResp);
+            var user = new User(samlResp);
 
             Assert.AreEqual(user.Uid, user.ToUid());
         }
@@ -75,7 +75,7 @@ namespace Maestrano.Tests.Sso
 
             // Build user
             ResponseStub samlResp = new ResponseStub();
-            var user = new BaseUser(samlResp);
+            var user = new User(samlResp);
 
             Assert.AreEqual(user.VirtualUid, user.ToUid());
         }
@@ -89,7 +89,7 @@ namespace Maestrano.Tests.Sso
 
             // Build user
             ResponseStub samlResp = new ResponseStub();
-            var user = new BaseUser(samlResp);
+            var user = new User(samlResp);
 
             Assert.AreEqual(user.Email, user.ToEmail());
         }
@@ -103,7 +103,7 @@ namespace Maestrano.Tests.Sso
 
             // Build user
             ResponseStub samlResp = new ResponseStub();
-            var user = new BaseUser(samlResp);
+            var user = new User(samlResp);
 
             Assert.AreEqual(user.VirtualEmail, user.ToEmail());
         }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Maestrano.Sso
 {
 
-    public class BaseUser
+    public class User
     {
         public string SsoSession { get; set; }
         public DateTime SsoSessionRecheck { get; set; }
@@ -29,7 +29,7 @@ namespace Maestrano.Sso
         /// Constructor loading user attributes from a Saml.Response
         /// </summary>
         /// <param name="samlResponse"></param>
-        public BaseUser(Saml.Response samlResponse)
+        public User(Saml.Response samlResponse)
         {
             NameValueCollection att = samlResponse.GetAttributes();
             SsoSession = att["mno_session"];
@@ -91,10 +91,10 @@ namespace Maestrano.Sso
                     new JProperty("virtual_uid", FirstName),
                     new JProperty("real_email", LastName),
                     new JProperty("virtual_email", Country),
-                    new JProperty("group", JObject(
+                    new JProperty("group", new JObject(
                         new JProperty("uid", GroupUid),
                         new JProperty("role", GroupRole))),
-                    new JProperty("session", JObject(
+                    new JProperty("session", new JObject(
                         new JProperty("uid", Uid),
                         new JProperty("token", SsoSession),
                         new JProperty("recheck", SsoSessionRecheck),

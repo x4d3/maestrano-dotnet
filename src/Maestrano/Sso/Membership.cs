@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Sso
 {
-    public class BaseGroup
+    class Membership
     {
     }
 }

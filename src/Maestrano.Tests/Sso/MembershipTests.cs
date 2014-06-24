@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Maestrano.Tests.Sso
 {
     [TestClass]
-    public class BaseGroupTests
+    public class MembershipTests
     {
         [TestMethod]
         public void TestMethod1()

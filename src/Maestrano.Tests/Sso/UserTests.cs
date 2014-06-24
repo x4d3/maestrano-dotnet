@@ -7,15 +7,16 @@ using System.Collections.Specialized;
 namespace Maestrano.Tests.Sso
 {
     // Stub class for Saml.Response
-    public class ResponseStub : Response
+    public class SsoUserResponseStub : Response
     {
-        public ResponseStub()
+        public SsoUserResponseStub()
         {
             _cachedAttributes = new NameValueCollection();
             _cachedAttributes.Add("mno_session", "7ds8f9789a7fd7x0b898bvb8vc9h0gg");
             _cachedAttributes.Add("mno_session_recheck", DateTime.UtcNow.ToString("o"));
             _cachedAttributes.Add("group_uid", "cld-1");
             _cachedAttributes.Add("group_role", "Admin");
+            _cachedAttributes.Add("group_end_free_trial", DateTime.UtcNow.ToString("o"));
             _cachedAttributes.Add("uid", "usr-1");
             _cachedAttributes.Add("virtual_uid", "user-1.cld-1");
             _cachedAttributes.Add("email", "j.doe@doecorp.com");
@@ -34,7 +35,7 @@ namespace Maestrano.Tests.Sso
         [TestMethod]
         public void ItShouldExtractTheRightAttributesFromTheSamlResponse()
         {
-            ResponseStub samlResp = new ResponseStub();
+            SsoUserResponseStub samlResp = new SsoUserResponseStub();
             var att = samlResp.GetAttributes();
             var user = new User(samlResp);
 
@@ -60,7 +61,7 @@ namespace Maestrano.Tests.Sso
             Maestrano.Sso.CreationMode = "real";
 
             // Build user
-            ResponseStub samlResp = new ResponseStub();
+            SsoUserResponseStub samlResp = new SsoUserResponseStub();
             var user = new User(samlResp);
 
             Assert.AreEqual(user.Uid, user.ToUid());
@@ -74,7 +75,7 @@ namespace Maestrano.Tests.Sso
             Maestrano.Sso.CreationMode = "virtual";
 
             // Build user
-            ResponseStub samlResp = new ResponseStub();
+            SsoUserResponseStub samlResp = new SsoUserResponseStub();
             var user = new User(samlResp);
 
             Assert.AreEqual(user.VirtualUid, user.ToUid());
@@ -88,7 +89,7 @@ namespace Maestrano.Tests.Sso
             Maestrano.Sso.CreationMode = "real";
 
             // Build user
-            ResponseStub samlResp = new ResponseStub();
+            SsoUserResponseStub samlResp = new SsoUserResponseStub();
             var user = new User(samlResp);
 
             Assert.AreEqual(user.Email, user.ToEmail());
@@ -102,7 +103,7 @@ namespace Maestrano.Tests.Sso
             Maestrano.Sso.CreationMode = "virtual";
 
             // Build user
-            ResponseStub samlResp = new ResponseStub();
+            SsoUserResponseStub samlResp = new SsoUserResponseStub();
             var user = new User(samlResp);
 
             Assert.AreEqual(user.VirtualEmail, user.ToEmail());

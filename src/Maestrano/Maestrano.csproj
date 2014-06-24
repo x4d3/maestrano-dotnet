@@ -57,9 +57,9 @@
     <Compile Include="Saml\Request.cs" />
     <Compile Include="Saml\Response.cs" />
     <Compile Include="Saml\Settings.cs" />
-    <Compile Include="Sso\BaseGroup.cs" />
-    <Compile Include="Sso\BaseMembership.cs" />
-    <Compile Include="Sso\BaseUser.cs" />
+    <Compile Include="Sso\Group.cs" />
+    <Compile Include="Sso\Membership.cs" />
+    <Compile Include="Sso\User.cs" />
     <Compile Include="Sso\Session.cs" />
   </ItemGroup>
   <ItemGroup>

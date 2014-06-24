@@ -21,8 +21,8 @@ namespace Maestrano.Tests.Sso
         {
             var httpRequest = new HttpRequest("", "http://stackoverflow/", "");
             var stringWriter = new StringWriter();
-            var httpResponce = new HttpResponse(stringWriter);
-            var httpContext = new HttpContext(httpRequest, httpResponce);
+            var httpResponse = new HttpResponse(stringWriter);
+            var httpContext = new HttpContext(httpRequest, httpResponse);
 
             var sessionContainer = new HttpSessionStateContainer("id", new SessionStateItemCollection(),
                                                     new HttpStaticObjectsCollection(), 10, true,

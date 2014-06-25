@@ -211,6 +211,20 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
+        /// Build the url used for user session check
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public string SessionCheckUrl(String uid, String session)
+        {
+            string url = Idp + "/api/v1/auth/saml";
+            url += "/" + uid + "?session=" + session;
+
+            return url;
+        }
+
+        /// <summary>
         /// Return the SAML Settings to be used by the SAML Request
         /// and Response classes
         /// </summary>

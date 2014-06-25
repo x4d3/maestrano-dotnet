@@ -82,6 +82,14 @@ namespace Maestrano.Tests
         }
 
         [TestMethod]
+        public void Sso_SessionCheckUrl_ItsReturnsTheRightUrl()
+        {
+            Maestrano.Environment = "production";
+
+            Assert.AreEqual(Maestrano.Sso.Idp + "/api/v1/auth/saml/usr-1?session=somesessiontoken", Maestrano.Sso.SessionCheckUrl("usr-1", "somesessiontoken"));
+        }
+
+        [TestMethod]
         public void Sso_IdpUrl_ItsReturnsTheRightUrl()
         {
             Maestrano.Environment = "production";

@@ -69,5 +69,26 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual("sessiontoken", mnoSession.SessionToken);
             Assert.AreEqual(DateTime.Parse("2014-06-22T01:00:00Z").ToUniversalTime(), mnoSession.Recheck);
         }
+
+        [TestMethod]
+        public void ItContructsAnInstanceFromHttpSessionStateObjectAndSsoUser()
+        {
+            // Http context
+            HttpContext httpContext = FakeHttpContext();
+            injectMnoSession(httpContext);
+
+            // User
+            SsoUserResponseStub samlResp = new SsoUserResponseStub();
+            var user = new User(samlResp);
+
+
+            Session mnoSession = new Session(httpContext.Session, user);
+
+            Assert.AreEqual(httpContext.Session, mnoSession.HttpSession);
+            Assert.AreEqual(user.Uid, mnoSession.Uid);
+            Assert.AreEqual(user.GroupUid, mnoSession.GroupUid);
+            Assert.AreEqual(user.SsoSession, mnoSession.SessionToken);
+            Assert.AreEqual(user.SsoSessionRecheck, mnoSession.Recheck);
+        }
     }
 }

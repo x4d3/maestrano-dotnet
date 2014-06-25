@@ -17,6 +17,11 @@ namespace Maestrano.Sso
         public string SessionToken { get; set; }
         public HttpSessionState HttpSession { get; set; }
 
+        /// <summary>
+        /// Contructor retrieving maestrano session from
+        /// http session
+        /// </summary>
+        /// <param name="httpSessionObj"></param>
         public Session(HttpSessionState httpSessionObj)
         {
             HttpSession = httpSessionObj;
@@ -43,6 +48,24 @@ namespace Maestrano.Sso
                     }
                     catch (Exception){ }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Contructor retrieving maestrano session from user
+        /// </summary>
+        /// <param name="httpSessionObj"></param>
+        /// <param name="user"></param>
+        public Session(HttpSessionState httpSessionObj, User user)
+        {
+            HttpSession = httpSessionObj;
+
+            if (user != null)
+            {
+                Uid = user.Uid;
+                GroupUid = user.GroupUid;
+                SessionToken = user.SsoSession;
+                Recheck = user.SsoSessionRecheck;
             }
         }
     }

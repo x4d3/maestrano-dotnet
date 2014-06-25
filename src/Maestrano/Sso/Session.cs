@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.SessionState;
 using Newtonsoft.Json.Linq;
+using RestSharp;
 
 namespace Maestrano.Sso
 {
@@ -81,6 +82,48 @@ namespace Maestrano.Sso
                 return (Recheck.CompareTo(DateTime.UtcNow) <= 0);
             }
             return true;
+        }
+
+        /// <summary>
+        /// Check whether the remote maestrano session is still
+        /// valid
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public Boolean PerformRemoteCheck(RestClient client)
+        {
+            if (Uid != null && SessionToken != null && Uid.Length > 0 && SessionToken.Length > 0)
+            {
+                // Prepare request
+                var request = new RestRequest("api/v1/auth/saml/{id}", Method.GET);
+                request.AddUrlSegment("id", Uid);
+                request.AddParameter("session", SessionToken);
+                JObject resp = new JObject();
+                try {
+                    resp = JObject.Parse(client.Execute(request).Content);
+                }
+                catch (Exception) { }
+
+                bool valid = Convert.ToBoolean(resp.Value<String>("valid"));
+                string dateStr = resp.Value<String>("recheck");
+                if ( valid && dateStr != null && dateStr.Length > 0)
+                {
+                    Recheck = DateTime.Parse(dateStr);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Check whether the remote maestrano session is still
+        /// valid
+        /// </summary>
+        /// <returns></returns>
+        public Boolean PerformRemoteCheck()
+        {
+            var client = new RestClient(Maestrano.Sso.Idp);
+            return PerformRemoteCheck(client);
         }
     }
 }

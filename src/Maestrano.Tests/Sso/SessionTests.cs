@@ -8,6 +8,8 @@ using Maestrano.Sso;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Moq;
+using RestSharp;
 
 namespace Maestrano.Tests.Sso
 {
@@ -21,7 +23,7 @@ namespace Maestrano.Tests.Sso
         {
             var httpRequest = new HttpRequest("", "http://stackoverflow/", "");
             var stringWriter = new StringWriter();
-            var httpResponse = new HttpResponse(stringWriter);
+            var httpResponse = new System.Web.HttpResponse(stringWriter);
             var httpContext = new HttpContext(httpRequest, httpResponse);
 
             var sessionContainer = new HttpSessionStateContainer("id", new SessionStateItemCollection(),
@@ -52,7 +54,7 @@ namespace Maestrano.Tests.Sso
                     new JProperty("uid", "usr-1"),
                     new JProperty("token", "sessiontoken"),
                     new JProperty("group_uid", "cld-1"),
-                    new JProperty("recheck", datetime.ToString("o"))
+                    new JProperty("recheck", datetime.ToString("s"))
                 );
 
             var enc = System.Text.Encoding.UTF8;
@@ -120,6 +122,55 @@ namespace Maestrano.Tests.Sso
             // test
             Session mnoSession = new Session(httpContext.Session);
             Assert.IsFalse(mnoSession.isRemoteCheckRequired());
+        }
+
+        [TestMethod]
+        public void PerformRemoteCheck_WhenValid_ItShouldReturnTrueAndAssignRecheckIfValid()
+        {   
+            // Response preparation
+            RestResponse response = new RestResponse();
+            var datetime = DateTime.UtcNow;
+            JObject respObj = new JObject(new JProperty("valid", "true"), new JProperty("recheck", datetime.ToString("s")));
+            response.Content = respObj.ToString();
+            response.ResponseStatus = ResponseStatus.Completed;
+
+            // Client mock
+            var mockRestClient = new Mock<RestClient>();
+            mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
+
+            // Http context
+            HttpContext httpContext = FakeHttpContext();
+            injectMnoSession(httpContext);
+            Session mnoSession = new Session(httpContext.Session);
+
+            // Tests
+            Assert.IsTrue(mnoSession.PerformRemoteCheck(mockRestClient.Object));
+            Assert.AreEqual(DateTime.Parse(datetime.ToString("s")), mnoSession.Recheck);
+        }
+
+        [TestMethod]
+        public void PerformRemoteCheck_WhenInvalid_ItShouldReturnFalseAndLeaveRecheckUnchanged()
+        {
+            // Response preparation
+            RestResponse response = new RestResponse();
+            var datetime = DateTime.UtcNow;
+            JObject respObj = new JObject(new JProperty("valid", "false"), new JProperty("recheck", datetime.ToString("s")));
+            response.Content = respObj.ToString();
+            response.ResponseStatus = ResponseStatus.Completed;
+
+            // Client mock
+            var mockRestClient = new Mock<RestClient>();
+            mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
+
+            // Http context
+            HttpContext httpContext = FakeHttpContext();
+            injectMnoSession(httpContext);
+            Session mnoSession = new Session(httpContext.Session);
+
+            // Tests
+            var recheck = mnoSession.Recheck;
+            Assert.IsFalse(mnoSession.PerformRemoteCheck(mockRestClient.Object));
+            Assert.AreEqual(DateTime.Parse(recheck.ToString("s")), mnoSession.Recheck);
         }
     }
 }

@@ -68,5 +68,19 @@ namespace Maestrano.Sso
                 Recheck = user.SsoSessionRecheck;
             }
         }
+
+        /// <summary>
+        /// Returns whether the session needs to be checked
+        /// remotely from maestrano or not
+        /// </summary>
+        /// <returns></returns>
+        public Boolean isRemoteCheckRequired()
+        {
+            if (Uid != null && SessionToken != null && Recheck != null)
+            {
+                return (Recheck.CompareTo(DateTime.UtcNow) <= 0);
+            }
+            return true;
+        }
     }
 }

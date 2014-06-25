@@ -42,12 +42,17 @@ namespace Maestrano.Tests.Sso
         // Used to build HttpSession
         private HttpContext injectMnoSession(HttpContext context)
         {
+            return injectMnoSession(context, DateTime.Parse("2014-06-22T01:00:00Z").ToUniversalTime());
+        }
+
+        private HttpContext injectMnoSession(HttpContext context, DateTime datetime)
+        {
             HttpSessionState httpSession = context.Session;
             JObject mnoContent = new JObject(
-                    new JProperty("uid","usr-1"),
-                    new JProperty("token","sessiontoken"),
-                    new JProperty("group_uid","cld-1"),
-                    new JProperty("recheck","2014-06-22T01:00:00Z")
+                    new JProperty("uid", "usr-1"),
+                    new JProperty("token", "sessiontoken"),
+                    new JProperty("group_uid", "cld-1"),
+                    new JProperty("recheck", datetime.ToString("o"))
                 );
 
             var enc = System.Text.Encoding.UTF8;
@@ -89,6 +94,32 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(user.GroupUid, mnoSession.GroupUid);
             Assert.AreEqual(user.SsoSession, mnoSession.SessionToken);
             Assert.AreEqual(user.SsoSessionRecheck, mnoSession.Recheck);
+        }
+
+        [TestMethod]
+        public void IsRemoteCheckRequired_ItReturnsTrueIfRecheckIsBeforeNow()
+        {
+            // Http context
+            HttpContext httpContext = FakeHttpContext();
+            var recheck = DateTime.UtcNow.AddMinutes(-1);
+            injectMnoSession(httpContext, recheck);
+
+            // test
+            Session mnoSession = new Session(httpContext.Session);
+            Assert.IsTrue(mnoSession.isRemoteCheckRequired());
+        }
+
+        [TestMethod]
+        public void IsRemoteCheckRequired_ItReturnsFalseIfRecheckIsAfterNow()
+        {
+            // Http context
+            HttpContext httpContext = FakeHttpContext();
+            var recheck = DateTime.UtcNow.AddMinutes(1);
+            injectMnoSession(httpContext, recheck);
+
+            // test
+            Session mnoSession = new Session(httpContext.Session);
+            Assert.IsFalse(mnoSession.isRemoteCheckRequired());
         }
     }
 }

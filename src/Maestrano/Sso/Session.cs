@@ -88,7 +88,7 @@ namespace Maestrano.Sso
         /// Check whether the remote maestrano session is still
         /// valid
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="client"></param>
         /// <returns></returns>
         public Boolean PerformRemoteCheck(RestClient client)
         {
@@ -125,5 +125,30 @@ namespace Maestrano.Sso
             var client = new RestClient(Maestrano.Sso.Idp);
             return PerformRemoteCheck(client);
         }
+
+        /// <summary>
+        /// Return wether the session is valid or not. Perform
+        /// remote check to maestrano if recheck is overdue.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
+        public Boolean IsValid(RestClient client)
+        {
+            if (isRemoteCheckRequired())
+            {
+                if (PerformRemoteCheck(client))
+                {
+                    //Save
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
     }
 }

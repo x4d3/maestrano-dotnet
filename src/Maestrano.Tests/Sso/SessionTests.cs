@@ -40,7 +40,7 @@ namespace Maestrano.Tests.Sso
         }
 
         // Used to build HttpSession
-        private HttpSessionState buildMnoHttpSession(HttpContext context)
+        private HttpContext injectMnoSession(HttpContext context)
         {
             HttpSessionState httpSession = context.Session;
             JObject mnoContent = new JObject(
@@ -53,15 +53,21 @@ namespace Maestrano.Tests.Sso
             var enc = System.Text.Encoding.UTF8;
             httpSession["maestrano"] = Convert.ToBase64String(enc.GetBytes(mnoContent.ToString()));
 
-            return httpSession;
+            return context;
         }
 
         [TestMethod]
         public void ItContructsAnInstanceFromHttpSessionStateObject()
         {
+            HttpContext httpContext = FakeHttpContext();
+            injectMnoSession(httpContext);
+            Session mnoSession = new Session(httpContext.Session);
 
-            HttpSessionState httpSession = buildMnoHttpSession(FakeHttpContext());
-            Session mnoSession = new Session(httpSession);
+            Assert.AreEqual(httpContext.Session, mnoSession.HttpSession);
+            Assert.AreEqual("usr-1", mnoSession.Uid);
+            Assert.AreEqual("cld-1", mnoSession.GroupUid);
+            Assert.AreEqual("sessiontoken", mnoSession.SessionToken);
+            Assert.AreEqual(DateTime.Parse("2014-06-22T01:00:00Z").ToUniversalTime(), mnoSession.Recheck);
         }
     }
 }

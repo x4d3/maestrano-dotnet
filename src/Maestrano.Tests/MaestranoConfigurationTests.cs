@@ -12,7 +12,7 @@ namespace Maestrano.Tests
             Maestrano.Environment = "test";
 
             // App
-            Assert.AreEqual("localhost", Maestrano.App.Host);
+            Assert.AreEqual("http://localhost", Maestrano.App.Host);
 
             // API
             Assert.AreEqual("C#", Maestrano.Api.Lang);
@@ -25,7 +25,7 @@ namespace Maestrano.Tests
 
             // SSO
             Assert.AreEqual("http://api-sandbox.maestrano.io", Maestrano.Sso.Idp);
-            Assert.AreEqual("localhost", Maestrano.Sso.Idm);
+            Assert.AreEqual("http://localhost", Maestrano.Sso.Idm);
             Assert.AreEqual("virtual", Maestrano.Sso.CreationMode);
             Assert.AreEqual("/maestrano/auth/saml/init.aspx", Maestrano.Sso.InitPath);
             Assert.AreEqual("/maestrano/auth/saml/consume.aspx", Maestrano.Sso.ConsumePath);
@@ -40,7 +40,7 @@ namespace Maestrano.Tests
             Maestrano.Environment = "production";
 
             // App
-            Assert.AreEqual("localhost", Maestrano.App.Host);
+            Assert.AreEqual("http://localhost", Maestrano.App.Host);
 
             // API
             Assert.AreEqual("C#", Maestrano.Api.Lang);
@@ -53,7 +53,7 @@ namespace Maestrano.Tests
 
             // SSO
             Assert.AreEqual("https://maestrano.com", Maestrano.Sso.Idp);
-            Assert.AreEqual("localhost", Maestrano.Sso.Idm);
+            Assert.AreEqual("http://localhost", Maestrano.Sso.Idm);
             Assert.AreEqual("virtual", Maestrano.Sso.CreationMode);
             Assert.AreEqual("/maestrano/auth/saml/init.aspx", Maestrano.Sso.InitPath);
             Assert.AreEqual("/maestrano/auth/saml/consume.aspx", Maestrano.Sso.ConsumePath);

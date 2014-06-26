@@ -20,9 +20,9 @@ namespace Maestrano
 
         static Maestrano()
         {
-            App = new Configuration.App();
+            App = Configuration.App.Load();
             Api = Configuration.Api.Load();
-            Webhook = new Configuration.Webhook();
+            Webhook = Configuration.Webhook.Load();
             Sso = Configuration.Sso.Load();
         }
 

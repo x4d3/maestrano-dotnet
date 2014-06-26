@@ -10,9 +10,18 @@ namespace Maestrano.Configuration
     {
         public Configuration.WebhookAccount Account { get; private set; }
 
+        /// <summary>
+        /// Load Webhook configuration into a Webhook configuration object
+        /// </summary>
+        /// <returns>A Webhook configuration object</returns>
+        public static Webhook Load()
+        {
+            return (new Webhook());
+        }
+
         public Webhook()
         {
-            Account = new WebhookAccount();
+            Account = WebhookAccount.Load();
         }
     }
 }

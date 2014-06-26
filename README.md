@@ -38,6 +38,7 @@ To get started just go to: http://api-sandbox.maestrano.io
 
 ### Installation
 
+[TODO: Package not available on NuGet yet]
 To install Maestrano, run the following command in the Package Manager Console
 ```console
 PM> Install-Package Maestrano

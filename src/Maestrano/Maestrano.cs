@@ -12,7 +12,7 @@ namespace Maestrano
         // VERSION
         public static string Version { get { return "0.1.0"; } }
 
-        public static string Environment { get; set; }
+        
         public static Configuration.Sso Sso { get; private set; }
         public static Configuration.App App { get; private set; }
         public static Configuration.Api Api { get; private set; }
@@ -24,6 +24,14 @@ namespace Maestrano
             Api = Configuration.Api.Load();
             Webhook = Configuration.Webhook.Load();
             Sso = Configuration.Sso.Load();
+        }
+
+        /// <summary>
+        /// App environment: 'test' or 'production'
+        /// </summary>
+        public static string Environment {
+            get { return Maestrano.App.Environment; }
+            set { Maestrano.App.Environment = value; }
         }
 
         /// <summary>

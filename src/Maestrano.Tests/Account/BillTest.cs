@@ -30,7 +30,17 @@ namespace Maestrano.Tests.Account
             Console.WriteLine(Maestrano.Api.Id);
             var obj = Bill.Retrieve("bill-1");
             Assert.AreEqual("bill-1", obj.Id);
+        }
 
+        [TestMethod]
+        public void Create_ItShouldCreateABill()
+        {
+            var obj = Bill.Create(
+                groupUid: "cld-3",
+                priceCents: 1500,
+                description: "Some Bill"
+                );
+            Assert.IsNotNull("bill-1", obj.Id);
         }
     }
 }

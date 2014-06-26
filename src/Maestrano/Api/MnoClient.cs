@@ -99,11 +99,20 @@ namespace Maestrano.Api
             request.Resource = path;
             request.Method = Method.GET;
             request.AddUrlSegment("id", resourceId);
-            Console.WriteLine(resourceId);
 
             return MnoClient.ProjectSingleObject<T>(request);
         }
 
+        public static T Create<T>(string path, NameValueCollection parameters)
+        {
+            var request = new RestRequest();
+            request.Resource = path;
+            request.Method = Method.POST;
 
+            foreach (var k in parameters.AllKeys)
+                request.AddParameter(StringExtensions.ToSnakeCase(k), parameters[k]);
+
+            return MnoClient.ProjectSingleObject<T>(request);
+        }
     }
 }

@@ -52,5 +52,21 @@ namespace Maestrano.Account
         {
             return MnoClient.Retrieve<Bill>(ResourcePath(), billId);
         }
+
+        public static Bill Create(String groupUid,Int32 priceCents, String description, String currency = "AUD", Decimal? units = null, DateTime? periodStartedAt = null, DateTime? periodEndedAt = null){
+            var att = new NameValueCollection();
+            att.Add("groupUid",groupUid);
+            att.Add("priceCents",priceCents.ToString());
+            att.Add("description",description);
+            att.Add("currency",currency);
+            if (units != null)
+                att.Add("units", units.Value.ToString());
+            if (periodStartedAt != null)
+                att.Add("periodStartedAt",periodStartedAt.Value.ToString("s"));
+            if (periodEndedAt != null)
+                att.Add("periodEndedAt", periodEndedAt.Value.ToString("s"));
+
+            return MnoClient.Create<Bill>(IndexPath(),att);
+        }
     }
 }

@@ -54,6 +54,7 @@
     <Compile Include="Account\RecurringBill.cs" />
     <Compile Include="Api\MnoClient.cs" />
     <Compile Include="Api\MnoObject.cs" />
+    <Compile Include="Api\StringExtensions.cs" />
     <Compile Include="Configuration\Api.cs" />
     <Compile Include="Configuration\App.cs" />
     <Compile Include="Configuration\Sso.cs" />

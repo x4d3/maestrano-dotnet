@@ -40,15 +40,19 @@ namespace Maestrano.Sso
                 // Assign attributes
                 Uid = sessionObject.Value<String>("uid");
                 GroupUid = sessionObject.Value<String>("group_uid");
-                SessionToken = sessionObject.Value<String>("token");
+                SessionToken = sessionObject.Value<String>("session");
 
-                string recheckValue = sessionObject.Value<String>("recheck");
+                // Assign Session Recheck
+                // Assign past timestamp if date couldn't be parsed
+                string recheckValue = sessionObject.Value<String>("session_recheck");
                 if (recheckValue != null && recheckValue.Length > 0) {
                     try {
                     Recheck = DateTime.Parse(recheckValue);
                     }
                     catch (Exception){ }
                 }
+                if (Recheck == null)
+                    Recheck = DateTime.UtcNow.AddMinutes(-1);
             }
         }
 
@@ -149,6 +153,22 @@ namespace Maestrano.Sso
             return true;
         }
 
+        /// <summary>
+        /// Save the Maestrano session in
+        /// HTTP Session
+        /// </summary>
+        public void Save()
+        {
+            var enc = System.Text.Encoding.UTF8;
+            JObject sessionObject = new JObject(
+                new JProperty("uid",Uid),
+                new JProperty("session",SessionToken),
+                new JProperty("session_recheck",Recheck.ToUniversalTime().ToString("s")),
+                new JProperty("group_uid",GroupUid));
+
+            // Fianlly store the maestrano session
+            HttpSession["maestrano"] = Convert.ToBase64String(enc.GetBytes(sessionObject.ToString()));
+        }
 
     }
 }

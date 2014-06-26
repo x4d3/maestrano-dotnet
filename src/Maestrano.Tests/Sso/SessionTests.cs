@@ -52,9 +52,9 @@ namespace Maestrano.Tests.Sso
             HttpSessionState httpSession = context.Session;
             JObject mnoContent = new JObject(
                     new JProperty("uid", "usr-1"),
-                    new JProperty("token", "sessiontoken"),
+                    new JProperty("session", "sessiontoken"),
                     new JProperty("group_uid", "cld-1"),
-                    new JProperty("recheck", datetime.ToString("s"))
+                    new JProperty("session_recheck", datetime.ToString("s"))
                 );
 
             var enc = System.Text.Encoding.UTF8;
@@ -171,6 +171,28 @@ namespace Maestrano.Tests.Sso
             var recheck = mnoSession.Recheck;
             Assert.IsFalse(mnoSession.PerformRemoteCheck(mockRestClient.Object));
             Assert.AreEqual(DateTime.Parse(recheck.ToString("s")), mnoSession.Recheck);
+        }
+
+
+        [TestMethod]
+        public void Save_ItShouldSaveTheMaestranoSessionInHttpSession()
+        {
+            // Http context
+            HttpContext httpContext = FakeHttpContext();
+            var recheck = DateTime.UtcNow.AddMinutes(1);
+            injectMnoSession(httpContext, recheck);
+
+            // Create Mno session and save it
+            Session mnoSession = new Session(httpContext.Session);
+            mnoSession.SessionToken = "anothertoken";
+            mnoSession.Save();
+
+            // Decrypt session and test
+            var enc = System.Text.Encoding.UTF8;
+            var json = enc.GetString(Convert.FromBase64String(httpContext.Session["maestrano"].ToString()));
+            var mnoObj = JObject.Parse(json);
+
+            Assert.AreEqual("anothertoken", mnoObj.Value<String>("session"));
         }
     }
 }

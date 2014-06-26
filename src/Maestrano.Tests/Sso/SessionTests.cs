@@ -192,7 +192,78 @@ namespace Maestrano.Tests.Sso
             var json = enc.GetString(Convert.FromBase64String(httpContext.Session["maestrano"].ToString()));
             var mnoObj = JObject.Parse(json);
 
-            Assert.AreEqual("anothertoken", mnoObj.Value<String>("session"));
+            Assert.AreEqual(mnoSession.SessionToken, mnoObj.Value<String>("session"));
+            Assert.AreEqual(mnoSession.Uid, mnoObj.Value<String>("uid"));
+            Assert.AreEqual(mnoSession.GroupUid, mnoObj.Value<String>("group_uid"));
+            Assert.AreEqual(mnoSession.Recheck, mnoObj.Value<DateTime>("session_recheck"));
+        }
+
+        [TestMethod]
+        public void IsValid_WhenRecheckRequired_ItShouldReturnTrue()
+        {
+            // Http context
+            HttpContext httpContext = FakeHttpContext();
+            var recheck = DateTime.UtcNow.AddMinutes(1);
+            injectMnoSession(httpContext, recheck);
+
+            // test
+            Session mnoSession = new Session(httpContext.Session);
+            Assert.IsTrue(mnoSession.IsValid());
+        }
+
+        [TestMethod]
+        public void IsValid_WhenRecheckRequiredAndValid_ItShouldReturnTrueAndSaveTheSession()
+        {
+            // Response preparation
+            RestResponse response = new RestResponse();
+            var datetime = DateTime.UtcNow;
+            JObject respObj = new JObject(new JProperty("valid", "true"), new JProperty("recheck", datetime.ToString("s")));
+            response.Content = respObj.ToString();
+            response.ResponseStatus = ResponseStatus.Completed;
+
+            // Client mock
+            var mockRestClient = new Mock<RestClient>();
+            mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
+
+            // Http context
+            HttpContext httpContext = FakeHttpContext();
+            var recheck = DateTime.UtcNow.AddMinutes(-1);
+            injectMnoSession(httpContext, recheck);
+
+            // Test mno session
+            Session mnoSession = new Session(httpContext.Session);
+            Assert.IsTrue(mnoSession.IsValid(mockRestClient.Object));
+
+            // Decrypt session and test recheck
+            var enc = System.Text.Encoding.UTF8;
+            var json = enc.GetString(Convert.FromBase64String(httpContext.Session["maestrano"].ToString()));
+            var mnoObj = JObject.Parse(json);
+
+            Assert.AreEqual(datetime.ToString("s"), mnoObj.Value<DateTime>("session_recheck").ToString("s"));
+        }
+
+        [TestMethod]
+        public void IsValid_ItShouldReturnFalseIfRecheckRequiredAndInvalid()
+        {
+            // Response preparation
+            RestResponse response = new RestResponse();
+            var datetime = DateTime.UtcNow;
+            JObject respObj = new JObject(new JProperty("valid", "false"), new JProperty("recheck", datetime.ToString("s")));
+            response.Content = respObj.ToString();
+            response.ResponseStatus = ResponseStatus.Completed;
+
+            // Client mock
+            var mockRestClient = new Mock<RestClient>();
+            mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
+
+            // Http context
+            HttpContext httpContext = FakeHttpContext();
+            var recheck = DateTime.UtcNow.AddMinutes(-1);
+            injectMnoSession(httpContext, recheck);
+
+            // test
+            Session mnoSession = new Session(httpContext.Session);
+            Assert.IsFalse(mnoSession.IsValid(mockRestClient.Object));
         }
     }
 }

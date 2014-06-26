@@ -42,15 +42,14 @@ namespace Maestrano.Sso
                 GroupUid = sessionObject.Value<String>("group_uid");
                 SessionToken = sessionObject.Value<String>("session");
 
-                // Assign Session Recheck
-                // Assign past timestamp if date couldn't be parsed
-                string recheckValue = sessionObject.Value<String>("session_recheck");
-                if (recheckValue != null && recheckValue.Length > 0) {
-                    try {
-                    Recheck = DateTime.Parse(recheckValue);
-                    }
-                    catch (Exception){ }
+                // Session Recheck
+                try
+                {
+                    Recheck = sessionObject.Value<DateTime>("session_recheck");
                 }
+                catch (Exception) { }
+                
+
                 if (Recheck == null)
                     Recheck = DateTime.UtcNow.AddMinutes(-1);
             }
@@ -142,7 +141,7 @@ namespace Maestrano.Sso
             {
                 if (PerformRemoteCheck(client))
                 {
-                    //Save
+                    Save();
                     return true;
                 }
                 else
@@ -151,6 +150,17 @@ namespace Maestrano.Sso
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Return wether the session is valid or not. Perform
+        /// remote check to maestrano if recheck is overdue.
+        /// </summary>
+        /// <returns></returns>
+        public Boolean IsValid()
+        {
+            var client = new RestClient(Maestrano.Sso.Idp);
+            return IsValid(client);
         }
 
         /// <summary>
@@ -163,10 +173,10 @@ namespace Maestrano.Sso
             JObject sessionObject = new JObject(
                 new JProperty("uid",Uid),
                 new JProperty("session",SessionToken),
-                new JProperty("session_recheck",Recheck.ToUniversalTime().ToString("s")),
+                new JProperty("session_recheck",Recheck.ToString("s")),
                 new JProperty("group_uid",GroupUid));
 
-            // Fianlly store the maestrano session
+            // Finally store the maestrano session
             HttpSession["maestrano"] = Convert.ToBase64String(enc.GetBytes(sessionObject.ToString()));
         }
 

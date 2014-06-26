@@ -32,6 +32,12 @@ namespace Maestrano.Api
             _client.BaseUrl = String.Format("{0}{1}", ApiEndpoint, ApiVersion);
         }
 
+        public MnoClient()
+        {
+            string apiKey = Maestrano.Api.Key;
+            new MnoClient(apiKey);
+        }
+
         /// <summary>
         /// Execute a manual REST request
         /// </summary>

@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account\Bill.cs" />
+    <Compile Include="Account\RecurringBill.cs" />
     <Compile Include="Api\DateTimeExtensions.cs" />
     <Compile Include="Api\JsonObject.cs" />
     <Compile Include="Api\JsonPropertyNameEqualityComparer.cs" />
@@ -79,9 +81,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Account\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

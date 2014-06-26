@@ -12,10 +12,13 @@ namespace Maestrano.Configuration
 {
     public class Sso : ConfigurationSection
     {
+        /// <summary>
+        /// Load Sso configuration into a Sso configuration object
+        /// </summary>
+        /// <returns>A Sso configuration object</returns>
         public static Sso Load()
         {
-            var obj = ConfigurationManager.GetSection("maestrano/sso") as Sso;
-            return obj;
+            return ConfigurationManager.GetSection("maestrano/sso") as Sso;
         }
 
         /// <summary>

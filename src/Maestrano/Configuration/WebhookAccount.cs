@@ -1,43 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Maestrano.Configuration
 {
-    public class WebhookAccount
+    public class WebhookAccount : ConfigurationSection
     {
-        // Application REST endpoint for groups
-        private string _groupspath;
-        public string GroupsPath 
+        /// <summary>
+        /// Load WebhooAccount configuration into a WebhooAccount configuration object
+        /// </summary>
+        /// <returns>A WebhooAccount configuration object</returns>
+        public static WebhookAccount Load()
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_groupspath))
-                {
-                    return "/maestrano/account/groups/:id";
-                }
-                return _groupspath;
-            }
-
-            set { _groupspath = value; }
+            return ConfigurationManager.GetSection("maestrano/webhook/account") as WebhookAccount;
         }
 
-        // Application REST endpoint for group > users
-        private string _groupuserspath;
-        public string GroupUsersPath 
+        /// <summary>
+        /// Return False (object not read only)
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsReadOnly()
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_groupuserspath))
-                {
-                    return "/maestrano/account/groups/:group_id/users/:id";
-                }
-                return _groupuserspath;
-            }
+            return false;
+        }
 
-            set { _groupuserspath = value; }
+        /// <summary>
+        /// Application REST endpoint for groups
+        /// </summary>
+        [ConfigurationProperty("groupsPath", DefaultValue = "/maestrano/account/groups/:id", IsRequired = false)]
+        public String GroupsPath
+        {
+            get { return (String)this["groupsPath"]; }
+            set { this["groupsPath"] = value; }
+        }
+
+        /// <summary>
+        /// Application REST endpoint for group > users
+        /// </summary>
+        [ConfigurationProperty("groupUsersPath", DefaultValue = "/maestrano/account/groups/:group_id/users/:id", IsRequired = false)]
+        public String GroupUsersPath
+        {
+            get { return (String)this["groupUsersPath"]; }
+            set { this["groupUsersPath"] = value; }
         }
     }
 }

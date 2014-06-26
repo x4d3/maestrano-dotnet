@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Maestrano.Api
 {
-    class MnoArray : IEnumerable<JsonObject>
+    public class MnoArray : IEnumerable<JsonObject>
 	{
 		private JsonObject _internalJson;
 

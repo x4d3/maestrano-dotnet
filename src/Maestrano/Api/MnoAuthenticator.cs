@@ -8,15 +8,17 @@ namespace Maestrano.Api
     public class MnoAuthenticator : IAuthenticator
     {
         private readonly string _apiKey;
+        private readonly string _apiId;
 
-        public MnoAuthenticator(string apiKey)
+        public MnoAuthenticator(string apiId, string apiKey)
         {
+            _apiId = apiId;
             _apiKey = apiKey;
         }
 
         public void Authenticate(IRestClient client, IRestRequest request)
         {
-            request.Credentials = new NetworkCredential(_apiKey, "");
+            request.Credentials = new NetworkCredential(_apiId,_apiKey);
         }
     }
 }

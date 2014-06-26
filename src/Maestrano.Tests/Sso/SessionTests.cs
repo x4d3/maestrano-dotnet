@@ -19,33 +19,11 @@ namespace Maestrano.Tests.Sso
     public class SessionTests
     {
 
-        // Used to build HttpSession
-        private HttpContext injectMnoSession(HttpContext context)
-        {
-            return injectMnoSession(context, DateTime.Parse("2014-06-22T01:00:00Z").ToUniversalTime());
-        }
-
-        private HttpContext injectMnoSession(HttpContext context, DateTime datetime)
-        {
-            HttpSessionState httpSession = context.Session;
-            JObject mnoContent = new JObject(
-                    new JProperty("uid", "usr-1"),
-                    new JProperty("session", "sessiontoken"),
-                    new JProperty("group_uid", "cld-1"),
-                    new JProperty("session_recheck", datetime.ToString("s"))
-                );
-
-            var enc = System.Text.Encoding.UTF8;
-            httpSession["maestrano"] = Convert.ToBase64String(enc.GetBytes(mnoContent.ToString()));
-
-            return context;
-        }
-
         [TestMethod]
         public void ItContructsAnInstanceFromHttpSessionStateObject()
         {
             HttpContext httpContext = Helpers.FakeHttpContext();
-            injectMnoSession(httpContext);
+            Helpers.injectMnoSession(httpContext);
             Session mnoSession = new Session(httpContext.Session);
 
             Assert.AreEqual(httpContext.Session, mnoSession.HttpSession);
@@ -60,7 +38,7 @@ namespace Maestrano.Tests.Sso
         {
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
-            injectMnoSession(httpContext);
+            Helpers.injectMnoSession(httpContext);
 
             // User
             var samlResp = new SsoResponseStub();
@@ -82,7 +60,7 @@ namespace Maestrano.Tests.Sso
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(-1);
-            injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(httpContext, recheck);
 
             // test
             Session mnoSession = new Session(httpContext.Session);
@@ -95,7 +73,7 @@ namespace Maestrano.Tests.Sso
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(1);
-            injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(httpContext, recheck);
 
             // test
             Session mnoSession = new Session(httpContext.Session);
@@ -118,7 +96,7 @@ namespace Maestrano.Tests.Sso
 
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
-            injectMnoSession(httpContext);
+            Helpers.injectMnoSession(httpContext);
             Session mnoSession = new Session(httpContext.Session);
 
             // Tests
@@ -142,7 +120,7 @@ namespace Maestrano.Tests.Sso
 
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
-            injectMnoSession(httpContext);
+            Helpers.injectMnoSession(httpContext);
             Session mnoSession = new Session(httpContext.Session);
 
             // Tests
@@ -158,7 +136,7 @@ namespace Maestrano.Tests.Sso
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(1);
-            injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(httpContext, recheck);
 
             // Create Mno session and save it
             Session mnoSession = new Session(httpContext.Session);
@@ -182,7 +160,7 @@ namespace Maestrano.Tests.Sso
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(1);
-            injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(httpContext, recheck);
 
             // test
             Session mnoSession = new Session(httpContext.Session);
@@ -206,7 +184,7 @@ namespace Maestrano.Tests.Sso
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(-1);
-            injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(httpContext, recheck);
 
             // Test mno session
             Session mnoSession = new Session(httpContext.Session);
@@ -237,7 +215,7 @@ namespace Maestrano.Tests.Sso
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(-1);
-            injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(httpContext, recheck);
 
             // test
             Session mnoSession = new Session(httpContext.Session);

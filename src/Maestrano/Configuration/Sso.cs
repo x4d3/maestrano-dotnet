@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Maestrano.Sso;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.SessionState;
 
 namespace Maestrano.Configuration
 {
@@ -266,6 +268,24 @@ namespace Maestrano.Configuration
             resp.LoadXmlFromBase64(samlPostParam);
 
             return resp;
+        }
+
+        /// <summary>
+        /// Set the maestrano user in session
+        /// </summary>
+        public void SetSession(HttpSessionState httpSessionObj, User user)
+        {
+            var mnoSession = new Session(httpSessionObj, user);
+            mnoSession.Save();
+        }
+
+        /// <summary>
+        /// Clear the maestrano session
+        /// </summary>
+        /// <param name="httpSessionObj"></param>
+        public void ClearSession(HttpSessionState httpSessionObj)
+        {
+            httpSessionObj.Remove("maestrano");
         }
     }
 }

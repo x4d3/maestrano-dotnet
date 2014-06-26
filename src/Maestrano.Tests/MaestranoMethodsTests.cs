@@ -2,6 +2,8 @@
 using Maestrano.Saml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
+using System.Web;
+using Maestrano.Sso;
 
 namespace Maestrano.Tests
 {
@@ -164,6 +166,47 @@ namespace Maestrano.Tests
             Maestrano.Environment = "production";
             string samlResponseStr = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");
             Assert.IsInstanceOfType(Maestrano.Sso.BuildResponse(samlResponseStr), typeof(Response));
+        }
+
+        [TestMethod]
+        public void Sso_SetSession_ItShouldSetTheUserInSession()
+        {
+            Maestrano.Environment = "production";
+
+            // Build context
+            var httpContext = Helpers.FakeHttpContext();
+            var samlResp = new SsoResponseStub();
+            var att = samlResp.GetAttributes();
+            var user = new User(samlResp);
+            Maestrano.Sso.SetSession(httpContext.Session, user);
+
+            // Decrypt session
+            var enc = System.Text.Encoding.UTF8;
+            var json = enc.GetString(Convert.FromBase64String(httpContext.Session["maestrano"].ToString()));
+            var mnoObj = JObject.Parse(json);
+
+            Assert.AreEqual(user.SsoSession, mnoObj.Value<String>("session"));
+            Assert.AreEqual(user.Uid, mnoObj.Value<String>("uid"));
+            Assert.AreEqual(user.GroupUid, mnoObj.Value<String>("group_uid"));
+            Assert.AreEqual(user.SsoSessionRecheck, mnoObj.Value<DateTime>("session_recheck"));
+        }
+
+        [TestMethod]
+        public void Sso_ClearSession_ItShouldDeleteTheMaestranoSession()
+        {
+            Maestrano.Environment = "production";
+
+            // Build context
+            var httpContext = Helpers.FakeHttpContext();
+            var samlResp = new SsoResponseStub();
+            var att = samlResp.GetAttributes();
+            var user = new User(samlResp);
+            Maestrano.Sso.SetSession(httpContext.Session, user);
+
+            // Test
+            Maestrano.Sso.ClearSession(httpContext.Session);
+            Assert.IsNull(httpContext.Session["maestrano"]);
+            
         }
     }
 }

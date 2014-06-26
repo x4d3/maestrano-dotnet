@@ -7,11 +7,35 @@ using System.Collections.Specialized;
 using System.Web;
 using System.Web.SessionState;
 using System.Reflection;
+using Newtonsoft.Json.Linq;
 
 namespace Maestrano.Tests
 {
     public class Helpers
     {
+
+        // Used to build HttpSession
+        public static HttpContext injectMnoSession(HttpContext context)
+        {
+            return injectMnoSession(context, DateTime.Parse("2014-06-22T01:00:00Z").ToUniversalTime());
+        }
+
+        public static HttpContext injectMnoSession(HttpContext context, DateTime datetime)
+        {
+            HttpSessionState httpSession = context.Session;
+            JObject mnoContent = new JObject(
+                    new JProperty("uid", "usr-1"),
+                    new JProperty("session", "sessiontoken"),
+                    new JProperty("group_uid", "cld-1"),
+                    new JProperty("session_recheck", datetime.ToString("s"))
+                );
+
+            var enc = System.Text.Encoding.UTF8;
+            httpSession["maestrano"] = Convert.ToBase64String(enc.GetBytes(mnoContent.ToString()));
+
+            return context;
+        }
+
         /// <summary>
         /// Read a reponse from the support/saml folder
         /// </summary>

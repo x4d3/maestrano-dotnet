@@ -398,7 +398,7 @@ Maestrano.Account.Bill
 <tr>
 <td><b>created_at</b></td>
 <td>readonly</td>
-<td>Time</td>
+<td>DateTime</td>
 <td>-</td>
 <td>-</td>
 <td>When the the bill was created</td>
@@ -434,7 +434,7 @@ Maestrano.Account.Bill
 <tr>
 <td><b>period_started_at</b></td>
 <td>read/write</td>
-<td>Time</td>
+<td>DateTime</td>
 <td>-</td>
 <td>-</td>
 <td>If the bill relates to a specific period then specifies when the period started. Both period_started_at and period_ended_at need to be filled in order to appear on customer invoice.</td>
@@ -443,7 +443,7 @@ Maestrano.Account.Bill
 <tr>
 <td><b>period_ended_at</b></td>
 <td>read/write</td>
-<td>Time</td>
+<td>DateTime</td>
 <td>-</td>
 <td>-</td>
 <td>If the bill relates to a specific period then specifies when the period ended. Both period_started_at and period_ended_at need to be filled in order to appear on customer invoice.</td>
@@ -559,7 +559,7 @@ Maestrano.Account.RecurringBill
 <tr>
 <td><b>start_date</b></td>
 <td>read/write</td>
-<td>Time</td>
+<td>DateTime</td>
 <td>-</td>
 <td>Now</td>
 <td>The date when this recurring bill should start billing the customer</td>
@@ -568,7 +568,7 @@ Maestrano.Account.RecurringBill
 <tr>
 <td><b>created_at</b></td>
 <td>readonly</td>
-<td>Time</td>
+<td>DateTime</td>
 <td>-</td>
 <td>-</td>
 <td>When the the bill was created</td>
@@ -608,7 +608,7 @@ rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54")
 
 Create a new recurring bill
 ```csharp
-rec_bill = Maestrano.Account.RecurringBill.Create(group_id: "cld-3", price_cents: 2000, description: "Product purchase", period: 'Month', start_date: DateTime.UtcNow)
+rec_bill = Maestrano.Account.RecurringBill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase", period: 'Month', startDate: DateTime.UtcNow)
 ```
 
 Cancel a recurring bill

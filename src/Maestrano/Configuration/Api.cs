@@ -49,6 +49,16 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
+        /// API Key (from sandbox or maestrano.com)
+        /// </summary>
+        [ConfigurationProperty("base", DefaultValue = "/api/v1/", IsRequired = false)]
+        public String Base
+        {
+            get { return (String)this["base"]; }
+            set { this["base"] = value; }
+        }
+
+        /// <summary>
         /// Verify SSL certs (disabled for now)
         /// </summary>
         [ConfigurationProperty("verifySslCerts", DefaultValue = false, IsRequired = false)]
@@ -70,6 +80,32 @@ namespace Maestrano.Configuration
 
         // Return the language version
         public string LangVersion { get { return Environment.OSVersion.ToString() + " - " + Environment.Version.ToString(); } }
+
+        /// <summary>
+        /// Address of the API Host
+        /// </summary>
+        [ConfigurationProperty("host", DefaultValue = null, IsRequired = false)]
+        public string Host
+        {
+            get
+            {
+                var _idp = (String)this["host"];
+                if (string.IsNullOrEmpty(_idp))
+                {
+                    if (Maestrano.Environment.Equals("production"))
+                    {
+                        return "https://maestrano.com";
+                    }
+                    else
+                    {
+                        return "http://api-sandbox.maestrano.io";
+                    }
+                }
+                return _idp;
+            }
+
+            set { this["host"] = value; }
+        }
 
     }
 }

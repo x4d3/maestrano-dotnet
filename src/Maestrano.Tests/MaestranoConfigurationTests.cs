@@ -15,6 +15,8 @@ namespace Maestrano.Tests
             Assert.AreEqual("http://localhost", Maestrano.App.Host);
 
             // API
+            Assert.AreEqual("http://api-sandbox.maestrano.io", Maestrano.Api.Host);
+            Assert.AreEqual("/api/v1/", Maestrano.Api.Base);
             Assert.AreEqual("C#", Maestrano.Api.Lang);
             Assert.AreEqual(Maestrano.Version, Maestrano.Api.Version);
             Assert.AreEqual(Environment.OSVersion.ToString() + " - " + Environment.Version.ToString(), Maestrano.Api.LangVersion);
@@ -43,6 +45,8 @@ namespace Maestrano.Tests
             Assert.AreEqual("http://localhost", Maestrano.App.Host);
 
             // API
+            Assert.AreEqual("https://maestrano.com", Maestrano.Api.Host);
+            Assert.AreEqual("/api/v1/", Maestrano.Api.Base);
             Assert.AreEqual("C#", Maestrano.Api.Lang);
             Assert.AreEqual(Maestrano.Version, Maestrano.Api.Version);
             Assert.AreEqual(Environment.OSVersion.ToString() + " - " + Environment.Version.ToString(), Maestrano.Api.LangVersion);

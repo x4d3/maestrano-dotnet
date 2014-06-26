@@ -12,7 +12,6 @@ namespace Maestrano.Tests.Saml
     public class RequestTests
     {
         
-
         [TestMethod]
         public void GetRequest_ItReturnsTheRightBased64EncodedXmlRequest()
         {

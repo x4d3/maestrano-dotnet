@@ -9,7 +9,7 @@ namespace Maestrano.Api
 {
     class MnoClient
     {
-        public partial class StripeClient
+        public partial class MnoClient
         {
             public string ApiVersion { get; set; }
             public string ApiEndpoint { get; set; }
@@ -17,10 +17,10 @@ namespace Maestrano.Api
 
             private RestClient _client;
 
-            public StripeClient(string apiKey)
+            public MnoClient(string apiKey)
             {
                 ApiVersion = "v1";
-                ApiEndpoint = "https://api.stripe.com/";
+                ApiEndpoint = "https://maestrano.com/api";
                 ApiKey = apiKey;
 
                 // silverlight friendly way to get current version

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,74 +10,72 @@ using System.Web.SessionState;
 
 namespace Maestrano.Configuration
 {
-    public class Sso
+    public class Sso : ConfigurationSection
     {
-        // Is Single Sign-On enabled - useful for debugging
-        private bool? _enabled;
+        public static Sso Load()
+        {
+            var obj = ConfigurationManager.GetSection("maestrano/sso") as Sso;
+            return obj;
+        }
+
+        /// <summary>
+        /// Return False (object not read only)
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsReadOnly()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Is Single Sign-On enabled - useful for debugging
+        /// </summary>
+        [ConfigurationProperty("enabled", DefaultValue = true, IsRequired = false)]
         public bool Enabled
         { 
-            get
-            {
-                if(!_enabled.HasValue) {
-                    return true;
-                }
-                return (bool)_enabled;
-            }
-
-            set{ _enabled = value; }
+            get { return (Boolean)this["enabled"]; }
+            set { this["enabled"] = value; }
         }
 
-        // SSO user creation mode: 'real' or 'virtual'
-        private string _creationmode;
+        /// <summary>
+        /// SSO user creation mode: 'real' or 'virtual'
+        /// </summary>
+        [ConfigurationProperty("creationMode", DefaultValue = "virtual", IsRequired = false)]
         public string CreationMode
-        { 
-            get
-            {
-                if(string.IsNullOrEmpty(_creationmode)) {
-                    return "virtual";
-                }
-                return _creationmode;
-            }
-
-            set{ _creationmode = value; }
+        {
+            get { return (String)this["creationMode"]; }
+            set { this["creationMode"] = value; }
         }
 
-        // Path to init action
-        private string _initpath;
+        /// <summary>
+        /// Path to init action
+        /// </summary>
+        [ConfigurationProperty("initPath", DefaultValue = "/maestrano/auth/saml/init.aspx", IsRequired = false)]
         public string InitPath
-        { 
-            get
-            {
-                if(string.IsNullOrEmpty(_initpath)) {
-                    return "/maestrano/auth/saml/init";
-                }
-                return _initpath;
-            }
-
-            set{ _initpath = value; }
+        {
+            get { return (String)this["initPath"]; }
+            set { this["initPath"] = value; }
         }
 
-        // Path to consume action
-        private string _consumepath;
+        /// <summary>
+        /// Path to consume action
+        /// </summary>
+        [ConfigurationProperty("consumePath", DefaultValue = "/maestrano/auth/saml/consume.aspx", IsRequired = false)]
         public string ConsumePath
-        { 
-            get
-            {
-                if(string.IsNullOrEmpty(_consumepath)) {
-                    return "/maestrano/auth/saml/consume";
-                }
-                return _consumepath;
-            }
-
-            set{ _consumepath = value; }
+        {
+            get { return (String)this["consumePath"]; }
+            set { this["consumePath"] = value; }
         }
 
-        // Address of the identity manager (for your application)
-        private string _idm;
+        /// <summary>
+        /// Address of the identity manager (for your application)
+        /// </summary>
+        [ConfigurationProperty("idm", DefaultValue = null, IsRequired = false)]
         public string Idm
         {
             get
             {
+                var _idm = (String)this["idm"];
                 if (string.IsNullOrEmpty(_idm))
                 {
                     if (!string.IsNullOrEmpty(Maestrano.App.Host))
@@ -88,15 +87,18 @@ namespace Maestrano.Configuration
                 return _idm;
             }
 
-            set { _idm = value; }
+            set { this["idm"] = value; }
         }
 
-        // Address of the identity provider
-        private string _idp;
+        /// <summary>
+        /// Address of the identity provider
+        /// </summary>
+        [ConfigurationProperty("idp", DefaultValue = null, IsRequired = false)]
         public string Idp
         { 
             get
             {
+                var _idp = (String)this["idp"];
                 if(string.IsNullOrEmpty(_idp)) {
                     if (Maestrano.Environment.Equals("production")) {
                         return "https://maestrano.com";
@@ -107,30 +109,30 @@ namespace Maestrano.Configuration
                 return _idp;
             }
 
-            set{ _idp = value; }
+            set { this["idp"] = value; }
         }
 
-        // The nameid format for SAML handshake
-        private string _nameidformat;
+        
+        /// <summary>
+        /// The nameid format for SAML handshake
+        /// </summary>
+        [ConfigurationProperty("nameIdFormat", DefaultValue = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent", IsRequired = false)]
         public string NameIdFormat 
-        { 
-            get
-            {
-                if(string.IsNullOrEmpty(_nameidformat)) {
-                    return "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent";
-                }
-                return _nameidformat;
-            } 
-            
-            set{ _nameidformat = value; } 
+        {
+            get { return (String)this["nameIdFormat"]; }
+            set { this["nameIdFormat"] = value; }
         }
 
-        // Fingerprint of x509 certificate used for SAML
-        private string _x509fingerprint;
+        
+        /// <summary>
+        /// Fingerprint of x509 certificate used for SAML
+        /// </summary>
+        [ConfigurationProperty("x509Fingerprint", DefaultValue = null, IsRequired = false)]
         public string X509Fingerprint
         { 
             get
             {
+                var _x509fingerprint = (String)this["x509Fingerprint"];
                 if(string.IsNullOrEmpty(_x509fingerprint)) {
                     if (Maestrano.Environment.Equals("production")) {
                         return "2f:57:71:e4:40:19:57:37:a6:2c:f0:c5:82:52:2f:2e:41:b7:9d:7e";
@@ -141,15 +143,16 @@ namespace Maestrano.Configuration
                 return _x509fingerprint;
             }
 
-            set{ _x509fingerprint = value; }
+            set { this["x509Fingerprint"] = value; }
         }
 
         // Actual x509 certificate
-        private string _509certificate;
+        [ConfigurationProperty("x509Certificate", DefaultValue = null, IsRequired = false)]
         public string X509Certificate
         { 
             get
             {
+                var _509certificate = (String)this["x509Certificate"];
                 if (string.IsNullOrEmpty(_509certificate))
                 {
                     if (Maestrano.Environment.Equals("production")) {
@@ -161,7 +164,7 @@ namespace Maestrano.Configuration
                 return _509certificate;
             }
 
-            set { _509certificate = value; }
+            set { this["x509Certificate"] = value; }
         }
 
         /// <summary>

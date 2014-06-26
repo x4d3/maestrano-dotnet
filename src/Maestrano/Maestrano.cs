@@ -23,7 +23,7 @@ namespace Maestrano
             App = new Configuration.App();
             Api = new Configuration.Api();
             Webhook = new Configuration.Webhook();
-            Sso = new Configuration.Sso();
+            Sso = Configuration.Sso.Load();
         }
 
         /// <summary>

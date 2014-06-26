@@ -13,5 +13,14 @@ namespace Maestrano.Api
         public JObject Errors;
         public T Data;
         public string Success;
+
+        public void ThrowIfErrors()
+        {
+            if (Errors.Count > 0)
+            {
+                var error = (JProperty) Errors.First;
+                throw new ResourceException(error.Name + " " + error.Value);
+            }
+        }
     }
 }

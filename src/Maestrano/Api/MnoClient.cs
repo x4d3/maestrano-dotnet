@@ -54,6 +54,7 @@ namespace Maestrano.Api
             var response = _client.Execute(request);
             Console.WriteLine(response.Content);
             var respObj = JsonConvert.DeserializeObject<MnoObject<T>>(response.Content);
+            respObj.ThrowIfErrors();
 
             return respObj.Data;
         }
@@ -76,6 +77,7 @@ namespace Maestrano.Api
             var response = _client.Execute(request);
             Console.WriteLine(response.Content);
             var respObj = JsonConvert.DeserializeObject<MnoObject<List<T>>>(response.Content);
+            respObj.ThrowIfErrors();
 
             return respObj.Data;
         }

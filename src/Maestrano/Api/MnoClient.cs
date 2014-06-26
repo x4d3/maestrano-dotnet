@@ -4,22 +4,26 @@ using System.Linq;
 using System.Reflection;
 using System.Web.Script.Serialization;
 using RestSharp;
+using System.Collections.Specialized;
+using Newtonsoft.Json;
 
 namespace Maestrano.Api
 {
-    public partial class MnoClient
+    public static class MnoClient
     {
-        public string ApiVersion { get; set; }
-        public string ApiEndpoint { get; set; }
-        public string ApiKey { get; private set; }
+        public static string ApiBase { get; set; }
+        public static string ApiHost { get; set; }
+        public static string ApiId { get; set; }
+        public static string ApiKey { get; private set; }
 
-        private RestClient _client;
+        public static RestClient _client;
 
-        public MnoClient(string apiKey)
+        static MnoClient()
         {
-            ApiVersion = "v1";
-            ApiEndpoint = "https://maestrano.com/api";
-            ApiKey = apiKey;
+            ApiHost = Maestrano.Api.Host;
+            ApiBase = Maestrano.Api.Base;
+            ApiKey = Maestrano.Api.Key;
+            ApiId = Maestrano.Api.Id;
 
             // silverlight friendly way to get current version
             var assembly = Assembly.GetExecutingAssembly();
@@ -28,14 +32,8 @@ namespace Maestrano.Api
 
             _client = new RestClient();
             _client.UserAgent = "maestrano-dotnet/" + version;
-            _client.Authenticator = new MnoAuthenticator(apiKey);
-            _client.BaseUrl = String.Format("{0}{1}", ApiEndpoint, ApiVersion);
-        }
-
-        public MnoClient()
-        {
-            string apiKey = Maestrano.Api.Key;
-            new MnoClient(apiKey);
+            _client.Authenticator = new HttpBasicAuthenticator(ApiId, ApiKey);
+            _client.BaseUrl = String.Format("{0}{1}", ApiHost, ApiBase);
         }
 
         /// <summary>
@@ -43,7 +41,7 @@ namespace Maestrano.Api
         /// </summary>
         /// <typeparam name="T">The type of object to create and populate with the returned data.</typeparam>
         /// <param name="request">The RestRequest to execute (will use client credentials)</param>
-        public MnoObject ExecuteObject(RestRequest request)
+        public static T ProjectSingleObject<T>(RestRequest request)
         {
             request.OnBeforeDeserialization = (resp) =>
             {
@@ -54,11 +52,9 @@ namespace Maestrano.Api
             };
 
             var response = _client.Execute(request);
-            var json = Deserialize(response.Content);
-            var obj = new MnoObject();
-            obj.SetModel(json);
+            var respObj = JsonConvert.DeserializeObject<MnoObject<T>>(response.Content);
 
-            return obj;
+            return respObj.Data;
         }
 
         /// <summary>
@@ -66,31 +62,48 @@ namespace Maestrano.Api
         /// </summary>
         /// <typeparam name="T">The type of object to create and populate with the returned data.</typeparam>
         /// <param name="request">The RestRequest to execute (will use client credentials)</param>
-        public MnoArray ExecuteArray(RestRequest request)
+        public static List<T> ProcessList<T>(RestRequest request)
         {
             request.OnBeforeDeserialization = (resp) =>
             {
                 // for individual resources when there's an error to make
                 // sure that RestException props are populated
-                if (((int)resp.StatusCode) >= 400)
-                    request.RootElement = "";
+                //if (((int)resp.StatusCode) >= 400)
+                //    request.RootElement = "";
             };
 
             var response = _client.Execute(request);
-            var json = Deserialize(response.Content);
-            var obj = new MnoArray();
-            obj.SetModel(json);
+            Console.WriteLine(response.Content);
+            var respObj = JsonConvert.DeserializeObject<MnoObject<List<T>>>(response.Content);
 
-            return obj;
+            return respObj.Data;
         }
 
-        private IDictionary<string, object> Deserialize(string input)
+        public static List<T> All<T>(string path, NameValueCollection filters = null)
         {
-            if (String.IsNullOrEmpty(input))
-                return null;
+            var request = new RestRequest();
+            request.Resource = path;
+            request.Method = Method.GET;
 
-            var serializer = new JavaScriptSerializer();
-            return serializer.Deserialize<IDictionary<string, object>>(input);
+            // Add query parameters
+            if (filters != null)
+                foreach (String k in filters.AllKeys)
+                    request.AddParameter(k, filters[k]);
+
+            return MnoClient.ProcessList<T>(request);
         }
+
+        public static T Retrieve<T>(string path, string resourceId)
+        {
+            var request = new RestRequest();
+            request.Resource = path;
+            request.Method = Method.GET;
+            request.AddUrlSegment("id", resourceId);
+            Console.WriteLine(resourceId);
+
+            return MnoClient.ProjectSingleObject<T>(request);
+        }
+
+
     }
 }

@@ -13,11 +13,11 @@ namespace Maestrano.Account
     public class Bill
     {
         public string Id { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public String Status { get; set; }
         public decimal? Units { get; set; }
-        public DateTime PeriodStartedAt { get; set; }
-        public DateTime PeriodEndedAt { get; set; }
+        public DateTime? PeriodStartedAt { get; set; }
+        public DateTime? PeriodEndedAt { get; set; }
 
         // Mandatory for creation
         public string GroupId { get; set; }
@@ -53,17 +53,18 @@ namespace Maestrano.Account
             return MnoClient.Retrieve<Bill>(ResourcePath(), billId);
         }
 
-        public static Bill Create(String groupUid,Int32 priceCents, String description, String currency = "AUD", Decimal? units = null, DateTime? periodStartedAt = null, DateTime? periodEndedAt = null){
+        public static Bill Create(String groupId, Int32 priceCents, String description, String currency = "AUD", Decimal? units = null, DateTime? periodStartedAt = null, DateTime? periodEndedAt = null)
+        {
             var att = new NameValueCollection();
-            att.Add("groupId",groupUid);
+            att.Add("groupId", groupId);
             att.Add("priceCents",priceCents.ToString());
             att.Add("description",description);
             att.Add("currency",currency);
-            if (units != null)
+            if (units.HasValue)
                 att.Add("units", units.Value.ToString());
-            if (periodStartedAt != null)
+            if (periodStartedAt.HasValue)
                 att.Add("periodStartedAt",periodStartedAt.Value.ToString("s"));
-            if (periodEndedAt != null)
+            if (periodEndedAt.HasValue)
                 att.Add("periodEndedAt", periodEndedAt.Value.ToString("s"));
 
             return MnoClient.Create<Bill>(IndexPath(),att);

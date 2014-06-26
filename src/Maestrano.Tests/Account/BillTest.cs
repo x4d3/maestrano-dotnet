@@ -36,7 +36,7 @@ namespace Maestrano.Tests.Account
         public void Create_ItShouldCreateABill()
         {
             var obj = Bill.Create(
-                groupUid: "cld-3",
+                groupId: "cld-3",
                 priceCents: 1500,
                 description: "Some Bill"
                 );
@@ -47,7 +47,7 @@ namespace Maestrano.Tests.Account
         public void Cancel_ItShouldCancelABill()
         {
             var obj = Bill.Create(
-                groupUid: "cld-3",
+                groupId: "cld-3",
                 priceCents: 1500,
                 description: "Some Bill"
                 );

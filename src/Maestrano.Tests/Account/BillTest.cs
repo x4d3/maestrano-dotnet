@@ -40,7 +40,19 @@ namespace Maestrano.Tests.Account
                 priceCents: 1500,
                 description: "Some Bill"
                 );
-            Assert.IsNotNull("bill-1", obj.Id);
+            Assert.IsNotNull(obj.Id);
+        }
+
+        [TestMethod]
+        public void Cancel_ItShouldCancelABill()
+        {
+            var obj = Bill.Create(
+                groupUid: "cld-3",
+                priceCents: 1500,
+                description: "Some Bill"
+                );
+            obj.Cancel();
+            Assert.AreEqual("cancelled", obj.Status);
         }
     }
 }

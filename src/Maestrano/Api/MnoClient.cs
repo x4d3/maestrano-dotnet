@@ -52,6 +52,7 @@ namespace Maestrano.Api
             };
 
             var response = _client.Execute(request);
+            Console.WriteLine(response.Content);
             var respObj = JsonConvert.DeserializeObject<MnoObject<T>>(response.Content);
 
             return respObj.Data;
@@ -110,7 +111,20 @@ namespace Maestrano.Api
             request.Method = Method.POST;
 
             foreach (var k in parameters.AllKeys)
+                Console.WriteLine(StringExtensions.ToSnakeCase(k));
+
+            foreach (var k in parameters.AllKeys)
                 request.AddParameter(StringExtensions.ToSnakeCase(k), parameters[k]);
+
+            return MnoClient.ProjectSingleObject<T>(request);
+        }
+
+        public static T Delete<T>(string path, string resourceId)
+        {
+            var request = new RestRequest();
+            request.Resource = path;
+            request.Method = Method.DELETE;
+            request.AddUrlSegment("id", resourceId);
 
             return MnoClient.ProjectSingleObject<T>(request);
         }

@@ -20,7 +20,7 @@ namespace Maestrano.Account
         public DateTime PeriodEndedAt { get; set; }
 
         // Mandatory for creation
-        public string GroupUid { get; set; }
+        public string GroupId { get; set; }
         public Int32 PriceCents { get; set; }
         public string Currency { get; set; }
         public string Description { get; set; }
@@ -55,7 +55,7 @@ namespace Maestrano.Account
 
         public static Bill Create(String groupUid,Int32 priceCents, String description, String currency = "AUD", Decimal? units = null, DateTime? periodStartedAt = null, DateTime? periodEndedAt = null){
             var att = new NameValueCollection();
-            att.Add("groupUid",groupUid);
+            att.Add("groupId",groupUid);
             att.Add("priceCents",priceCents.ToString());
             att.Add("description",description);
             att.Add("currency",currency);
@@ -67,6 +67,18 @@ namespace Maestrano.Account
                 att.Add("periodEndedAt", periodEndedAt.Value.ToString("s"));
 
             return MnoClient.Create<Bill>(IndexPath(),att);
+        }
+
+        public Boolean Cancel()
+        {
+            if (Id != null)
+            {
+                Bill respBill = MnoClient.Delete<Bill>(ResourcePath(), Id);
+                Status = respBill.Status;
+                return (Status.Equals("cancelled"));
+            }
+
+            return false;
         }
     }
 }

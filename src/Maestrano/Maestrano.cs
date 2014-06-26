@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 
 namespace Maestrano
 {
@@ -45,6 +46,37 @@ namespace Maestrano
         public static bool Authenticate(string apiId, string apiKey)
         {
             return Api.Id == apiId && Api.Key == apiKey;
+        }
+
+        /// <summary>
+        /// Take a 
+        /// </summary>
+        /// <returns></returns>
+        public static bool Authenticate(System.Web.HttpRequest request)
+        {
+            bool authenticated = false;
+            var authHeader = request.Headers["Authorization"];
+            if (authHeader != null)
+            {
+                var authHeaderVal = AuthenticationHeaderValue.Parse(authHeader);
+
+                // RFC 2617 sec 1.2, "scheme" name is case-insensitive
+                if (authHeaderVal.Scheme.Equals("basic",
+                        StringComparison.OrdinalIgnoreCase) &&
+                    authHeaderVal.Parameter != null)
+                {
+                    var credentials = authHeaderVal.Parameter;
+                    var encoding = Encoding.GetEncoding("iso-8859-1");
+                    credentials = encoding.GetString(Convert.FromBase64String(credentials));
+
+                    int separator = credentials.IndexOf(':');
+                    string apiId = credentials.Substring(0, separator);
+                    string apiKey = credentials.Substring(separator + 1);
+                    authenticated = Authenticate(apiId,apiKey);
+                }
+            }
+
+            return authenticated
         }
 
         /// <summary>

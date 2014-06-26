@@ -4,6 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 using System.Web;
 using Maestrano.Sso;
+using System.Configuration;
+using System.Collections.Specialized;
 
 namespace Maestrano.Tests
 {

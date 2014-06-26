@@ -150,5 +150,20 @@ namespace Maestrano.Tests
             Assert.AreEqual(Maestrano.Sso.Idm + Maestrano.Sso.ConsumePath, settings.AssertionConsumerServiceUrl);
             Assert.AreEqual(Maestrano.Sso.X509Certificate, settings.IdpCertificate);
         }
+
+        [TestMethod]
+        public void Sso_BuildRequest_ItShouldReturnSamlRequest()
+        {
+            Maestrano.Environment = "production";
+            Assert.IsInstanceOfType(Maestrano.Sso.BuildRequest(), typeof(Request));
+        }
+
+        [TestMethod]
+        public void Sso_BuildResponse_ItShouldReturnSamlRequest()
+        {
+            Maestrano.Environment = "production";
+            string samlResponseStr = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");
+            Assert.IsInstanceOfType(Maestrano.Sso.BuildResponse(samlResponseStr), typeof(Response));
+        }
     }
 }

@@ -87,6 +87,7 @@
     <Compile Include="Sso\GroupTests.cs" />
     <Compile Include="Sso\MembershipTests.cs" />
     <Compile Include="Sso\SessionTests.cs" />
+    <Compile Include="Support\Helpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

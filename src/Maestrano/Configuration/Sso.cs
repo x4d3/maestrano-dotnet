@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -239,6 +240,32 @@ namespace Maestrano.Configuration
             settings.NameIdentifierFormat = NameIdFormat;
 
             return settings;
+        }
+
+        /// <summary>
+        /// Build a SAML Request ready to be sent
+        /// You can call RedirectUrl() on the returned request
+        /// and redirect the user to that url to trigger the Maestrano
+        /// SSO handshake
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public Saml.Request BuildRequest(NameValueCollection parameters = null)
+        {
+            return (new Saml.Request(parameters));
+        }
+
+        /// <summary>
+        /// Build a Saml Response object from a base64 encoded response
+        /// </summary>
+        /// <param name="samlPostParam">The value of the SAMLResponse POST parameter</param>
+        /// <returns></returns>
+        public Saml.Response BuildResponse(String samlPostParam)
+        {
+            var resp = new Saml.Response();
+            resp.LoadXmlFromBase64(samlPostParam);
+
+            return resp;
         }
     }
 }

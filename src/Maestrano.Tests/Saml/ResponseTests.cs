@@ -37,7 +37,7 @@ namespace Maestrano.Tests.Saml
         {
             Maestrano.Environment = "production";
 
-            string samlResponse = ReadSamlSupportFiles("Responses/response1.xml.base64");
+            string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");
             Response resp = new Response();
             resp.Cert.LoadCertificate(ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);

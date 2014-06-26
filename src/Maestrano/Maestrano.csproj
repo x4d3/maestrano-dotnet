@@ -52,14 +52,8 @@
   <ItemGroup>
     <Compile Include="Account\Bill.cs" />
     <Compile Include="Account\RecurringBill.cs" />
-    <Compile Include="Api\DateTimeExtensions.cs" />
-    <Compile Include="Api\JsonObject.cs" />
-    <Compile Include="Api\JsonPropertyNameEqualityComparer.cs" />
-    <Compile Include="Api\MnoArray.cs" />
-    <Compile Include="Api\MnoAuthenticator.cs" />
     <Compile Include="Api\MnoClient.cs" />
     <Compile Include="Api\MnoObject.cs" />
-    <Compile Include="Api\StringExtensions.cs" />
     <Compile Include="Configuration\Api.cs" />
     <Compile Include="Configuration\App.cs" />
     <Compile Include="Configuration\Sso.cs" />

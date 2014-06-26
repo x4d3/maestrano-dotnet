@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Maestrano.Api
 {
-    public class MnoObject : JsonObject
+    public class MnoObject<T>
     {
-        public bool IsError { get { return HasProperty("error"); } }
+        public JObject Errors;
+        public T Data;
+        public string Success;
     }
 }

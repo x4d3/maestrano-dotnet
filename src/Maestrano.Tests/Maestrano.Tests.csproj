@@ -71,7 +71,6 @@
   <ItemGroup>
     <Compile Include="Account\BillTest.cs" />
     <Compile Include="Account\RecurringBillTest.cs" />
-    <Compile Include="Api\JsonPropertyNameEqualityComparerTest.cs" />
     <Compile Include="MaestranoConfigurationTests.cs" />
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
@@ -113,6 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Support\Saml\Certificates\certificate1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Api\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

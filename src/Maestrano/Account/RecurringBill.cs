@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Account
 {
-    class RecurringBill
+    public class RecurringBill
     {
     }
 }

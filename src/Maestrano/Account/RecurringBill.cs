@@ -12,12 +12,14 @@ namespace Maestrano.Account
     {
         public string Id { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public String Status { get; set; }
         public decimal? Units { get; set; }
         public String Period { get; set; }
         public Int16? Frequency { get; set; }
         public Int16? Cycles { get; set; }
         public DateTime? StartDate { get; set; }
+        public Int32 InitialCents { get; set; }
 
         // Mandatory for creation
         public string GroupId { get; set; }
@@ -53,13 +55,14 @@ namespace Maestrano.Account
             return MnoClient.Retrieve<RecurringBill>(ResourcePath(), billId);
         }
 
-        public static RecurringBill Create(String groupId, Int32 priceCents, String description, String currency = "AUD", Int16? frequency = null, Int16? cycles = null, DateTime? startDate = null)
+        public static RecurringBill Create(String groupId, Int32 priceCents, String description, String currency = "AUD", Int32 initialCents = 0, Int16? frequency = null, Int16? cycles = null, DateTime? startDate = null)
         {
             var att = new NameValueCollection();
             att.Add("groupId", groupId);
             att.Add("priceCents", priceCents.ToString());
             att.Add("description", description);
             att.Add("currency", currency);
+            att.Add("initialCents", initialCents.ToString());
             if (frequency.HasValue)
                 att.Add("frequency", frequency.Value.ToString());
             if (cycles.HasValue)

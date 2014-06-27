@@ -14,6 +14,7 @@ namespace Maestrano.Account
     {
         public string Id { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public String Status { get; set; }
         public decimal? Units { get; set; }
         public DateTime? PeriodStartedAt { get; set; }

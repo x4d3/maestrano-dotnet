@@ -76,7 +76,7 @@ namespace Maestrano
                 }
             }
 
-            return authenticated
+            return authenticated;
         }
 
         /// <summary>

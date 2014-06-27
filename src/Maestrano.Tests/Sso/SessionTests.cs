@@ -19,6 +19,11 @@ namespace Maestrano.Tests.Sso
     public class SessionTests
     {
 
+        public SessionTests()
+        {
+            Maestrano.Sso.SloEnabled = true;
+        }
+
         [TestMethod]
         public void ItContructsAnInstanceFromHttpSessionStateObject()
         {
@@ -155,7 +160,45 @@ namespace Maestrano.Tests.Sso
         }
 
         [TestMethod]
-        public void IsValid_WhenRecheckRequired_ItShouldReturnTrue()
+        public void IsValid_WhenSloDisabled_ItShouldReturnTrue()
+        {
+            // Disable SLO
+            Maestrano.Sso.SloEnabled = false;
+
+            // Response preparation (session not valid)
+            RestResponse response = new RestResponse();
+            var datetime = DateTime.UtcNow;
+            JObject respObj = new JObject(new JProperty("valid", "false"), new JProperty("recheck", datetime.ToString("s")));
+            response.Content = respObj.ToString();
+            response.ResponseStatus = ResponseStatus.Completed;
+
+            // Client mock
+            var mockRestClient = new Mock<RestClient>();
+            mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
+
+            // Http context
+            HttpContext httpContext = Helpers.FakeHttpContext();
+            var recheck = DateTime.UtcNow.AddMinutes(-1);
+            Helpers.injectMnoSession(httpContext, recheck);
+
+            // test
+            Session mnoSession = new Session(httpContext.Session);
+            Assert.IsTrue(mnoSession.IsValid());
+        }
+
+        [TestMethod]
+        public void IsValid_WhenIfSessionSpecifiedAndNoMnoSession_ItShouldReturnTrue()
+        {
+            // Http context
+            HttpContext httpContext = Helpers.FakeHttpContext();
+
+            // test
+            Session mnoSession = new Session(httpContext.Session);
+            Assert.IsTrue(mnoSession.IsValid(ifSession: true));
+        }
+
+        [TestMethod]
+        public void IsValid_WhenNoRecheckRequired_ItShouldReturnTrue()
         {
             // Http context
             HttpContext httpContext = Helpers.FakeHttpContext();
@@ -199,7 +242,7 @@ namespace Maestrano.Tests.Sso
         }
 
         [TestMethod]
-        public void IsValid_ItShouldReturnFalseIfRecheckRequiredAndInvalid()
+        public void IsValid_WhenRecheckRequiredAndInvalid_ItShouldReturnFalse()
         {
             // Response preparation
             RestResponse response = new RestResponse();

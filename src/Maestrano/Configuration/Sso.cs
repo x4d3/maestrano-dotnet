@@ -41,6 +41,16 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
+        /// Is Single Logout enabled - useful for debugging
+        /// </summary>
+        [ConfigurationProperty("sloEnabled", DefaultValue = true, IsRequired = false)]
+        public bool SloEnabled
+        {
+            get { return (Boolean)this["sloEnabled"]; }
+            set { this["sloEnabled"] = value; }
+        }
+
+        /// <summary>
         /// SSO user creation mode: 'real' or 'virtual'
         /// </summary>
         [ConfigurationProperty("creationMode", DefaultValue = "virtual", IsRequired = false)]

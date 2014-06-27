@@ -26,6 +26,8 @@ namespace Maestrano.Tests
             Assert.AreEqual("/maestrano/account/groups/:group_id/users/:id", Maestrano.Webhook.Account.GroupUsersPath);
 
             // SSO
+            Assert.IsTrue(Maestrano.Sso.Enabled);
+            Assert.IsTrue(Maestrano.Sso.SloEnabled);
             Assert.AreEqual("http://api-sandbox.maestrano.io", Maestrano.Sso.Idp);
             Assert.AreEqual("http://localhost", Maestrano.Sso.Idm);
             Assert.AreEqual("virtual", Maestrano.Sso.CreationMode);
@@ -56,6 +58,8 @@ namespace Maestrano.Tests
             Assert.AreEqual("/maestrano/account/groups/:group_id/users/:id", Maestrano.Webhook.Account.GroupUsersPath);
 
             // SSO
+            Assert.IsTrue(Maestrano.Sso.Enabled);
+            Assert.IsTrue(Maestrano.Sso.SloEnabled);
             Assert.AreEqual("https://maestrano.com", Maestrano.Sso.Idp);
             Assert.AreEqual("http://localhost", Maestrano.Sso.Idm);
             Assert.AreEqual("virtual", Maestrano.Sso.CreationMode);

@@ -134,9 +134,23 @@ namespace Maestrano.Sso
         /// remote check to maestrano if recheck is overdue.
         /// </summary>
         /// <param name="client"></param>
+        /// <param name="ifSession"></param>
         /// <returns></returns>
-        public Boolean IsValid(RestClient client)
+        public Boolean IsValid(RestClient client, Boolean ifSession = false)
         {
+            // Return true automatically if SLO is disabled
+            if (!Maestrano.Sso.SloEnabled)
+                return true;
+
+            // Return true if maestrano session not set
+            // and ifSession option enabled
+            if (ifSession && (HttpSession == null || HttpSession["maestrano"] == null))
+                return true;
+
+            // Return false if HttpSession is nil
+            if (HttpSession == null)
+                return false;
+
             if (isRemoteCheckRequired())
             {
                 if (PerformRemoteCheck(client))
@@ -156,11 +170,12 @@ namespace Maestrano.Sso
         /// Return wether the session is valid or not. Perform
         /// remote check to maestrano if recheck is overdue.
         /// </summary>
+        /// <param name="ifSession">If set to true then session return false ONLY if maestrano session exists and is invalid</param>
         /// <returns></returns>
-        public Boolean IsValid()
+        public Boolean IsValid(Boolean ifSession = false)
         {
             var client = new RestClient(Maestrano.Sso.Idp);
-            return IsValid(client);
+            return IsValid(client,ifSession);
         }
 
         /// <summary>

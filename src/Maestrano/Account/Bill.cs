@@ -6,24 +6,46 @@ using System.Threading.Tasks;
 using Maestrano.Api;
 using System.Collections.Specialized;
 using RestSharp;
+using Newtonsoft.Json;
 
 namespace Maestrano.Account
 {
 
     public class Bill
     {
+        [JsonProperty("id")]
         public string Id { get; set; }
+
+        [JsonProperty("created_at")]
         public DateTime? CreatedAt { get; set; }
+
+        [JsonProperty("updated_at")]
         public DateTime? UpdatedAt { get; set; }
+
+        [JsonProperty("status")]
         public String Status { get; set; }
+
+        [JsonProperty("units")]
         public decimal? Units { get; set; }
+
+        [JsonProperty("period_started_at")]
         public DateTime? PeriodStartedAt { get; set; }
+
+        [JsonProperty("period_ended_at")]
         public DateTime? PeriodEndedAt { get; set; }
 
         // Mandatory for creation
+
+        [JsonProperty("group_id")]
         public string GroupId { get; set; }
+
+        [JsonProperty("price_cents")]
         public Int32 PriceCents { get; set; }
+
+        [JsonProperty("currency")]
         public string Currency { get; set; }
+
+        [JsonProperty("description")]
         public string Description { get; set; }
 
         /// <summary>

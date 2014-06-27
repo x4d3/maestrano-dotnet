@@ -41,6 +41,7 @@ namespace Maestrano.Tests.Account
                 description: "Some Bill"
                 );
             Assert.IsNotNull(obj.Id);
+            Assert.IsNotNull(obj.CreatedAt);
         }
 
         [TestMethod]
@@ -51,8 +52,10 @@ namespace Maestrano.Tests.Account
                 priceCents: 1500,
                 description: "Some Bill"
                 );
+            var updatedAt = obj.UpdatedAt;
             obj.Cancel();
             Assert.AreEqual("cancelled", obj.Status);
+            Assert.IsTrue(obj.UpdatedAt.HasValue);
         }
     }
 }

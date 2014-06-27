@@ -1,4 +1,5 @@
 ﻿using Maestrano.Api;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -10,21 +11,48 @@ namespace Maestrano.Account
 {
     public class RecurringBill
     {
+        [JsonProperty("id")]
         public string Id { get; set; }
+
+        [JsonProperty("created_at")]
         public DateTime? CreatedAt { get; set; }
+
+        [JsonProperty("updated_at")]
         public DateTime? UpdatedAt { get; set; }
+
+        [JsonProperty("status")]
         public String Status { get; set; }
+
+        [JsonProperty("units")]
         public decimal? Units { get; set; }
+
+        [JsonProperty("period")]
         public String Period { get; set; }
+
+        [JsonProperty("frequency")]
         public Int16? Frequency { get; set; }
+
+        [JsonProperty("cycles")]
         public Int16? Cycles { get; set; }
+
+        [JsonProperty("start_date")]
         public DateTime? StartDate { get; set; }
-        public Int32 InitialCents { get; set; }
+
+        [JsonProperty("initial_cents")]
+        public Int32? InitialCents { get; set; }
 
         // Mandatory for creation
+
+        [JsonProperty("group_id")]
         public string GroupId { get; set; }
+
+        [JsonProperty("price_cents")]
         public Int32 PriceCents { get; set; }
+
+        [JsonProperty("currency")]
         public string Currency { get; set; }
+
+        [JsonProperty("description")]
         public string Description { get; set; }
 
         /// <summary>
@@ -79,6 +107,7 @@ namespace Maestrano.Account
             {
                 RecurringBill respBill = MnoClient.Delete<RecurringBill>(ResourcePath(), Id);
                 Status = respBill.Status;
+                UpdatedAt = respBill.UpdatedAt;
                 return (Status.Equals("cancelled"));
             }
 

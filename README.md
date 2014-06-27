@@ -117,6 +117,12 @@ The initializer should look like this:
       Enable/Disable single sign-on. When troubleshooting authentication issues
       you might want to disable SSO temporarily
       
+      => sloEnabled
+      Enable/Disable single logout. When troubleshooting authentication issues
+      you might want to disable SLO temporarily.
+      If set to false then Maestrano.SSO.Session#IsValid - which should be
+      used in a controller action filter to check user session - always return true
+      
       => idm
       By default we consider that the domain managing user identification
       is the same as your application host (see above config.app.host parameter)
@@ -360,7 +366,7 @@ Maestrano.Account.Bill
 <tr>
 
 <tr>
-<td><b>id</b></td>
+<td><b>Id</b></td>
 <td>readonly</td>
 <td>string</td>
 <td>-</td>
@@ -369,7 +375,7 @@ Maestrano.Account.Bill
 <tr>
 
 <tr>
-<td><b>group_id</b></td>
+<td><b>GroupId</b></td>
 <td>read/write</td>
 <td>string</td>
 <td><b>Yes</b></td>
@@ -378,7 +384,7 @@ Maestrano.Account.Bill
 <tr>
 
 <tr>
-<td><b>price_cents</b></td>
+<td><b>PriceCents</b></td>
 <td>read/write</td>
 <td>Integer</td>
 <td><b>Yes</b></td>
@@ -387,7 +393,7 @@ Maestrano.Account.Bill
 <tr>
 
 <tr>
-<td><b>description</b></td>
+<td><b>Description</b></td>
 <td>read/write</td>
 <td>String</td>
 <td><b>Yes</b></td>
@@ -396,16 +402,25 @@ Maestrano.Account.Bill
 <tr>
 
 <tr>
-<td><b>created_at</b></td>
+<td><b>CreatedAt</b></td>
 <td>readonly</td>
 <td>DateTime</td>
 <td>-</td>
 <td>-</td>
 <td>When the the bill was created</td>
 <tr>
+  
+<tr>
+<td><b>UpdatedAt</b></td>
+<td>readonly</td>
+<td>Time</td>
+<td>-</td>
+<td>-</td>
+<td>When the bill was last updated</td>
+<tr>
 
 <tr>
-<td><b>status</b></td>
+<td><b>Status</b></td>
 <td>readonly</td>
 <td>String</td>
 <td>-</td>
@@ -414,7 +429,7 @@ Maestrano.Account.Bill
 <tr>
 
 <tr>
-<td><b>currency</b></td>
+<td><b>Currency</b></td>
 <td>read/write</td>
 <td>String</td>
 <td>-</td>
@@ -423,7 +438,7 @@ Maestrano.Account.Bill
 <tr>
 
 <tr>
-<td><b>units</b></td>
+<td><b>Units</b></td>
 <td>read/write</td>
 <td>Decimal(10,2)</td>
 <td>-</td>
@@ -432,7 +447,7 @@ Maestrano.Account.Bill
 <tr>
 
 <tr>
-<td><b>period_started_at</b></td>
+<td><b>PeriodStarted_at</b></td>
 <td>read/write</td>
 <td>DateTime</td>
 <td>-</td>
@@ -441,7 +456,7 @@ Maestrano.Account.Bill
 <tr>
 
 <tr>
-<td><b>period_ended_at</b></td>
+<td><b>PeriodEndedAt</b></td>
 <td>read/write</td>
 <td>DateTime</td>
 <td>-</td>
@@ -494,7 +509,7 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>id</b></td>
+<td><b>Id</b></td>
 <td>readonly</td>
 <td>string</td>
 <td>-</td>
@@ -503,7 +518,7 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>group_id</b></td>
+<td><b>GroupId</b></td>
 <td>read/write</td>
 <td>string</td>
 <td><b>Yes</b></td>
@@ -512,7 +527,7 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>price_cents</b></td>
+<td><b>PriceCents</b></td>
 <td>read/write</td>
 <td>Integer</td>
 <td><b>Yes</b></td>
@@ -521,7 +536,7 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>description</b></td>
+<td><b>Description</b></td>
 <td>read/write</td>
 <td>String</td>
 <td><b>Yes</b></td>
@@ -530,7 +545,7 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>period</b></td>
+<td><b>Period</b></td>
 <td>read/write</td>
 <td>String</td>
 <td>-</td>
@@ -539,7 +554,7 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>frequency</b></td>
+<td><b>Frequency</b></td>
 <td>read/write</td>
 <td>Integer</td>
 <td>-</td>
@@ -548,7 +563,7 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>cycles</b></td>
+<td><b>Cycles</b></td>
 <td>read/write</td>
 <td>Integer</td>
 <td>-</td>
@@ -557,7 +572,7 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>start_date</b></td>
+<td><b>StartDate</b></td>
 <td>read/write</td>
 <td>DateTime</td>
 <td>-</td>
@@ -566,16 +581,25 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>created_at</b></td>
+<td><b>CreatedAt</b></td>
 <td>readonly</td>
 <td>DateTime</td>
 <td>-</td>
 <td>-</td>
 <td>When the the bill was created</td>
 <tr>
+  
+<tr>
+<td><b>UpdatedAt</b></td>
+<td>readonly</td>
+<td>Time</td>
+<td>-</td>
+<td>-</td>
+<td>When the recurring bill was last updated</td>
+<tr>
 
 <tr>
-<td><b>currency</b></td>
+<td><b>Currency</b></td>
 <td>read/write</td>
 <td>String</td>
 <td>-</td>
@@ -584,12 +608,21 @@ Maestrano.Account.RecurringBill
 <tr>
 
 <tr>
-<td><b>status</b></td>
+<td><b>Status</b></td>
 <td>readonly</td>
 <td>String</td>
 <td>-</td>
 <td>-</td>
 <td>Status of the recurring bill. Either 'submitted', 'active', 'expired' or 'cancelled'.</td>
+<tr>
+  
+<tr>
+<td><b>InitialCents</b></td>
+<td>read/write</td>
+<td>Integer</td>
+<td><b>-</b></td>
+<td>0</td>
+<td>Initial non-recurring payment amount - in cents - due immediately upon creating the recurring bill</td>
 <tr>
 
 </table>

@@ -119,7 +119,7 @@ The initializer should look like this:
       => sloEnabled
       Enable/Disable single logout. When troubleshooting authentication issues
       you might want to disable SLO temporarily.
-      If set to false then Maestrano.SSO.Session#IsValid - which should be
+      If set to false then Maestrano.Sso.Session#IsValid - which should be
       used in a controller action filter to check user session - always return true
       
       => idm
@@ -225,6 +225,10 @@ What would the controller action look like? First let's talk about authenticatio
 So here is an example of page to adapt depending on the framework you're using:
 
 ```csharp
+using Maestrano;
+
+...
+
 public partial class _Default : System.Web.UI.Page 
 {
     protected void Page_Load(object sender, EventArgs e)
@@ -234,9 +238,9 @@ public partial class _Default : System.Web.UI.Page
         // Authentication
         var request = HttpContext.Current.Request;
         
-        if (Maestrano.Authenticate(request)) 
+        if (MnoHelper.Authenticate(request)) 
         {
-          Response.Write(Maestrano.ToMetadata().ToString());
+          Response.Write(MnoHelper.ToMetadata().ToString());
         } 
         else 
         {
@@ -262,13 +266,17 @@ You will need two controller action init and consume. The init action will initi
 
 The init action is all handled via Maestrano methods and should look like this:
 ```csharp
+using Maestrano;
+
+...
+
 public partial class _Default : System.Web.UI.Page 
 {
     protected void Page_Load(object sender, EventArgs e)
     {
         var request = HttpContext.Current.Request;
         
-        var ssoUrl = Maestrano.Sso.BuildRequest(request.Params).RedirectUrl();
+        var ssoUrl = MnoHelper.Sso.BuildRequest(request.Params).RedirectUrl();
         Response.Redirect(ssoUrl);
     }
 }
@@ -276,6 +284,10 @@ public partial class _Default : System.Web.UI.Page
 
 Based on your application requirements the consume action might look like this:
 ```csharp
+using Maestrano;
+
+...
+
 public partial class _Default : System.Web.UI.Page 
 {
     protected void Page_Load(object sender, EventArgs e)
@@ -283,7 +295,7 @@ public partial class _Default : System.Web.UI.Page
         var request = HttpContext.Current.Request;
         
         // Get SAML response, build maestrano user and group objects
-        var samlResp = Maestrano.Sso.BuildResponse(request.Params["SAMLResponse"]) 
+        var samlResp = MnoHelper.Sso.BuildResponse(request.Params["SAMLResponse"]) 
         var mnoUser = new Maestrano.Sso.User(samlResp);
         var mnoGroup = new Maestrano.Sso.Group(samlResp);
         
@@ -298,7 +310,7 @@ public partial class _Default : System.Web.UI.Page
         }
         
         // Set Maestrano session
-        Maestrano.Sso.SetSession(Session,mnoUser)
+        MnoHelper.Sso.SetSession(Session,mnoUser)
         
         Response.Redirect("/");
     }
@@ -469,23 +481,23 @@ Maestrano.Account.Bill
 
 List all bills you have created and iterate through the list
 ```csharp
-var bills = Maestrano.Account.Bill.All()
+var bills = Maestrano.Account.Bill.All();
 ```
 
 Access a single bill by id
 ```csharp
-bill = Maestrano.Account.Bill.Retrieve("bill-f1d2s54")
+bill = Maestrano.Account.Bill.Retrieve("bill-f1d2s54");
 ```
 
 Create a new bill
 ```csharp
-bill = Maestrano.Account.Bill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase")
+bill = Maestrano.Account.Bill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase");
 ```
 
 Cancel a bill
 ```csharp
-bill = Maestrano.Account.Bill.retrieve("bill-f1d2s54")
-bill.Cancel()
+bill = Maestrano.Account.Bill.retrieve("bill-f1d2s54");
+bill.Cancel();
 ```
 
 #### Recurring Bill
@@ -630,23 +642,23 @@ Maestrano.Account.RecurringBill
 
 List all recurring bills you have created and iterate through the list
 ```csharp
-rec_bills = Maestrano.Account.RecurringBill.All()
+rec_bills = Maestrano.Account.RecurringBill.All();
 ```
 
 Access a single recurring bill by id
 ```csharp
-rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54")
+rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
 ```
 
 Create a new recurring bill
 ```csharp
-rec_bill = Maestrano.Account.RecurringBill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase", period: 'Month', startDate: DateTime.UtcNow)
+rec_bill = Maestrano.Account.RecurringBill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase", period: 'Month', startDate: DateTime.UtcNow);
 ```
 
 Cancel a recurring bill
 ```csharp
-rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54")
-rec_bill.Cancel()
+rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
+rec_bill.Cancel();
 ```
 
 

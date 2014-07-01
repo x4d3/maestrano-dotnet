@@ -125,7 +125,7 @@ namespace Maestrano.Sso
         /// <returns></returns>
         public Boolean PerformRemoteCheck()
         {
-            var client = new RestClient(Mno.Sso.Idp);
+            var client = new RestClient(MnoHelper.Sso.Idp);
             return PerformRemoteCheck(client);
         }
 
@@ -139,7 +139,7 @@ namespace Maestrano.Sso
         public Boolean IsValid(RestClient client, Boolean ifSession = false)
         {
             // Return true automatically if SLO is disabled
-            if (!Mno.Sso.SloEnabled)
+            if (!MnoHelper.Sso.SloEnabled)
                 return true;
 
             // Return true if maestrano session not set
@@ -174,7 +174,7 @@ namespace Maestrano.Sso
         /// <returns></returns>
         public Boolean IsValid(Boolean ifSession = false)
         {
-            var client = new RestClient(Mno.Sso.Idp);
+            var client = new RestClient(MnoHelper.Sso.Idp);
             return IsValid(client,ifSession);
         }
 

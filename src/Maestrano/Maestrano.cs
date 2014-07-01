@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 
 namespace Maestrano
 {
-    public static class Mno
+    public static class MnoHelper
     {
         // VERSION
         public static string Version { get { return "0.2.0"; } }
@@ -19,7 +19,7 @@ namespace Maestrano
         public static Configuration.Api Api { get; private set; }
         public static Configuration.Webhook Webhook { get; private set; }
 
-        static Mno()
+        static MnoHelper()
         {
             App = Configuration.App.Load();
             Api = Configuration.Api.Load();
@@ -31,8 +31,8 @@ namespace Maestrano
         /// App environment: 'test' or 'production'
         /// </summary>
         public static string Environment {
-            get { return Mno.App.Environment; }
-            set { Mno.App.Environment = value; }
+            get { return MnoHelper.App.Environment; }
+            set { MnoHelper.App.Environment = value; }
         }
 
         /// <summary>
@@ -130,27 +130,27 @@ namespace Maestrano
         public static JObject ToMetadata()
         {
             JObject metadata = new JObject(
-                new JProperty("environment", Mno.Environment),
-                new JProperty("app", new JObject(new JProperty("host", Mno.App.Host))),
+                new JProperty("environment", MnoHelper.Environment),
+                new JProperty("app", new JObject(new JProperty("host", MnoHelper.App.Host))),
                 new JProperty("api", new JObject(
-                    new JProperty("id", Mno.Api.Id),
-                    new JProperty("lang", Mno.Api.Lang),
-                    new JProperty("version", Mno.Api.Version),
-                    new JProperty("lang_version", Mno.Api.LangVersion))),
+                    new JProperty("id", MnoHelper.Api.Id),
+                    new JProperty("lang", MnoHelper.Api.Lang),
+                    new JProperty("version", MnoHelper.Api.Version),
+                    new JProperty("lang_version", MnoHelper.Api.LangVersion))),
                 new JProperty("sso", new JObject(
-                    new JProperty("enabled", Mno.Sso.Enabled),
-                    new JProperty("creation_mode", Mno.Sso.CreationMode),
-                    new JProperty("init_path", Mno.Sso.InitPath),
-                    new JProperty("consume_path", Mno.Sso.ConsumePath),
-                    new JProperty("idm", Mno.Sso.Idm),
-                    new JProperty("idp", Mno.Sso.Idp),
-                    new JProperty("name_id_format", Mno.Sso.NameIdFormat),
-                    new JProperty("x509_fingerprint", Mno.Sso.X509Fingerprint),
-                    new JProperty("x509_certificate", Mno.Sso.X509Certificate))),
+                    new JProperty("enabled", MnoHelper.Sso.Enabled),
+                    new JProperty("creation_mode", MnoHelper.Sso.CreationMode),
+                    new JProperty("init_path", MnoHelper.Sso.InitPath),
+                    new JProperty("consume_path", MnoHelper.Sso.ConsumePath),
+                    new JProperty("idm", MnoHelper.Sso.Idm),
+                    new JProperty("idp", MnoHelper.Sso.Idp),
+                    new JProperty("name_id_format", MnoHelper.Sso.NameIdFormat),
+                    new JProperty("x509_fingerprint", MnoHelper.Sso.X509Fingerprint),
+                    new JProperty("x509_certificate", MnoHelper.Sso.X509Certificate))),
                 new JProperty("webhook", new JObject(
                     new JProperty("account", new JObject(
-                        new JProperty("groups_path", Mno.Webhook.Account.GroupsPath),
-                        new JProperty("group_users_path", Mno.Webhook.Account.GroupUsersPath)
+                        new JProperty("groups_path", MnoHelper.Webhook.Account.GroupsPath),
+                        new JProperty("group_users_path", MnoHelper.Webhook.Account.GroupUsersPath)
                         ))))
             );
 

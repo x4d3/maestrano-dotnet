@@ -486,17 +486,17 @@ var bills = Maestrano.Account.Bill.All();
 
 Access a single bill by id
 ```csharp
-bill = Maestrano.Account.Bill.Retrieve("bill-f1d2s54");
+var bill = Maestrano.Account.Bill.Retrieve("bill-f1d2s54");
 ```
 
 Create a new bill
 ```csharp
-bill = Maestrano.Account.Bill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase");
+var bill = Maestrano.Account.Bill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase");
 ```
 
 Cancel a bill
 ```csharp
-bill = Maestrano.Account.Bill.retrieve("bill-f1d2s54");
+var bill = Maestrano.Account.Bill.retrieve("bill-f1d2s54");
 bill.Cancel();
 ```
 
@@ -642,22 +642,22 @@ Maestrano.Account.RecurringBill
 
 List all recurring bills you have created and iterate through the list
 ```csharp
-rec_bills = Maestrano.Account.RecurringBill.All();
+var rec_bills = Maestrano.Account.RecurringBill.All();
 ```
 
 Access a single recurring bill by id
 ```csharp
-rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
+var rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
 ```
 
 Create a new recurring bill
 ```csharp
-rec_bill = Maestrano.Account.RecurringBill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase", period: 'Month', startDate: DateTime.UtcNow);
+var rec_bill = Maestrano.Account.RecurringBill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase", period: 'Month', startDate: DateTime.UtcNow);
 ```
 
 Cancel a recurring bill
 ```csharp
-rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
+var rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
 rec_bill.Cancel();
 ```
 

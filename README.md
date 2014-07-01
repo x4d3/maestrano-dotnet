@@ -353,7 +353,7 @@ The example below needs to be adapted depending on your application:
 ```
 
 ## API
-The maestrano gem also provides bindings to its REST API allowing you to access, create, update or delete various entities under your account (e.g: billing).
+The maestrano package also provides bindings to its REST API allowing you to access, create, update or delete various entities under your account (e.g: billing).
 
 ### Payment API
  

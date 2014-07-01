@@ -35,8 +35,8 @@ namespace Maestrano.Tests.Sso
         public void ToUid_WhenReal_ShouldReturnTheRightUid()
         {
             // Configure environment
-            Maestrano.Environment = "production";
-            Maestrano.Sso.CreationMode = "real";
+            Mno.Environment = "production";
+            Mno.Sso.CreationMode = "real";
 
             // Build user
             var samlResp = new SsoResponseStub();
@@ -49,8 +49,8 @@ namespace Maestrano.Tests.Sso
         public void ToUid_WhenVirtual_ShouldReturnTheRightUid()
         {
             // Configure environment
-            Maestrano.Environment = "production";
-            Maestrano.Sso.CreationMode = "virtual";
+            Mno.Environment = "production";
+            Mno.Sso.CreationMode = "virtual";
 
             // Build user
             var samlResp = new SsoResponseStub();
@@ -63,8 +63,8 @@ namespace Maestrano.Tests.Sso
         public void ToEmail_WhenReal_ShouldReturnTheRightEmail()
         {
             // Configure environment
-            Maestrano.Environment = "production";
-            Maestrano.Sso.CreationMode = "real";
+            Mno.Environment = "production";
+            Mno.Sso.CreationMode = "real";
 
             // Build user
             var samlResp = new SsoResponseStub();
@@ -77,8 +77,8 @@ namespace Maestrano.Tests.Sso
         public void ToEmail_WhenVirtual_ShouldReturnTheRightEmail()
         {
             // Configure environment
-            Maestrano.Environment = "production";
-            Maestrano.Sso.CreationMode = "virtual";
+            Mno.Environment = "production";
+            Mno.Sso.CreationMode = "virtual";
 
             // Build user
             var samlResp = new SsoResponseStub();

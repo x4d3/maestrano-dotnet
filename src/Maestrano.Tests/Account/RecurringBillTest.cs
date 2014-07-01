@@ -10,15 +10,15 @@ namespace Maestrano.Tests.Account
     {
         public RecurringBillTest()
         {
-            Maestrano.Environment = "test";
-            Maestrano.Api.Id = "app-1";
-            Maestrano.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
+            Mno.Environment = "test";
+            Mno.Api.Id = "app-1";
+            Mno.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
         }
 
         [TestMethod]
         public void All_ItShouldReturnTheListOfBills()
         {
-            Console.WriteLine(Maestrano.Api.Id);
+            Console.WriteLine(Mno.Api.Id);
             var list = RecurringBill.All();
             Assert.AreEqual("rbill-1", list[0].Id);
             Assert.AreEqual("rbill-2", list[1].Id);
@@ -27,7 +27,7 @@ namespace Maestrano.Tests.Account
         [TestMethod]
         public void Retrieve_ItShouldReturnASingleBill()
         {
-            Console.WriteLine(Maestrano.Api.Id);
+            Console.WriteLine(Mno.Api.Id);
             var obj = RecurringBill.Retrieve("rbill-1");
             Assert.AreEqual("rbill-1", obj.Id);
         }

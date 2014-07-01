@@ -21,7 +21,7 @@ namespace Maestrano.Tests.Sso
 
         public SessionTests()
         {
-            Maestrano.Sso.SloEnabled = true;
+            Mno.Sso.SloEnabled = true;
         }
 
         [TestMethod]
@@ -163,7 +163,7 @@ namespace Maestrano.Tests.Sso
         public void IsValid_WhenSloDisabled_ItShouldReturnTrue()
         {
             // Disable SLO
-            Maestrano.Sso.SloEnabled = false;
+            Mno.Sso.SloEnabled = false;
 
             // Response preparation (session not valid)
             RestResponse response = new RestResponse();

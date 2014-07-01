@@ -30,7 +30,7 @@ namespace Maestrano.Saml
         public Request(NameValueCollection parameters = null)
         {
             this.parameters = parameters;
-            this.settings = Maestrano.Sso.SamlSettings();
+            this.settings = Mno.Sso.SamlSettings();
 
             Id = "_" + Guid.NewGuid().ToString();
             IssueInstant = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");

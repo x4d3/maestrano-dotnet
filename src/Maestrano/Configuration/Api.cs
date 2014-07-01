@@ -76,7 +76,7 @@ namespace Maestrano.Configuration
         public string Lang { get { return "C#"; } }
 
         // Return the API version
-        public string Version { get { return Maestrano.Version; } }
+        public string Version { get { return Mno.Version; } }
 
         // Return the language version
         public string LangVersion { get { return Environment.OSVersion.ToString() + " - " + Environment.Version.ToString(); } }
@@ -92,7 +92,7 @@ namespace Maestrano.Configuration
                 var _idp = (String)this["host"];
                 if (string.IsNullOrEmpty(_idp))
                 {
-                    if (Maestrano.Environment.Equals("production"))
+                    if (Mno.Environment.Equals("production"))
                     {
                         return "https://maestrano.com";
                     }

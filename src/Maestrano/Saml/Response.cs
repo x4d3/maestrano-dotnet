@@ -18,7 +18,7 @@ namespace Maestrano.Saml
 
         public Response()
         {
-            settings = Maestrano.Sso.SamlSettings();
+            settings = Mno.Sso.SamlSettings();
             string strCert = settings.IdpCertificate;
             Cert = new Certificate();
             Cert.LoadCertificate(strCert);

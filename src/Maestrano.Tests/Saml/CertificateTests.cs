@@ -11,8 +11,8 @@ namespace Maestrano.Tests.Saml
         [TestMethod]
         public void itLoadsACertificateFromByteArray()
         {
-            Maestrano.Environment = "production";
-            string strCert = Maestrano.Sso.X509Certificate;
+            Mno.Environment = "production";
+            string strCert = Mno.Sso.X509Certificate;
 
             // Build certificate
             byte[] bytCert = new byte[strCert.Length * sizeof(char)];
@@ -30,8 +30,8 @@ namespace Maestrano.Tests.Saml
         [TestMethod]
         public void ItLoadsACertificateFromString()
         {
-            Maestrano.Environment = "production";
-            string strCert = Maestrano.Sso.X509Certificate;
+            Mno.Environment = "production";
+            string strCert = Mno.Sso.X509Certificate;
 
             // Build certificate
             byte[] bytCert = new byte[strCert.Length * sizeof(char)];

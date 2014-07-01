@@ -20,10 +20,10 @@ namespace Maestrano.Api
 
         static MnoClient()
         {
-            ApiHost = Maestrano.Api.Host;
-            ApiBase = Maestrano.Api.Base;
-            ApiKey = Maestrano.Api.Key;
-            ApiId = Maestrano.Api.Id;
+            ApiHost = Mno.Api.Host;
+            ApiBase = Mno.Api.Base;
+            ApiKey = Mno.Api.Key;
+            ApiId = Mno.Api.Id;
 
             // silverlight friendly way to get current version
             var assembly = Assembly.GetExecutingAssembly();

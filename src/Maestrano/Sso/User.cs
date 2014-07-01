@@ -53,7 +53,7 @@ namespace Maestrano.Sso
         /// </summary>
         public string ToUid()
         {
-            if (Maestrano.Sso.CreationMode.Equals("real"))
+            if (Mno.Sso.CreationMode.Equals("real"))
                 return Uid;
             else
                 return VirtualUid;
@@ -65,7 +65,7 @@ namespace Maestrano.Sso
         /// </summary>
         public string ToEmail()
         {
-            if (Maestrano.Sso.CreationMode.Equals("real"))
+            if (Mno.Sso.CreationMode.Equals("real"))
                 return Email;
             else
                 return VirtualEmail;

@@ -15,9 +15,9 @@ namespace Maestrano.Tests.Saml
         [TestMethod]
         public void GetRequest_ItReturnsTheRightBased64EncodedXmlRequest()
         {
-            Maestrano.Environment = "production";
-            Maestrano.App.Host = "https://mysuperapp.com";
-            Maestrano.Api.Id = "app-1";
+            MnoHelper.Environment = "production";
+            MnoHelper.App.Host = "https://mysuperapp.com";
+            MnoHelper.Api.Id = "app-1";
 
             Request req = new Request();
 
@@ -27,9 +27,9 @@ namespace Maestrano.Tests.Saml
         [TestMethod]
         public void RedirectUrl_WithNoParameters_ItReturnsTheRightUrl()
         {
-            Maestrano.Environment = "production";
-            Maestrano.App.Host = "https://mysuperapp.com";
-            Maestrano.Api.Id = "app-1";
+            MnoHelper.Environment = "production";
+            MnoHelper.App.Host = "https://mysuperapp.com";
+            MnoHelper.Api.Id = "app-1";
 
             // Build parameters
             NameValueCollection parameters = new NameValueCollection();
@@ -40,7 +40,7 @@ namespace Maestrano.Tests.Saml
             Request req = new Request(parameters);
 
             // Build expected url
-            string expectedUrl = Maestrano.Sso.IdpUrl();
+            string expectedUrl = MnoHelper.Sso.IdpUrl();
             expectedUrl += "?SAMLRequest=";
             expectedUrl += HttpUtility.UrlEncode(XmlRequestBase64Encoded(req.Id, req.IssueInstant));
             expectedUrl += "&group_uid=someparamvalue";
@@ -52,15 +52,15 @@ namespace Maestrano.Tests.Saml
         [TestMethod]
         public void RedirectUrl_WithParameters_ItReturnsTheRightUrl()
         {
-            Maestrano.Environment = "production";
-            Maestrano.App.Host = "https://mysuperapp.com";
-            Maestrano.Api.Id = "app-1";
+            MnoHelper.Environment = "production";
+            MnoHelper.App.Host = "https://mysuperapp.com";
+            MnoHelper.Api.Id = "app-1";
 
             // Build request
             Request req = new Request();
 
             // Build expected url
-            string expectedUrl = Maestrano.Sso.IdpUrl();
+            string expectedUrl = MnoHelper.Sso.IdpUrl();
             expectedUrl += "?SAMLRequest=";
             expectedUrl += HttpUtility.UrlEncode(XmlRequestBase64Encoded(req.Id, req.IssueInstant));
 
@@ -81,11 +81,11 @@ namespace Maestrano.Tests.Saml
         {
             // Default values
             if (string.IsNullOrEmpty(consumeUrl))
-                consumeUrl = Maestrano.Sso.ConsumeUrl();
+                consumeUrl = MnoHelper.Sso.ConsumeUrl();
             if (string.IsNullOrEmpty(nameIdFormat))
-                nameIdFormat = Maestrano.Sso.NameIdFormat;
+                nameIdFormat = MnoHelper.Sso.NameIdFormat;
             if (string.IsNullOrEmpty(issuer))
-                issuer = Maestrano.Api.Id;
+                issuer = MnoHelper.Api.Id;
 
             using (StringWriter sw = new StringWriter())
             {

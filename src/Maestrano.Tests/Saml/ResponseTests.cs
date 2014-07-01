@@ -12,7 +12,7 @@ namespace Maestrano.Tests.Saml
         [TestMethod]
         public void ItShouldConsiderResponse1AsInvalid()
         {
-            Maestrano.Environment = "production";
+            MnoHelper.Environment = "production";
 
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");
             Response resp = new Response();
@@ -27,7 +27,7 @@ namespace Maestrano.Tests.Saml
         {
             // Response2 contains \n and \r characters that should break base64.decode usually
 
-            Maestrano.Environment = "production";
+            MnoHelper.Environment = "production";
 
             // Prepare response
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response2.xml.base64");
@@ -42,7 +42,7 @@ namespace Maestrano.Tests.Saml
         [TestMethod]
         public void ItShouldLoadResponse4Properly()
         {
-            Maestrano.Environment = "production";
+            MnoHelper.Environment = "production";
 
             // Prepare response
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response4.xml.base64");
@@ -58,7 +58,7 @@ namespace Maestrano.Tests.Saml
         [TestMethod]
         public void ItShouldLoadTheResponseAttributesProperly()
         {
-            Maestrano.Environment = "production";
+            MnoHelper.Environment = "production";
 
             // Prepare response
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");

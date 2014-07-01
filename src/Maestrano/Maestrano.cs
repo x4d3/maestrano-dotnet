@@ -8,10 +8,10 @@ using System.Net.Http.Headers;
 
 namespace Maestrano
 {
-    public static class Maestrano
+    public static class MnoHelper
     {
         // VERSION
-        public static string Version { get { return "0.1.0"; } }
+        public static string Version { get { return "0.2.0"; } }
 
         
         public static Configuration.Sso Sso { get; private set; }
@@ -19,7 +19,7 @@ namespace Maestrano
         public static Configuration.Api Api { get; private set; }
         public static Configuration.Webhook Webhook { get; private set; }
 
-        static Maestrano()
+        static MnoHelper()
         {
             App = Configuration.App.Load();
             Api = Configuration.Api.Load();
@@ -31,8 +31,8 @@ namespace Maestrano
         /// App environment: 'test' or 'production'
         /// </summary>
         public static string Environment {
-            get { return Maestrano.App.Environment; }
-            set { Maestrano.App.Environment = value; }
+            get { return MnoHelper.App.Environment; }
+            set { MnoHelper.App.Environment = value; }
         }
 
         /// <summary>
@@ -130,27 +130,27 @@ namespace Maestrano
         public static JObject ToMetadata()
         {
             JObject metadata = new JObject(
-                new JProperty("environment", Maestrano.Environment),
-                new JProperty("app", new JObject(new JProperty("host", Maestrano.App.Host))),
+                new JProperty("environment", MnoHelper.Environment),
+                new JProperty("app", new JObject(new JProperty("host", MnoHelper.App.Host))),
                 new JProperty("api", new JObject(
-                    new JProperty("id", Maestrano.Api.Id),
-                    new JProperty("lang", Maestrano.Api.Lang),
-                    new JProperty("version", Maestrano.Api.Version),
-                    new JProperty("lang_version", Maestrano.Api.LangVersion))),
+                    new JProperty("id", MnoHelper.Api.Id),
+                    new JProperty("lang", MnoHelper.Api.Lang),
+                    new JProperty("version", MnoHelper.Api.Version),
+                    new JProperty("lang_version", MnoHelper.Api.LangVersion))),
                 new JProperty("sso", new JObject(
-                    new JProperty("enabled", Maestrano.Sso.Enabled),
-                    new JProperty("creation_mode", Maestrano.Sso.CreationMode),
-                    new JProperty("init_path", Maestrano.Sso.InitPath),
-                    new JProperty("consume_path", Maestrano.Sso.ConsumePath),
-                    new JProperty("idm", Maestrano.Sso.Idm),
-                    new JProperty("idp", Maestrano.Sso.Idp),
-                    new JProperty("name_id_format", Maestrano.Sso.NameIdFormat),
-                    new JProperty("x509_fingerprint", Maestrano.Sso.X509Fingerprint),
-                    new JProperty("x509_certificate", Maestrano.Sso.X509Certificate))),
+                    new JProperty("enabled", MnoHelper.Sso.Enabled),
+                    new JProperty("creation_mode", MnoHelper.Sso.CreationMode),
+                    new JProperty("init_path", MnoHelper.Sso.InitPath),
+                    new JProperty("consume_path", MnoHelper.Sso.ConsumePath),
+                    new JProperty("idm", MnoHelper.Sso.Idm),
+                    new JProperty("idp", MnoHelper.Sso.Idp),
+                    new JProperty("name_id_format", MnoHelper.Sso.NameIdFormat),
+                    new JProperty("x509_fingerprint", MnoHelper.Sso.X509Fingerprint),
+                    new JProperty("x509_certificate", MnoHelper.Sso.X509Certificate))),
                 new JProperty("webhook", new JObject(
                     new JProperty("account", new JObject(
-                        new JProperty("groups_path", Maestrano.Webhook.Account.GroupsPath),
-                        new JProperty("group_users_path", Maestrano.Webhook.Account.GroupUsersPath)
+                        new JProperty("groups_path", MnoHelper.Webhook.Account.GroupsPath),
+                        new JProperty("group_users_path", MnoHelper.Webhook.Account.GroupUsersPath)
                         ))))
             );
 

@@ -11,7 +11,7 @@ namespace Maestrano
     public static class MnoHelper
     {
         // VERSION
-        public static string Version { get { return "0.3.0"; } }
+        public static string Version { get { return "0.4.0"; } }
 
         
         public static Configuration.Sso Sso { get; private set; }

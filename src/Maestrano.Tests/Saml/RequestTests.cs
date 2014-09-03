@@ -5,6 +5,7 @@ using System.Xml;
 using System.Web;
 using Maestrano.Saml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO.Compression;
 
 namespace Maestrano.Tests.Saml
 {
@@ -122,9 +123,17 @@ namespace Maestrano.Tests.Saml
                     xw.WriteEndElement();
                 }
 
-                // Encode in base64
-                byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(sw.ToString());
-                return System.Convert.ToBase64String(toEncodeAsBytes);
+                // Encode in base64 and compress
+                byte[] bytes = System.Text.ASCIIEncoding.ASCII.GetBytes(sw.ToString());
+                
+                using (var output = new MemoryStream())
+                {
+                    using (var zip = new DeflateStream(output, CompressionMode.Compress))
+                    {
+                        zip.Write(bytes, 0, bytes.Length);
+                    }
+                    return Convert.ToBase64String(output.ToArray());
+                }
             }
         }
     }

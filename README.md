@@ -276,7 +276,7 @@ public partial class _Default : System.Web.UI.Page
     {
         var request = HttpContext.Current.Request;
         
-        var ssoUrl = MnoHelper.Sso.BuildRequest(request.Params).RedirectUrl();
+        var ssoUrl = MnoHelper.Sso.BuildRequest(request.QueryString).RedirectUrl();
         Response.Redirect(ssoUrl);
     }
 }

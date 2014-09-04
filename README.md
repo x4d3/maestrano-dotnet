@@ -333,7 +333,7 @@ if (!mnoSession.isValid()) {
 
 The above piece of code makes at most one request every 3 minutes (standard session duration) to the Maestrano website to check whether the user is still logged in Maestrano. Therefore it should not impact your application from a performance point of view.
 
-If you start seing session check requests on every page load it means something is going wrong at the http session level. In this case feel free to just send us an email and we'll have a look with you.
+If you start seing session check requests on every page load it means something is going wrong at the http session level. In this case feel free to send us an email and we'll have a look with you.
 
 ### Redirecting on logout
 When Maestrano users sign out of your application you can redirect them to the Maestrano logout page. You can get the url of this page by calling:

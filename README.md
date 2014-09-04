@@ -18,6 +18,8 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
   * [Group Setup](#group-setup)
   * [Controller Setup](#controller-setup)
   * [Other Controllers](#other-controllers)
+  * [Redirecting on logout](#redirecting-on-logout)
+  * [Redirecting on error](#redirecting-on-error)
 4. [Account Webhooks](#account-webhooks)
   * [Groups Controller](#groups-controller-service-cancellation)
   * [Group Users Controller](#group-users-controller-business-member-removal)
@@ -327,18 +329,17 @@ var mnoSession = new Maestrano.Sso.Session(httpContext.Session);
 if (!mnoSession.isValid()) {
   Response.Redirect(MnoHelper.Sso.InitUrl());
 }
-
 ```
 
 ### Redirecting on logout
-When a Maestrano user signs out of your application, you can redirect them to the Maestrano logout page. You can get the url of this page by calling:
+When Maestrano users sign out of your application you can redirect them to the Maestrano logout page. You can get the url of this page by calling:
 
 ```csharp
 MnoHelper.Sso.LogoutUrl()
 ```
 
 ### Redirecting on error
-If any error happens during the SSO handshake, you can redirect user to the following URL:
+If any error happens during the SSO handshake, you can redirect users to the following URL:
 
 ```csharp
 MnoHelper.Sso.UnauthorizedUrl()

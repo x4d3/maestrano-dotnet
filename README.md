@@ -322,7 +322,26 @@ Note that for the consume action you should disable CSRF authenticity if your fr
 If you want your users to benefit from single logout then you should define the following filter in a module and include it in all your controllers except the one handling single sign-on authentication.
 
 ```csharp
-//TODO
+var mnoSession = new Maestrano.Sso.Session(httpContext.Session);
+
+if (!mnoSession.isValid()) {
+  Response.Redirect(MnoHelper.Sso.InitUrl());
+}
+
+```
+
+### Redirecting on logout
+When a Maestrano user signs out of your application, you can redirect them to the Maestrano logout page. You can get the url of this page by calling:
+
+```csharp
+MnoHelper.Sso.LogoutUrl()
+```
+
+### Redirecting on error
+If any error happens during the SSO handshake, you can redirect user to the following URL:
+
+```csharp
+MnoHelper.Sso.UnauthorizedUrl()
 ```
 
 ## Account Webhooks
@@ -337,7 +356,13 @@ The controller example below reimplements the authenticate_maestrano! method see
 
 The example below needs to be adapted depending on your application:
 ```csharp
-//TODO
+public HttpResponseMessage DisableGroup(string groupId)
+{
+    var mnoGroup = MyGroupModel.findByMnoId(groupId);
+    mnoGroup.disableAccess();
+    
+    ...
+}
 ```
 
 ### Group Users Controller (business member removal)
@@ -348,8 +373,15 @@ Maestrano only uses this controller for user membership cancellation so there is
 The controller example below reimplements the authenticate_maestrano! method seen in the [metadata section](#metadata) for completeness. Utimately you should move this method to a helper if you can.
 
 The example below needs to be adapted depending on your application:
+
 ```csharp
-//TODO
+public HttpResponseMessage DisableGroup(string groupId, string userId)
+{
+    var mnoGroup = MyGroupModel.findByMnoId(mnoId);
+    mnoGroup.removeUserById(userId);
+    
+    ...
+}
 ```
 
 ## API

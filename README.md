@@ -326,7 +326,7 @@ If you want your users to benefit from single logout then you should define the 
 ```csharp
 var mnoSession = new Maestrano.Sso.Session(httpContext.Session);
 
-if (!mnoSession.isValid()) {
+if (!mnoSession.IsValid()) {
   Response.Redirect(MnoHelper.Sso.InitUrl());
 }
 ```

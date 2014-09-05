@@ -363,8 +363,14 @@ The example below needs to be adapted depending on your application:
 ```csharp
 public HttpResponseMessage DisableGroup(string groupId)
 {
-    var mnoGroup = MyGroupModel.findByMnoId(groupId);
-    mnoGroup.disableAccess();
+    // Authentication
+    var request = HttpContext.Current.Request;
+    
+    if (MnoHelper.Authenticate(request)) {
+      var mnoGroup = MyGroupModel.findByMnoId(groupId);
+      mnoGroup.disableAccess();
+    }
+    
     
     ...
 }
@@ -382,8 +388,13 @@ The example below needs to be adapted depending on your application:
 ```csharp
 public HttpResponseMessage DisableGroup(string groupId, string userId)
 {
-    var mnoGroup = MyGroupModel.findByMnoId(mnoId);
-    mnoGroup.removeUserById(userId);
+    // Authentication
+    var request = HttpContext.Current.Request;
+    
+    if (MnoHelper.Authenticate(request)) {
+      var mnoGroup = MyGroupModel.findByMnoId(mnoId);
+      mnoGroup.removeUserById(userId);
+    }
     
     ...
 }

@@ -3,6 +3,7 @@ using Maestrano.Sso;
 using Maestrano.Saml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Specialized;
+using Maestrano.Helpers;
 
 namespace Maestrano.Tests.Sso
 {
@@ -23,7 +24,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(att["group_has_credit_card"].Equals("true"), group.HasCreditCard);
 
             Assert.AreEqual(att["group_currency"], group.Currency);
-            Assert.AreEqual(att["group_timezone"], group.Timezone);
+            Assert.AreEqual(TimeZoneConverter.fromOlsonTz(att["group_timezone"]), group.Timezone);
             Assert.AreEqual(att["group_country"], group.Country);
             Assert.AreEqual(att["group_city"], group.City);
         }

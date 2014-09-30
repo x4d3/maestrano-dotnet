@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Specialized;
 using Newtonsoft.Json.Linq;
+using Maestrano.Helpers;
 
 namespace Maestrano.Sso
 {
@@ -17,7 +18,7 @@ namespace Maestrano.Sso
         public string CompanyName { get; set; }
 
         public string Currency { get; set; }
-        public string Timezone { get; set; }
+        public TimeZoneInfo Timezone { get; set; }
         public string Country { get; set; }
         public string City { get; set; }
 
@@ -38,7 +39,7 @@ namespace Maestrano.Sso
 
             // Geo info
             Currency = att["group_currency"];
-            Timezone = att["group_timezone"];
+            Timezone = TimeZoneConverter.fromOlsonTz(att["group_timezone"]);
             Country = att["group_country"];
             City = att["group_city"];
         }

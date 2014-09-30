@@ -13,6 +13,7 @@ namespace Maestrano.Sso
     {
         public string Uid { get; set; }
         public string Name { get; set; }
+        public string Email { get; set; }
         public bool HasCreditCard { get; set; }
         public DateTime FreeTrialEndAt { get; set; }
         public string CompanyName { get; set; }
@@ -33,6 +34,7 @@ namespace Maestrano.Sso
             // General info
             Uid = att["group_uid"];
             Name = att["group_name"];
+            Email = att["group_email"];
             FreeTrialEndAt = DateTime.Parse(att["group_end_free_trial"]);
             CompanyName = att["company_name"];
             HasCreditCard = att["group_has_credit_card"].Equals("true");

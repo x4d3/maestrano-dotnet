@@ -100,6 +100,8 @@ namespace Maestrano.Tests
             _cachedAttributes.Add("mno_session_recheck", DateTime.UtcNow.ToString("s"));
 
             _cachedAttributes.Add("group_uid", "cld-1");
+            _cachedAttributes.Add("group_name", "SomeGroupName");
+            _cachedAttributes.Add("group_email", "email@example.com");
             _cachedAttributes.Add("group_role", "Admin");
             _cachedAttributes.Add("group_end_free_trial", DateTime.UtcNow.ToString("s"));
             _cachedAttributes.Add("group_has_credit_card", "true");

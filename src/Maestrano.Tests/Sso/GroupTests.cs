@@ -19,6 +19,7 @@ namespace Maestrano.Tests.Sso
 
             Assert.AreEqual(att["group_uid"], group.Uid);
             Assert.AreEqual(att["group_name"], group.Name);
+            Assert.AreEqual(att["group_email"], group.Email);
             Assert.AreEqual(DateTime.Parse(att["group_end_free_trial"]), group.FreeTrialEndAt);
             Assert.AreEqual(att["company_name"], group.CompanyName);
             Assert.AreEqual(att["group_has_credit_card"].Equals("true"), group.HasCreditCard);

@@ -11,9 +11,15 @@ namespace Maestrano.Sso
     public class Group
     {
         public string Uid { get; set; }
+        public string Name { get; set; }
+        public bool HasCreditCard { get; set; }
         public DateTime FreeTrialEndAt { get; set; }
-        public string Country { get; set; }
         public string CompanyName { get; set; }
+
+        public string Currency { get; set; }
+        public string Timezone { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
 
         /// <summary>
         /// Constructor loading group attributes from a Saml.Response
@@ -22,10 +28,19 @@ namespace Maestrano.Sso
         public Group(Saml.Response samlResponse)
         {
             NameValueCollection att = samlResponse.GetAttributes();
+            
+            // General info
             Uid = att["group_uid"];
+            Name = att["group_name"];
             FreeTrialEndAt = DateTime.Parse(att["group_end_free_trial"]);
-            Country = att["country"];
             CompanyName = att["company_name"];
+            HasCreditCard = att["group_has_credit_card"].Equals("true");
+
+            // Geo info
+            Currency = att["group_currency"];
+            Timezone = att["group_timezone"];
+            Country = att["group_country"];
+            City = att["group_city"];
         }
 
         /// <summary>

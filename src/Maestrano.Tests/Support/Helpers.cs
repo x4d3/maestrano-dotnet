@@ -98,9 +98,16 @@ namespace Maestrano.Tests
             _cachedAttributes = new NameValueCollection();
             _cachedAttributes.Add("mno_session", "7ds8f9789a7fd7x0b898bvb8vc9h0gg");
             _cachedAttributes.Add("mno_session_recheck", DateTime.UtcNow.ToString("s"));
+
             _cachedAttributes.Add("group_uid", "cld-1");
             _cachedAttributes.Add("group_role", "Admin");
             _cachedAttributes.Add("group_end_free_trial", DateTime.UtcNow.ToString("s"));
+            _cachedAttributes.Add("group_has_credit_card", "true");
+            _cachedAttributes.Add("group_currency", "USD");
+            _cachedAttributes.Add("group_timezone", "America/Los_Angeles");
+            _cachedAttributes.Add("group_country", "US");
+            _cachedAttributes.Add("group_city", "Los Angeles");
+
             _cachedAttributes.Add("uid", "usr-1");
             _cachedAttributes.Add("virtual_uid", "user-1.cld-1");
             _cachedAttributes.Add("email", "j.doe@doecorp.com");

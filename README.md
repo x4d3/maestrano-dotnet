@@ -299,24 +299,30 @@ public partial class _Default : System.Web.UI.Page
         var request = HttpContext.Current.Request;
         
         // Get SAML response, build maestrano user and group objects
-        var samlResp = MnoHelper.Sso.BuildResponse(request.Params["SAMLResponse"]) 
-        var mnoUser = new Maestrano.Sso.User(samlResp);
-        var mnoGroup = new Maestrano.Sso.Group(samlResp);
+        var samlResp = MnoHelper.Sso.BuildResponse(request.Params["SAMLResponse"])
         
-        // Build/Map local entities
-        var localGroup = MyGroup.FindOrCreateForMaestrano(mnoGroup);
-        var localUser = MyUser.FindOrCreateForMaestrano(mnoUser);
+        // Check response validity
+        if (samlResp.IsValid()) {
+          var mnoUser = new Maestrano.Sso.User(samlResp);
+          var mnoGroup = new Maestrano.Sso.Group(samlResp);
         
-        // Add localUser to the localGroup if not already part
-        // of it
-        if (!localGroup.HasMember(localUser)){
-          localGroup.AddMember(localUser)
+          // Build/Map local entities
+          var localGroup = MyGroup.FindOrCreateForMaestrano(mnoGroup);
+          var localUser = MyUser.FindOrCreateForMaestrano(mnoUser);
+        
+          // Add localUser to the localGroup if not already part
+          // of it
+          if (!localGroup.HasMember(localUser)){
+            localGroup.AddMember(localUser)
+          }
+        
+          // Set Maestrano session
+          MnoHelper.Sso.SetSession(Session,mnoUser)
+        
+          Response.Redirect("/");
+        } else {
+          Response.Write("Invalid SAML Response");
         }
-        
-        // Set Maestrano session
-        MnoHelper.Sso.SetSession(Session,mnoUser)
-        
-        Response.Redirect("/");
     }
 }
 ```

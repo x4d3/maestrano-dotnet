@@ -113,9 +113,6 @@ namespace Maestrano.Api
             request.Method = Method.POST;
 
             foreach (var k in parameters.AllKeys)
-                Console.WriteLine(StringExtensions.ToSnakeCase(k));
-
-            foreach (var k in parameters.AllKeys)
                 request.AddParameter(StringExtensions.ToSnakeCase(k), parameters[k]);
 
             return MnoClient.ProjectSingleObject<T>(request);

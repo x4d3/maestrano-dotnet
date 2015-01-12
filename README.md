@@ -38,6 +38,8 @@ For testing purpose we provide an API Sandbox where you can freely obtain an App
 
 To get started just go to: http://api-sandbox.maestrano.io
 
+A **.NET demo application** is also available here: https://github.com/maestrano/demoapp-dotnet
+
 ## Getting Started
 
 ### Installation

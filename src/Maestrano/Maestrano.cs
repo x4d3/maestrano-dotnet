@@ -49,9 +49,10 @@ namespace Maestrano
         }
 
         /// <summary>
-        /// Take a 
+        /// Authenticate a request from Maestrano using HTTP Basic Authentication
         /// </summary>
-        /// <returns></returns>
+        /// <param name="request">An HttpRequest object</param>
+        /// <returns>true if the authentication is successful, false otherwise</returns>
         public static bool Authenticate(System.Web.HttpRequest request)
         {
             bool authenticated = false;

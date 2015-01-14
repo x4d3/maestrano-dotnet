@@ -19,7 +19,7 @@ namespace Maestrano.Connec
         public string ApiId { get; set; }
         public string ApiKey { get; set; }
 
-        private RestClient _client;
+        public RestClient _client;
 
         /// <summary>
         /// Constructor
@@ -27,9 +27,9 @@ namespace Maestrano.Connec
         /// <param name="groupId">The customer group id</param>
         public Client (string groupId)
         {
-            ConnecBasePath = MnoHelper.Connec.Host;
+            ConnecBasePath = MnoHelper.Connec.BasePath;
             ConnecScopedPath = ConnecBasePath + "/" + groupId;
-            ConnecHost = MnoHelper.Connec.BasePath;
+            ConnecHost = MnoHelper.Connec.Host;
             ApiKey = MnoHelper.Api.Key;
             ApiId = MnoHelper.Api.Id;
 
@@ -50,8 +50,8 @@ namespace Maestrano.Connec
         /// Return a configured RestClient
         /// </summary>
         /// <param name="groupId">The customer group id</param>
-        public static IRestClient GetRestClient(string groupId) {
-            return (new Client(groupId))._client;
+        public static RestClient GetRestClient(string groupId) {
+            return (RestClient)(new Client(groupId))._client;
         }
 
         private IRestRequest PrepareRequest(Method method, String path, NameValueCollection parameters, String body)
@@ -59,9 +59,12 @@ namespace Maestrano.Connec
             var request = new RestRequest();
             request.Resource = path;
             request.Method = method;
+            request.AddHeader("Accept", "application/vnd.api+json");
+            request.AddHeader("Content-Type", "application/vnd.api+json");
+            request.Parameters.Clear();
 
             if (body != null)
-                request.AddParameter("application/json", body, ParameterType.RequestBody);
+                request.AddParameter("application/vnd.api+json", body, ParameterType.RequestBody);
 
             if (parameters != null)
             {
@@ -72,42 +75,47 @@ namespace Maestrano.Connec
             return request;
         }
 
-        public IRestResponse Get(string path)
+        public RestResponse Get(string path)
         {
-            return _client.Execute(PrepareRequest(Method.GET, path, null, null));
+            return (RestResponse)_client.Execute(PrepareRequest(Method.GET, path, null, null));
         }
 
         public IRestResponse Get(string path, NameValueCollection parameters)
         {
-            return _client.Execute(PrepareRequest(Method.GET, path, parameters, null));
+            return (RestResponse)_client.Execute(PrepareRequest(Method.GET, path, parameters, null));
         }
 
-        public IRestResponse<T> Get<T>(string path, NameValueCollection parameters) where T : new()
+        public RestResponse<T> Get<T>(string path) where T : new()
         {
-            return _client.Execute<T>(PrepareRequest(Method.GET, path, parameters, null));
+            return (RestResponse<T>)_client.Execute<T>(PrepareRequest(Method.GET, path, null, null));
         }
 
-        
+        public RestResponse<T> Get<T>(string path, NameValueCollection parameters) where T : new()
+        {
+            return (RestResponse<T>)_client.Execute<T>(PrepareRequest(Method.GET, path, parameters, null));
+        }
+
+
 
         public IRestResponse Post(string path, string jsonBody)
         {
-            return _client.Execute(PrepareRequest(Method.POST, path, null, jsonBody));
+            return (RestResponse)_client.Execute(PrepareRequest(Method.POST, path, null, jsonBody));
         }
 
-        public IRestResponse<T> Post<T>(string path, string jsonBody) where T : new()
+        public RestResponse<T> Post<T>(string path, string jsonBody) where T : new()
         {
-            return _client.Execute<T>(PrepareRequest(Method.POST, path, null, jsonBody));
+            return (RestResponse<T>)_client.Execute<T>(PrepareRequest(Method.POST, path, null, jsonBody));
         }
 
 
         public IRestResponse Put(string path, string jsonBody)
         {
-            return _client.Execute(PrepareRequest(Method.PUT, path, null, jsonBody));
+            return (RestResponse)_client.Execute(PrepareRequest(Method.PUT, path, null, jsonBody));
         }
 
-        public IRestResponse<T> Put<T>(string path, string jsonBody) where T : new()
+        public RestResponse<T> Put<T>(string path, string jsonBody) where T : new()
         {
-            return _client.Execute<T>(PrepareRequest(Method.PUT, path, null, jsonBody));
+            return (RestResponse<T>)_client.Execute<T>(PrepareRequest(Method.PUT, path, null, jsonBody));
         }
     }
 }

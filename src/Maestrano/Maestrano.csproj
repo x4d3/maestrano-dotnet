@@ -79,7 +79,6 @@
     <Compile Include="Api\MnoClient.cs" />
     <Compile Include="Api\MnoObject.cs" />
     <Compile Include="Api\ResourceException.cs" />
-    <Compile Include="Api\StringExtensions.cs" />
     <Compile Include="Configuration\Api.cs" />
     <Compile Include="Configuration\App.cs" />
     <Compile Include="Configuration\Connec.cs" />

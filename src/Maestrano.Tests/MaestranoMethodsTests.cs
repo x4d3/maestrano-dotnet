@@ -59,12 +59,12 @@ namespace Maestrano.Tests
 
             JObject expected = new JObject(
                 new JProperty("environment", MnoHelper.Environment),
-                new JProperty("app", new JObject(new JProperty("host",MnoHelper.App.Host))),
+                new JProperty("app", new JObject(new JProperty("host", MnoHelper.App.Host))),
                 new JProperty("api", new JObject(
-                    new JProperty("id",MnoHelper.Api.Id), 
-                    new JProperty("lang",MnoHelper.Api.Lang),
-                    new JProperty("version",MnoHelper.Api.Version),
-                    new JProperty("lang_version",MnoHelper.Api.LangVersion))),
+                    new JProperty("id", MnoHelper.Api.Id),
+                    new JProperty("lang", MnoHelper.Api.Lang),
+                    new JProperty("version", MnoHelper.Api.Version),
+                    new JProperty("lang_version", MnoHelper.Api.LangVersion))),
                 new JProperty("sso", new JObject(
                     new JProperty("enabled", MnoHelper.Sso.Enabled),
                     new JProperty("creation_mode", MnoHelper.Sso.CreationMode),
@@ -79,6 +79,20 @@ namespace Maestrano.Tests
                     new JProperty("account", new JObject(
                         new JProperty("groups_path", MnoHelper.Webhook.Account.GroupsPath),
                         new JProperty("group_users_path", MnoHelper.Webhook.Account.GroupUsersPath)
+                        )),
+                    new JProperty("connec", new JObject(
+                        new JProperty("notifications_path", MnoHelper.Webhook.Connec.NotificationsPath),
+                        new JProperty("subscriptions", new JObject(
+                                new JProperty("accounts",MnoHelper.Webhook.Connec.Subscriptions.Accounts),
+                                new JProperty("company",  MnoHelper.Webhook.Connec.Subscriptions.Company),
+                                new JProperty("invoices", MnoHelper.Webhook.Connec.Subscriptions.Invoices),
+                                new JProperty("items", MnoHelper.Webhook.Connec.Subscriptions.Items),
+                                new JProperty("organizations", MnoHelper.Webhook.Connec.Subscriptions.Organizations),
+                                new JProperty("payments", MnoHelper.Webhook.Connec.Subscriptions.Payments),
+                                new JProperty("people", MnoHelper.Webhook.Connec.Subscriptions.People),
+                                new JProperty("tax_codes", MnoHelper.Webhook.Connec.Subscriptions.TaxCodes),
+                                new JProperty("tax_rates", MnoHelper.Webhook.Connec.Subscriptions.TaxRates)
+                            ))
                         ))))
             );
 

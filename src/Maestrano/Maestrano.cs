@@ -154,6 +154,20 @@ namespace Maestrano
                     new JProperty("account", new JObject(
                         new JProperty("groups_path", MnoHelper.Webhook.Account.GroupsPath),
                         new JProperty("group_users_path", MnoHelper.Webhook.Account.GroupUsersPath)
+                        )),
+                    new JProperty("connec", new JObject(
+                        new JProperty("notifications_path", MnoHelper.Webhook.Connec.NotificationsPath),
+                        new JProperty("subscriptions", new JObject(
+                                new JProperty("accounts",MnoHelper.Webhook.Connec.Subscriptions.Accounts),
+                                new JProperty("company",  MnoHelper.Webhook.Connec.Subscriptions.Company),
+                                new JProperty("invoices", MnoHelper.Webhook.Connec.Subscriptions.Invoices),
+                                new JProperty("items", MnoHelper.Webhook.Connec.Subscriptions.Items),
+                                new JProperty("organizations", MnoHelper.Webhook.Connec.Subscriptions.Organizations),
+                                new JProperty("payments", MnoHelper.Webhook.Connec.Subscriptions.Payments),
+                                new JProperty("people", MnoHelper.Webhook.Connec.Subscriptions.People),
+                                new JProperty("tax_codes", MnoHelper.Webhook.Connec.Subscriptions.TaxCodes),
+                                new JProperty("tax_rates", MnoHelper.Webhook.Connec.Subscriptions.TaxRates)
+                            ))
                         ))))
             );
 

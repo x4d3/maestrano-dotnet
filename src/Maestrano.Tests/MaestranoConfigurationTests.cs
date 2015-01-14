@@ -124,5 +124,15 @@ namespace Maestrano.Tests
 
             Assert.AreEqual("app-1:bla", MnoHelper.Api.Token);
         }
+
+        [TestMethod]
+        public void itGeneratesTheMetadataWithoutError()
+        {
+            MnoHelper.Environment = "production";
+            MnoHelper.Api.Id = "app-1";
+            MnoHelper.Api.Key = "bla";
+            Console.WriteLine(MnoHelper.ToMetadata().ToString());
+            Assert.IsNotNull(MnoHelper.ToMetadata());
+        }
     }
 }

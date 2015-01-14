@@ -16,7 +16,10 @@ namespace Maestrano.Configuration
         /// <returns>A Api configuration object</returns>
         public static Api Load()
         {
-            return ConfigurationManager.GetSection("maestrano/api") as Api;
+            var config = ConfigurationManager.GetSection("maestrano/api") as Api;
+            if (config == null) config = new Api();
+
+            return config;
         }
 
         /// <summary>

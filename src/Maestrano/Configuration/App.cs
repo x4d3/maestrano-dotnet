@@ -15,7 +15,10 @@ namespace Maestrano.Configuration
         /// <returns>A App configuration object</returns>
         public static App Load()
         {
-            return ConfigurationManager.GetSection("maestrano/app") as App;
+            var config = ConfigurationManager.GetSection("maestrano/app") as App;
+            if (config == null) config = new App();
+
+            return config;
         }
 
         /// <summary>

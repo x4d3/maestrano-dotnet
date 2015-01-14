@@ -82,9 +82,13 @@
     <Compile Include="Api\StringExtensions.cs" />
     <Compile Include="Configuration\Api.cs" />
     <Compile Include="Configuration\App.cs" />
+    <Compile Include="Configuration\Connec.cs" />
     <Compile Include="Configuration\Sso.cs" />
     <Compile Include="Configuration\Webhook.cs" />
     <Compile Include="Configuration\WebhookAccount.cs" />
+    <Compile Include="Configuration\WebhookConnec.cs" />
+    <Compile Include="Configuration\WebhookConnecSubscriptions.cs" />
+    <Compile Include="Connec\Client.cs" />
     <Compile Include="Helpers\TimeZoneConverter.cs" />
     <Compile Include="Maestrano.cs" />
     <Compile Include="Properties\Assembly.cs" />

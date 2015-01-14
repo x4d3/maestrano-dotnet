@@ -15,7 +15,10 @@ namespace Maestrano.Configuration
         /// <returns>A WebhooAccount configuration object</returns>
         public static WebhookAccount Load()
         {
-            return ConfigurationManager.GetSection("maestrano/webhook/account") as WebhookAccount;
+            var config = ConfigurationManager.GetSection("maestrano/webhook/account") as WebhookAccount;
+            if (config == null) config = new WebhookAccount();
+
+            return config;
         }
 
         /// <summary>

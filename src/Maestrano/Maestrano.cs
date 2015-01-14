@@ -17,12 +17,14 @@ namespace Maestrano
         public static Configuration.Sso Sso { get; private set; }
         public static Configuration.App App { get; private set; }
         public static Configuration.Api Api { get; private set; }
+        public static Configuration.Connec Connec { get; private set; }
         public static Configuration.Webhook Webhook { get; private set; }
 
         static MnoHelper()
         {
             App = Configuration.App.Load();
             Api = Configuration.Api.Load();
+            Connec = Configuration.Connec.Load();
             Webhook = Configuration.Webhook.Load();
             Sso = Configuration.Sso.Load();
         }

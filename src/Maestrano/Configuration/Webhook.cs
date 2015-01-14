@@ -9,6 +9,7 @@ namespace Maestrano.Configuration
     public class Webhook
     {
         public Configuration.WebhookAccount Account { get; private set; }
+        public Configuration.WebhookConnec Connec { get; private set; }
 
         /// <summary>
         /// Load Webhook configuration into a Webhook configuration object
@@ -22,6 +23,7 @@ namespace Maestrano.Configuration
         public Webhook()
         {
             Account = WebhookAccount.Load();
+            Connec = WebhookConnec.Load();
         }
     }
 }

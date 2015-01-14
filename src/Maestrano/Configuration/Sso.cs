@@ -18,7 +18,10 @@ namespace Maestrano.Configuration
         /// <returns>A Sso configuration object</returns>
         public static Sso Load()
         {
-            return ConfigurationManager.GetSection("maestrano/sso") as Sso;
+            var config = ConfigurationManager.GetSection("maestrano/sso") as Sso;
+            if (config == null) config = new Sso();
+
+            return config;
         }
 
         /// <summary>

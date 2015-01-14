@@ -770,11 +770,11 @@ client = new Maestrano.Connec.Client("cld-f7f5g4")
 
 // Retrieve all organizations (customers and suppliers) created in other applications
 var resp = client.Get('/organizations')
-resp.Content # returns the raw response "{\"organizations\":[ ... ]}"
+resp.Content // returns the raw response "{\"organizations\":[ ... ]}"
 
 // Retrieve a parsed response (assuming model Organization exists in your application)
 RestResponse<Organization> resp = client.Get<Organization>('/organizations')
-resp.Data # returns a native object
+resp.Data // returns a native object
 
 // Create a new organization
 var body = new Dictionary<string, Dictionary<string, string>>();
@@ -789,6 +789,9 @@ var update = new Dictionary<string, bool>();
 entity.Add("is_customer", true);
 updBody.Add("organizations", entity);
 client.Put('/organizations/e32303c1-5102-0132-661e-600308937d74', JsonConvert.SerializeObject(updBody))
+
+// If you prefer you can use Restsharp client directly (configured for Connec!™)
+var restClient = Maestrano.Connec.Client.RestClient()
 ```
 
 

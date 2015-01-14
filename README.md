@@ -790,8 +790,8 @@ entity.Add("is_customer", true);
 updBody.Add("organizations", entity);
 client.Put('/organizations/e32303c1-5102-0132-661e-600308937d74', JsonConvert.SerializeObject(updBody))
 
-// If you prefer you can use Restsharp client directly (configured for Connec!™)
-var restClient = Maestrano.Connec.Client.RestClient()
+// If you prefer you can also get a Restsharp client (configured for Connec!™)
+var restClient = Maestrano.Connec.Client.RestClient("cld-f7f5g4")
 ```
 
 

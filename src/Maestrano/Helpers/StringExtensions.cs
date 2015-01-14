@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Maestrano.Api
+namespace Maestrano.Helpers
 {
     internal static class StringExtensions
     {

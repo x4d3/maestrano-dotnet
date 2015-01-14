@@ -131,7 +131,7 @@ namespace Maestrano.Tests
             MnoHelper.Environment = "production";
             MnoHelper.Api.Id = "app-1";
             MnoHelper.Api.Key = "bla";
-            Console.WriteLine(MnoHelper.ToMetadata().ToString());
+
             Assert.IsNotNull(MnoHelper.ToMetadata());
         }
     }

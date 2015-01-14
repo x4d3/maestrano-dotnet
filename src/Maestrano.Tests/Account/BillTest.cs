@@ -18,7 +18,6 @@ namespace Maestrano.Tests.Account
         [TestMethod]
         public void All_ItShouldReturnTheListOfBills()
         {
-            Console.WriteLine(MnoHelper.Api.Id);
             var list = Bill.All();
             Assert.AreEqual("bill-1", list[0].Id);
             Assert.AreEqual("bill-2", list[1].Id);
@@ -27,7 +26,6 @@ namespace Maestrano.Tests.Account
         [TestMethod]
         public void Retrieve_ItShouldReturnASingleBill()
         {
-            Console.WriteLine(MnoHelper.Api.Id);
             var obj = Bill.Retrieve("bill-1");
             Assert.AreEqual("bill-1", obj.Id);
         }

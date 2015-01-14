@@ -37,9 +37,8 @@ namespace Maestrano.Tests.Connec
         [TestMethod]
         public void Get_onCollection_withType_itReturnsTheDeserializedResponse()
         {
-            Console.WriteLine(MnoHelper.Api.Id);
             RestResponse<Dictionary<string, string>> resp = this.client.Get<Dictionary<string, string>>("/organizations");
-            Console.WriteLine(resp.Data);
+
             Assert.IsNotNull(resp.Data["organizations"]);
         }
 

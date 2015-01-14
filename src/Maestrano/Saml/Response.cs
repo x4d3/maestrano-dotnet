@@ -55,7 +55,6 @@ namespace Maestrano.Saml
 
             // Decode the response and load the XML document
             System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
-            Console.WriteLine(enc.GetString(Convert.FromBase64String(base64Response)));
             LoadXml(enc.GetString(Convert.FromBase64String(base64Response)));
         }
 

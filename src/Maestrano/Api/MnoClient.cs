@@ -6,6 +6,7 @@ using System.Web.Script.Serialization;
 using RestSharp;
 using System.Collections.Specialized;
 using Newtonsoft.Json;
+using Maestrano.Helpers;
 
 namespace Maestrano.Api
 {

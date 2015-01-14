@@ -768,22 +768,22 @@ The Maestrano API provides a built-in client - based on Restsharp - for connecti
 // Pass the customer group id as argument
 client = new Maestrano.Connec.Client("cld-f7f5g4")
 
-# Retrieve all organizations (customers and suppliers) created in other applications
+// Retrieve all organizations (customers and suppliers) created in other applications
 var resp = client.Get('/organizations')
 resp.Content # returns the raw response "{\"organizations\":[ ... ]}"
 
-# Retrieve a parsed response (assuming model Organization exists in your application)
+// Retrieve a parsed response (assuming model Organization exists in your application)
 RestResponse<Organization> resp = client.Get<Organization>('/organizations')
 resp.Data # returns a native object
 
-# Create a new organization
+// Create a new organization
 var body = new Dictionary<string, Dictionary<string, string>>();
 var entity = new Dictionary<string, string>();
 entity.Add("name", "Jazz Corp Inc.");
 body.Add("organizations", entity);
 client.Post('/organizations', JsonConvert.SerializeObject(body))
 
-# Update an organization
+// Update an organization
 var updBody = new Dictionary<string, Dictionary<string, bool>>();
 var update = new Dictionary<string, bool>();
 entity.Add("is_customer", true);

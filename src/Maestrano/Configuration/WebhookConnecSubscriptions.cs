@@ -15,7 +15,7 @@ namespace Maestrano.Configuration
         /// <returns>A WebhooAccount configuration object</returns>
         public static WebhookConnecSubscriptions Load()
         {
-            var config = ConfigurationManager.GetSection("maestrano/webhook/connec-subscriptions") as WebhookConnecSubscriptions;
+            var config = ConfigurationManager.GetSection("maestrano/webhook/connecSubscriptions") as WebhookConnecSubscriptions;
             if (config == null) config = new WebhookConnecSubscriptions();
 
             return config;
@@ -74,7 +74,7 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to tax rates
         /// </summary>
-        [ConfigurationProperty("tax-rates", DefaultValue = false, IsRequired = false)]
+        [ConfigurationProperty("taxRates", DefaultValue = false, IsRequired = false)]
         public bool TaxRates
         {
             get { return (Boolean)this["tax-rates"]; }
@@ -84,7 +84,7 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to tax codes
         /// </summary>
-        [ConfigurationProperty("tax-codes", DefaultValue = false, IsRequired = false)]
+        [ConfigurationProperty("taxCodes", DefaultValue = false, IsRequired = false)]
         public bool TaxCodes
         {
             get { return (Boolean)this["tax-codes"]; }

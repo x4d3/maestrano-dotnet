@@ -209,6 +209,18 @@ The initializer should look like this:
         groupUsersPath="/maestrano/account/groups/:group_id/users/:id"
         />
        -->
+        
+      <!--
+      <connec
+        notificationsPath="/maestrano/account/groups/:id"
+        />
+       -->
+      
+      <!--
+      <connec
+        notificationsPath="/maestrano/account/groups/:id"
+        />
+       -->
     </webhook>
   </maestrano>
   

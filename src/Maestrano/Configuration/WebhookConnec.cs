@@ -29,7 +29,7 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("notifications-path", DefaultValue = "/maestrano/connec/notifications", IsRequired = false)]
+        [ConfigurationProperty("notificationsPath", DefaultValue = "/maestrano/connec/notifications", IsRequired = false)]
         public string NotificationsPath
         {
             get { return (String)this["notifications-path"]; }

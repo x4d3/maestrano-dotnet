@@ -29,9 +29,9 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
   * [Payment API](#payment-api)
     * [Bill](#bill)
     * [Recurring Bill](#recurring-bill)
-  * [User/Group API](#usergroup-api)
-    * [Bill](#user)
-    * [Recurring Bill](#group)
+  * [Membership API](#membership-api)
+    * [User](#user)
+    * [Group](#group)
 6. [Connec!™ Data Sharing](#connec-data-sharing)
   * [Making Requests](#making-requests)
   * [Webhook Notifications](#webhook-notifications)
@@ -751,7 +751,7 @@ var rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
 rec_bill.Cancel();
 ```
 
-### User/Group API
+### Membership API
  
 #### User
 A user is a member of a group having access to your application. Users are currently readonly.

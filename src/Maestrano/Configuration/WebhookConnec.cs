@@ -32,8 +32,8 @@ namespace Maestrano.Configuration
         [ConfigurationProperty("notificationsPath", DefaultValue = "/maestrano/connec/notifications", IsRequired = false)]
         public string NotificationsPath
         {
-            get { return (String)this["notifications-path"]; }
-            set { this["notifications-path"] = value; }
+            get { return (String)this["notificationsPath"]; }
+            set { this["notificationsPath"] = value; }
         }
     }
 }

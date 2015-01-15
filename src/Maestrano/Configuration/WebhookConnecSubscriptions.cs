@@ -77,8 +77,8 @@ namespace Maestrano.Configuration
         [ConfigurationProperty("taxRates", DefaultValue = false, IsRequired = false)]
         public bool TaxRates
         {
-            get { return (Boolean)this["tax-rates"]; }
-            set { this["tax-rates"] = value; }
+            get { return (Boolean)this["taxRates"]; }
+            set { this["taxRates"] = value; }
         }
 
         /// <summary>
@@ -87,8 +87,8 @@ namespace Maestrano.Configuration
         [ConfigurationProperty("taxCodes", DefaultValue = false, IsRequired = false)]
         public bool TaxCodes
         {
-            get { return (Boolean)this["tax-codes"]; }
-            set { this["tax-codes"] = value; }
+            get { return (Boolean)this["taxCodes"]; }
+            set { this["taxCodes"] = value; }
         }
 
         /// <summary>

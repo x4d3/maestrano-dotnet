@@ -72,7 +72,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Account\BillTest.cs" />
+    <Compile Include="Account\GroupTest.cs" />
     <Compile Include="Account\RecurringBillTest.cs" />
+    <Compile Include="Account\UserTest.cs" />
     <Compile Include="Connec\ClientTest.cs" />
     <Compile Include="MaestranoConfigurationTests.cs" />
     <Compile Include="Properties\Assembly.cs" />

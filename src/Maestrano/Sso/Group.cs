@@ -35,9 +35,18 @@ namespace Maestrano.Sso
             Uid = att["group_uid"];
             Name = att["group_name"];
             Email = att["group_email"];
-            FreeTrialEndAt = DateTime.Parse(att["group_end_free_trial"]);
             CompanyName = att["company_name"];
             HasCreditCard = att["group_has_credit_card"].Equals("true");
+
+            // Set Free trial in the past on failure
+            try 
+            {
+                FreeTrialEndAt = DateTime.Parse(att["group_end_free_trial"]);
+            }
+            catch
+            {
+                FreeTrialEndAt = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            }
 
             // Geo info
             Currency = att["group_currency"];

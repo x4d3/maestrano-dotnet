@@ -979,14 +979,14 @@ Maestrano.Account.Group
 
 ##### Actions
 
-List all users having access to your application
+List all groups having access to your application
 ```csharp
-var users = Maestrano.Account.User.All();
+var groups = Maestrano.Account.Group.All();
 ```
 
-Access a single user by id
+Access a single group by id
 ```csharp
-var user = Maestrano.Account.User.Retrieve("usr-f1d2s54");
+var user = Maestrano.Account.Group.Retrieve("usr-f1d2s54");
 ```
 
 

@@ -926,7 +926,7 @@ Maestrano.Account.Group
 <td>readonly</td>
 <td>String</td>
 <td>-</td>
-<td>AUD</td>
+<td>-</td>
 <td>The currency used by this Group in <a href="http://en.wikipedia.org/wiki/ISO_4217#Active_codes">ISO 4217 format</a> (3 letter code)</td>
 <tr>
 

@@ -510,7 +510,7 @@ Maestrano.Account.Bill
 <tr>
 <td><b>UpdatedAt</b></td>
 <td>readonly</td>
-<td>Time</td>
+<td>DateTime</td>
 <td>-</td>
 <td>-</td>
 <td>When the bill was last updated</td>
@@ -689,7 +689,7 @@ Maestrano.Account.RecurringBill
 <tr>
 <td><b>UpdatedAt</b></td>
 <td>readonly</td>
-<td>Time</td>
+<td>DateTime</td>
 <td>-</td>
 <td>-</td>
 <td>When the recurring bill was last updated</td>
@@ -745,6 +745,248 @@ Cancel a recurring bill
 ```csharp
 var rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
 rec_bill.Cancel();
+```
+
+### User/Group API
+ 
+#### User
+A user is a member of a group having access to your application. Users are currently readonly.
+
+```csharp
+Maestrano.Account.User
+```
+
+##### Attributes
+
+<table>
+<tr>
+<th>Field</th>
+<th>Mode</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+<tr>
+
+<tr>
+<td><b>Id</b></td>
+<td>readonly</td>
+<td>string</td>
+<td>-</td>
+<td>-</td>
+<td>The id of the user</td>
+<tr>
+
+<tr>
+<td><b>FirstName</b></td>
+<td>readonly</td>
+<td>string</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The user first name</td>
+<tr>
+
+<tr>
+<td><b>LastName</b></td>
+<td>readonly</td>
+<td>string</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The user last name</td>
+<tr>
+
+<tr>
+<td><b>Email</b></td>
+<td>readonly</td>
+<td>string</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The user real email address</td>
+<tr>
+
+<tr>
+<td><b>CompanyName</b></td>
+<td>readonly</td>
+<td>string</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The user company name as it was entered when they signed up. Nothing related to the user group name.</td>
+<tr>
+  
+<tr>
+<td><b>Country</b></td>
+<td>readonly</td>
+<td>string</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The country of the user in <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2 format</a> (2 letter code). E.g: 'US' for USA, 'AU' for Australia.</td>
+<tr>
+
+<tr>
+<td><b>CreatedAt</b></td>
+<td>readonly</td>
+<td>DateTime</td>
+<td>-</td>
+<td>-</td>
+<td>When the user was created</td>
+<tr>
+  
+<tr>
+<td><b>UpdatedAt</b></td>
+<td>readonly</td>
+<td>DateTime</td>
+<td>-</td>
+<td>-</td>
+<td>When the user was last updated</td>
+<tr>
+
+</table>
+
+##### Actions
+
+List all users having access to your application
+```csharp
+var users = Maestrano.Account.User.All();
+```
+
+Access a single user by id
+```csharp
+var user = Maestrano.Account.User.Retrieve("usr-f1d2s54");
+```
+
+#### Group
+A group represents a customer account and is composed of members (users) having access to your application. A group also represents a chargeable account (see Bill/RecurringBill). Typically you can remotely check if a group has entered a credit card on Maestrano.
+
+Groups are currently readonly.
+
+
+```csharp
+Maestrano.Account.Group
+```
+
+##### Attributes
+
+<table>
+<tr>
+<th>Field</th>
+<th>Mode</th>
+<th>Type</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+<tr>
+
+<tr>
+<td><b>Id</b></td>
+<td>readonly</td>
+<td>string</td>
+<td>-</td>
+<td>-</td>
+<td>The id of the group</td>
+<tr>
+
+<tr>
+<td><b>Name</b></td>
+<td>readonly</td>
+<td>string</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The group name</td>
+<tr>
+
+<tr>
+<td><b>Email</b></td>
+<td>readonly</td>
+<td>string</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The principal email address for this group (admin email address)</td>
+<tr>
+
+<tr>
+<td><b>HasCreditCard</b></td>
+<td>readonly</td>
+<td>bool</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>Whether the group has entered a credit card on Maestrano or not</td>
+<tr>
+  
+<tr>
+<td><b>FreeTrialEndAt</b></td>
+<td>readonly</td>
+<td>DateTime</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>When the group free trial will be finishing on Maestrano. You may optionally consider this date for your own free trial (optional)</td>
+<tr>
+
+<tr>
+<td><b>Currency</b></td>
+<td>readonly</td>
+<td>String</td>
+<td>-</td>
+<td>AUD</td>
+<td>The currency used by this Group in <a href="http://en.wikipedia.org/wiki/ISO_4217#Active_codes">ISO 4217 format</a> (3 letter code)</td>
+<tr>
+
+<tr>
+<td><b>Country</b></td>
+<td>readonly</td>
+<td>string</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The country of the group in <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166-1 alpha-2 format</a> (2 letter code). E.g: 'US' for USA, 'AU' for Australia.</td>
+<tr>
+
+<tr>
+<td><b>City</b></td>
+<td>readonly</td>
+<td>string</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The city of the group</td>
+<tr>
+
+<tr>
+<td><b>TimeZone</b></td>
+<td>readonly</td>
+<td>TimeZone</td>
+<td><b>-</b></td>
+<td>-</td>
+<td>The group timezone</td>
+<tr>
+
+<tr>
+<td><b>CreatedAt</b></td>
+<td>readonly</td>
+<td>DateTime</td>
+<td>-</td>
+<td>-</td>
+<td>When the group was created</td>
+<tr>
+
+<tr>
+<td><b>UpdatedAt</b></td>
+<td>readonly</td>
+<td>DateTime</td>
+<td>-</td>
+<td>-</td>
+<td>When the group was last updated</td>
+<tr>
+
+</table>
+
+##### Actions
+
+List all users having access to your application
+```csharp
+var users = Maestrano.Account.User.All();
+```
+
+Access a single user by id
+```csharp
+var user = Maestrano.Account.User.Retrieve("usr-f1d2s54");
 ```
 
 

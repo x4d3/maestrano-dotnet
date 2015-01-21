@@ -990,7 +990,7 @@ var groups = Maestrano.Account.Group.All();
 
 Access a single group by id
 ```csharp
-var user = Maestrano.Account.Group.Retrieve("usr-f1d2s54");
+var group = Maestrano.Account.Group.Retrieve("usr-f1d2s54");
 ```
 
 

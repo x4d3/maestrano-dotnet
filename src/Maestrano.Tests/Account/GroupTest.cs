@@ -9,7 +9,7 @@ namespace Maestrano.Tests.Account
     {
         public GroupTest()
         {
-            MnoHelper.Environment = "test";
+            MnoHelper.Environment = "development";
             MnoHelper.Api.Id = "app-1";
             MnoHelper.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
         }

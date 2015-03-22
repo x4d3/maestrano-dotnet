@@ -18,7 +18,7 @@ namespace Maestrano.Tests.Connec
 
         public ClientTest()
         {
-            MnoHelper.Environment = "test";
+            MnoHelper.Environment = "development";
             MnoHelper.Api.Id = "app-1";
             MnoHelper.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
             groupId = "cld-3";

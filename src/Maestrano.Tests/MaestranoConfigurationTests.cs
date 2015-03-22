@@ -9,7 +9,7 @@ namespace Maestrano.Tests
         [TestMethod]
         public void itHasTheRightDefaultTestConfig()
         {
-            MnoHelper.Environment = "test";
+            MnoHelper.Environment = "development";
 
             // App
             Assert.AreEqual("http://localhost", MnoHelper.App.Host);

@@ -33,7 +33,7 @@ namespace Maestrano.Configuration
                 var _host = (String)this["host"];
                 if (string.IsNullOrEmpty(_host))
                 {
-                    if (MnoHelper.Environment.Equals("production"))
+                    if (MnoHelper.isProduction())
                     {
                         return "https://api-connec.maestrano.com";
                     }
@@ -59,7 +59,7 @@ namespace Maestrano.Configuration
                 var _path = (String)this["base-path"];
                 if (string.IsNullOrEmpty(_path))
                 {
-                    if (MnoHelper.Environment.Equals("production"))
+                    if (MnoHelper.isProduction())
                     {
                         return "/api/v2";
                     }

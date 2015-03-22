@@ -124,6 +124,25 @@ namespace Maestrano
         }
 
         /// <summary>
+        /// Return whether the environment is production like (production or production sandbox)
+        /// </summary>
+        /// <returns>true for production and production-sandbox</returns>
+        public static Boolean isProduction()
+        {
+            return Environment.Equals("production", StringComparison.InvariantCultureIgnoreCase)
+                || Environment.Equals("production-sandbox", StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Return whether the environment is production like (production or production sandbox)
+        /// </summary>
+        /// <returns>true for production and production-sandbox</returns>
+        public static Boolean isDevelopment()
+        {
+            return !isProduction();
+        }
+
+        /// <summary>
         /// Return a json serializable object describing the current 
         /// Maestrano configuration. The metadata will be fetched remotely
         /// by Maestrano. Note that the metadata exclude any info

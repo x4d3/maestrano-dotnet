@@ -95,7 +95,7 @@ namespace Maestrano.Configuration
                 var _idp = (String)this["host"];
                 if (string.IsNullOrEmpty(_idp))
                 {
-                    if (MnoHelper.Environment.Equals("production"))
+                    if (MnoHelper.isProduction())
                     {
                         return "https://maestrano.com";
                     }

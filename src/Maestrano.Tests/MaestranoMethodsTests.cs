@@ -24,6 +24,32 @@ namespace Maestrano.Tests
         }
 
         [TestMethod]
+        public void isProduction_ItReturnsTheRightValues()
+        {
+            MnoHelper.Environment = "production";
+            Assert.IsTrue(MnoHelper.isProduction());
+            MnoHelper.Environment = "production-sandbox";
+            Assert.IsTrue(MnoHelper.isProduction());
+            MnoHelper.Environment = "development";
+            Assert.IsFalse(MnoHelper.isProduction());
+            MnoHelper.Environment = "test";
+            Assert.IsFalse(MnoHelper.isProduction());
+        }
+
+        [TestMethod]
+        public void isDevelopment_ItReturnsTheRightValues()
+        {
+            MnoHelper.Environment = "production";
+            Assert.IsFalse(MnoHelper.isDevelopment());
+            MnoHelper.Environment = "production-sandbox";
+            Assert.IsFalse(MnoHelper.isDevelopment());
+            MnoHelper.Environment = "development";
+            Assert.IsTrue(MnoHelper.isDevelopment());
+            MnoHelper.Environment = "test";
+            Assert.IsTrue(MnoHelper.isDevelopment());
+        }
+
+        [TestMethod]
         public void UnmaskUser_ItReturnsTheRightValues()
         {
             MnoHelper.Environment = "production";

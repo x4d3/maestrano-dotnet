@@ -93,18 +93,18 @@ The initializer should look like this:
       
       => environment
       The environment to connect to.
-      If set to 'production' then all Single Sign-On (SSO) and API requests
-      will be made to maestrano.com
-      If set to 'test' then requests will be made to api-sandbox.maestrano.io
-      The api-sandbox allows you to easily test integration scenarios.
-      More details on http://api-sandbox.maestrano.io
+      Accepted values are: 
+      - production: actual Maestrano production environment
+      - production-sandbox: production-like environment to use in your UAT/staging environment
+      - development: direct requests to our development sandbox (http://api-sandbox.maestrano.io)
+      - test: same as development (deprecated)
       
       => host
       This is your application host (e.g: my-app.com) which is ultimately
       used to redirect users to the right SAML url during SSO handshake.
     -->
     <app
-      environment="test"
+      environment="development"
       host="http://localhost"
       />
     

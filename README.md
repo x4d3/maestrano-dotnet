@@ -232,14 +232,31 @@ The initializer should look like this:
       This is the list of Connec!™ entities for which you want to
       receive updates
       <connecSubscriptions
-        accounts: false,
-        company: false,
-        invoices: false,
-        items: false,
-        organizations: false,
-        people: false,
-        taxCodes: false,
-        taxRates: false
+        accounts=false
+        company=false
+        invoices=false
+        salesOrders=false
+        purchaseOrders=false
+        quotes=false
+        payments=false
+        journals=false
+        items=false
+        organizations=false
+        people=false
+        projects=false
+        taxCodes=false
+        taxRates=false
+        events=false
+        venues=false
+        eventOrders=false
+        workLocations=false
+        payItems=false
+        employees=false
+        paySchedules=false
+        timeSheets=false
+        timeActivities=false
+        payRuns=false
+        payStubs=false
         />
        -->
       

@@ -78,6 +78,8 @@ The initializer should look like this:
         <section name="api" type="Maestrano.Configuration.Api, Maestrano" />
         <sectionGroup name="webhook">
           <section name="account" type="Maestrano.Configuration.WebhookAccount, Maestrano" />
+          <section name="connec" type="Maestrano.Configuration.WebhookConnec, Maestrano" />
+          <section name="connecSubscriptions" type="Maestrano.Configuration.WebhookConnecSubscriptions, Maestrano" />
         </sectionGroup>
       </sectionGroup>
       

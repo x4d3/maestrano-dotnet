@@ -94,12 +94,28 @@ namespace Maestrano.Tests
             Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Accounts);
             Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Company);
             Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Invoices);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.SalesOrders);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.PurchaseOrders);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Quotes);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Payments);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Journals);
             Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Items);
             Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Organizations);
-            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Payments);
             Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.People);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Projects);
             Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.TaxCodes);
             Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.TaxRates);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Events);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Venues);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.EventOrders);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.WorkLocations);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.PayItems);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.Employees);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.PaySchedules);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.TimeSheets);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.TimeActivities);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.PayRuns);
+            Assert.IsFalse(MnoHelper.Webhook.Connec.Subscriptions.PayStubs);
 
         }
 

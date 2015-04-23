@@ -109,15 +109,31 @@ namespace Maestrano.Tests
                     new JProperty("connec", new JObject(
                         new JProperty("notifications_path", MnoHelper.Webhook.Connec.NotificationsPath),
                         new JProperty("subscriptions", new JObject(
-                                new JProperty("accounts",MnoHelper.Webhook.Connec.Subscriptions.Accounts),
-                                new JProperty("company",  MnoHelper.Webhook.Connec.Subscriptions.Company),
+                                new JProperty("accounts", MnoHelper.Webhook.Connec.Subscriptions.Accounts),
+                                new JProperty("company", MnoHelper.Webhook.Connec.Subscriptions.Company),
                                 new JProperty("invoices", MnoHelper.Webhook.Connec.Subscriptions.Invoices),
+                                new JProperty("sales_orders", MnoHelper.Webhook.Connec.Subscriptions.SalesOrders),
+                                new JProperty("purchase_orders", MnoHelper.Webhook.Connec.Subscriptions.PurchaseOrders),
+                                new JProperty("quotes", MnoHelper.Webhook.Connec.Subscriptions.Quotes),
+                                new JProperty("payments", MnoHelper.Webhook.Connec.Subscriptions.Payments),
+                                new JProperty("journals", MnoHelper.Webhook.Connec.Subscriptions.Journals),
                                 new JProperty("items", MnoHelper.Webhook.Connec.Subscriptions.Items),
                                 new JProperty("organizations", MnoHelper.Webhook.Connec.Subscriptions.Organizations),
-                                new JProperty("payments", MnoHelper.Webhook.Connec.Subscriptions.Payments),
                                 new JProperty("people", MnoHelper.Webhook.Connec.Subscriptions.People),
+                                new JProperty("projects", MnoHelper.Webhook.Connec.Subscriptions.Projects),
                                 new JProperty("tax_codes", MnoHelper.Webhook.Connec.Subscriptions.TaxCodes),
-                                new JProperty("tax_rates", MnoHelper.Webhook.Connec.Subscriptions.TaxRates)
+                                new JProperty("tax_rates", MnoHelper.Webhook.Connec.Subscriptions.TaxRates),
+                                new JProperty("events", MnoHelper.Webhook.Connec.Subscriptions.Events),
+                                new JProperty("venues", MnoHelper.Webhook.Connec.Subscriptions.Venues),
+                                new JProperty("event_orders", MnoHelper.Webhook.Connec.Subscriptions.EventOrders),
+                                new JProperty("work_locations", MnoHelper.Webhook.Connec.Subscriptions.WorkLocations),
+                                new JProperty("pay_items", MnoHelper.Webhook.Connec.Subscriptions.PayItems),
+                                new JProperty("employees", MnoHelper.Webhook.Connec.Subscriptions.Employees),
+                                new JProperty("pay_schedules", MnoHelper.Webhook.Connec.Subscriptions.PaySchedules),
+                                new JProperty("time_sheets", MnoHelper.Webhook.Connec.Subscriptions.TimeSheets),
+                                new JProperty("time_activities", MnoHelper.Webhook.Connec.Subscriptions.TimeActivities),
+                                new JProperty("pay_runs", MnoHelper.Webhook.Connec.Subscriptions.PayRuns),
+                                new JProperty("pay_stubs", MnoHelper.Webhook.Connec.Subscriptions.PayStubs)
                             ))
                         ))))
             );

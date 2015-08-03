@@ -12,29 +12,31 @@ namespace Maestrano.Api
 {
     public static class MnoClient
     {
-        public static string ApiBase { get; set; }
-        public static string ApiHost { get; set; }
-        public static string ApiId { get; set; }
-        public static string ApiKey { get; private set; }
-
-        public static RestClient _client;
+        private static Dictionary<string, RestClient> clientDict;
 
         static MnoClient()
         {
-            ApiHost = MnoHelper.Api.Host;
-            ApiBase = MnoHelper.Api.Base;
-            ApiKey = MnoHelper.Api.Key;
-            ApiId = MnoHelper.Api.Id;
+        }
 
-            // silverlight friendly way to get current version
-            var assembly = Assembly.GetExecutingAssembly();
-            AssemblyName assemblyName = new AssemblyName(assembly.FullName);
-            var version = assemblyName.Version;
+        private static RestClient Client(string presetName = "maestrano")
+        {
+            if (!clientDict.ContainsKey(presetName))
+            {
+                var client = new RestClient();
 
-            _client = new RestClient();
-            _client.UserAgent = "maestrano-dotnet/" + version;
-            _client.Authenticator = new HttpBasicAuthenticator(ApiId, ApiKey);
-            _client.BaseUrl = String.Format("{0}{1}", ApiHost, ApiBase);
+                // silverlight friendly way to get current version
+                var assembly = Assembly.GetExecutingAssembly();
+                AssemblyName assemblyName = new AssemblyName(assembly.FullName);
+                var version = assemblyName.Version;
+
+                client = new RestClient();
+                client.UserAgent = "maestrano-dotnet/" + version;
+                client.Authenticator = new HttpBasicAuthenticator(MnoHelper.With(presetName).Api.Id, MnoHelper.With(presetName).Api.Key);
+                client.BaseUrl = String.Format("{0}{1}", MnoHelper.With(presetName).Api.Host, MnoHelper.With(presetName).Api.Base);
+                clientDict.Add(presetName, client);
+            }
+
+            return clientDict[presetName];
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace Maestrano.Api
         /// </summary>
         /// <typeparam name="T">The type of object to create and populate with the returned data.</typeparam>
         /// <param name="request">The RestRequest to execute (will use client credentials)</param>
-        public static T ProjectSingleObject<T>(RestRequest request)
+        public static T ProjectSingleObject<T>(RestRequest request, string presetName = "maestrano")
         {
             request.OnBeforeDeserialization = (resp) =>
             {
@@ -52,9 +54,10 @@ namespace Maestrano.Api
                     request.RootElement = "";
             };
 
-            var response = _client.Execute(request);
+            var response = Client(presetName).Execute(request);
             var respObj = JsonConvert.DeserializeObject<MnoObject<T>>(response.Content);
             respObj.ThrowIfErrors();
+            respObj.AssignPreset(presetName);
 
             return respObj.Data;
         }
@@ -64,7 +67,7 @@ namespace Maestrano.Api
         /// </summary>
         /// <typeparam name="T">The type of object to create and populate with the returned data.</typeparam>
         /// <param name="request">The RestRequest to execute (will use client credentials)</param>
-        public static List<T> ProcessList<T>(RestRequest request)
+        public static List<T> ProcessList<T>(RestRequest request, string presetName = "maestrano")
         {
             request.OnBeforeDeserialization = (resp) =>
             {
@@ -74,14 +77,15 @@ namespace Maestrano.Api
                 //    request.RootElement = "";
             };
 
-            var response = _client.Execute(request);
-            var respObj = JsonConvert.DeserializeObject<MnoObject<List<T>>>(response.Content);
+            var response = Client(presetName).Execute(request);
+            var respObj = JsonConvert.DeserializeObject<MnoCollection<T>>(response.Content);
             respObj.ThrowIfErrors();
+            respObj.AssignPreset(presetName);
 
             return respObj.Data;
         }
 
-        public static List<T> All<T>(string path, NameValueCollection filters = null)
+        public static List<T> All<T>(string path, NameValueCollection filters = null, string presetName = "maestrano")
         {
             var request = new RestRequest();
             request.Resource = path;
@@ -92,20 +96,20 @@ namespace Maestrano.Api
                 foreach (String k in filters.AllKeys)
                     request.AddParameter(k, filters[k]);
 
-            return MnoClient.ProcessList<T>(request);
+            return MnoClient.ProcessList<T>(request, presetName);
         }
 
-        public static T Retrieve<T>(string path, string resourceId)
+        public static T Retrieve<T>(string path, string resourceId, string presetName = "maestrano")
         {
             var request = new RestRequest();
             request.Resource = path;
             request.Method = Method.GET;
             request.AddUrlSegment("id", resourceId);
 
-            return MnoClient.ProjectSingleObject<T>(request);
+            return MnoClient.ProjectSingleObject<T>(request, presetName);
         }
 
-        public static T Create<T>(string path, NameValueCollection parameters)
+        public static T Create<T>(string path, NameValueCollection parameters, string presetName = "maestrano")
         {
             var request = new RestRequest();
             request.Resource = path;
@@ -114,17 +118,17 @@ namespace Maestrano.Api
             foreach (var k in parameters.AllKeys)
                 request.AddParameter(StringExtensions.ToSnakeCase(k), parameters[k]);
 
-            return MnoClient.ProjectSingleObject<T>(request);
+            return MnoClient.ProjectSingleObject<T>(request,presetName);
         }
 
-        public static T Delete<T>(string path, string resourceId)
+        public static T Delete<T>(string path, string resourceId, string presetName = "maestrano")
         {
             var request = new RestRequest();
             request.Resource = path;
             request.Method = Method.DELETE;
             request.AddUrlSegment("id", resourceId);
 
-            return MnoClient.ProjectSingleObject<T>(request);
+            return MnoClient.ProjectSingleObject<T>(request,presetName);
         }
     }
 }

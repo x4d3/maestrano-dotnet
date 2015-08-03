@@ -1,26 +1,27 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Maestrano.Api
 {
-    public class MnoObject<T>
+    public class MnoCollection<T>
     {
         public JObject Errors;
-        public T Data;
+        public List<T> Data;
         public string Success;
 
         public void AssignPreset(string presetName)
         {
-            System.Reflection.PropertyInfo propertyInfo = Data.GetType().GetProperty("PresetName");
-            // make sure object has the property
-            if (propertyInfo != null)
-            {
-                propertyInfo.SetValue(Data, presetName, null);
+            foreach(T item in Data) {
+                System.Reflection.PropertyInfo propertyInfo = Data.GetType().GetProperty("PresetName");
+                // make sure object has the property
+                if (propertyInfo != null)
+                {
+                    propertyInfo.SetValue(Data, presetName, null);
+                }
             }
         }
 
@@ -28,9 +29,10 @@ namespace Maestrano.Api
         {
             if (Errors.Count > 0)
             {
-                var error = (JProperty) Errors.First;
+                var error = (JProperty)Errors.First;
                 throw new ResourceException(error.Name + " " + error.Value);
             }
         }
     }
+
 }

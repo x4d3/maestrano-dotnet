@@ -68,6 +68,11 @@ namespace Maestrano.Account
             return IndexPath() + "/{id}";
         }
 
+        public static BillRequestor With(string presetName = "maestrano")
+        {
+            return new BillRequestor(presetName);
+        }
+
         public static List<Bill> All(NameValueCollection filters = null)
         {
             return (new BillRequestor()).All(filters);

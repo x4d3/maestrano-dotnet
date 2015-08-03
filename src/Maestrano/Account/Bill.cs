@@ -13,6 +13,8 @@ namespace Maestrano.Account
 
     public class Bill
     {
+        public string PresetName { get; set; }
+
         [JsonProperty("id")]
         public string Id { get; set; }
 
@@ -68,29 +70,25 @@ namespace Maestrano.Account
 
         public static List<Bill> All(NameValueCollection filters = null)
         {
-            return MnoClient.All<Bill>(IndexPath(), filters);
+            return (new BillRequestor()).All(filters);
         }
 
         public static Bill Retrieve(string billId)
         {
-            return MnoClient.Retrieve<Bill>(ResourcePath(), billId);
+            return (new BillRequestor()).Retrieve(billId);
         }
 
         public static Bill Create(String groupId, Int32 priceCents, String description, String currency = "AUD", Decimal? units = null, DateTime? periodStartedAt = null, DateTime? periodEndedAt = null)
         {
-            var att = new NameValueCollection();
-            att.Add("groupId", groupId);
-            att.Add("priceCents",priceCents.ToString());
-            att.Add("description",description);
-            att.Add("currency",currency);
-            if (units.HasValue)
-                att.Add("units", units.Value.ToString());
-            if (periodStartedAt.HasValue)
-                att.Add("periodStartedAt",periodStartedAt.Value.ToString("s"));
-            if (periodEndedAt.HasValue)
-                att.Add("periodEndedAt", periodEndedAt.Value.ToString("s"));
-
-            return MnoClient.Create<Bill>(IndexPath(),att);
+            return (new BillRequestor()).Create(
+                groupId: groupId, 
+                priceCents: priceCents, 
+                description:description, 
+                currency: currency,
+                units: units,
+                periodStartedAt: periodStartedAt,
+                periodEndedAt: periodEndedAt
+            );
         }
 
         public Boolean Cancel()

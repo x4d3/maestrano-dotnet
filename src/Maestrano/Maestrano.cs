@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
+using Maestrano.Configuration;
 
 namespace Maestrano
 {
@@ -13,7 +14,8 @@ namespace Maestrano
         // VERSION
         public static string Version { get { return "0.13.0"; } }
 
-        
+        private static Dictionary<string,Preset> presetDict;
+        private static Preset defaultPreset;
         public static Configuration.Sso Sso { get; private set; }
         public static Configuration.App App { get; private set; }
         public static Configuration.Api Api { get; private set; }
@@ -22,19 +24,40 @@ namespace Maestrano
 
         static MnoHelper()
         {
-            App = Configuration.App.Load();
-            Api = Configuration.Api.Load();
-            Connec = Configuration.Connec.Load();
-            Webhook = Configuration.Webhook.Load();
-            Sso = Configuration.Sso.Load();
+            // Initialize preset list
+            presetDict = new Dictionary<string, Preset>();
+
+            // Load "maestrano" preset by default
+            defaultPreset = new Preset("maestrano");
+            presetDict.Add("maestrano", defaultPreset);
+
+            // Emulate old configuration behaviour for backward 
+            // compatibility
+            App = defaultPreset.App;
+            Api = defaultPreset.Api;
+            Connec = defaultPreset.Connec;
+            Webhook = defaultPreset.Webhook;
+            Sso = defaultPreset.Sso;
+        }
+
+        /// <summary>
+        /// Scope the MnoHelper to a specific configuration preset
+        /// </summary>
+        public static Preset With(string presetName = "maestrano") {
+            if (!presetDict.ContainsKey(presetName))
+            {
+                presetDict.Add(presetName, new Preset(presetName));
+            }
+
+            return presetDict[presetName];
         }
 
         /// <summary>
         /// App environment: 'test' or 'production'
         /// </summary>
         public static string Environment {
-            get { return MnoHelper.App.Environment; }
-            set { MnoHelper.App.Environment = value; }
+            get { return defaultPreset.App.Environment; }
+            set { defaultPreset.App.Environment = value; }
         }
 
         /// <summary>
@@ -47,7 +70,7 @@ namespace Maestrano
         /// <returns>true if the authentication is successful, false otherwise</returns>
         public static bool Authenticate(string apiId, string apiKey)
         {
-            return Api.Id == apiId && Api.Key == apiKey;
+            return defaultPreset.Authenticate(apiId,apiKey);
         }
 
         /// <summary>
@@ -57,29 +80,7 @@ namespace Maestrano
         /// <returns>true if the authentication is successful, false otherwise</returns>
         public static bool Authenticate(System.Web.HttpRequest request)
         {
-            bool authenticated = false;
-            var authHeader = request.Headers["Authorization"];
-            if (authHeader != null)
-            {
-                var authHeaderVal = AuthenticationHeaderValue.Parse(authHeader);
-
-                // RFC 2617 sec 1.2, "scheme" name is case-insensitive
-                if (authHeaderVal.Scheme.Equals("basic",
-                        StringComparison.OrdinalIgnoreCase) &&
-                    authHeaderVal.Parameter != null)
-                {
-                    var credentials = authHeaderVal.Parameter;
-                    var encoding = Encoding.GetEncoding("iso-8859-1");
-                    credentials = encoding.GetString(Convert.FromBase64String(credentials));
-
-                    int separator = credentials.IndexOf(':');
-                    string apiId = credentials.Substring(0, separator);
-                    string apiKey = credentials.Substring(separator + 1);
-                    authenticated = Authenticate(apiId,apiKey);
-                }
-            }
-
-            return authenticated;
+            return defaultPreset.Authenticate(request);
         }
 
         /// <summary>
@@ -90,12 +91,7 @@ namespace Maestrano
         /// <returns>Real user uid</returns>
         public static string UnmaskUser(string userUid)
         {
-            string[] words = userUid.Split('.');
-            if (words.Length > 0)
-            {
-                return words.First();
-            }
-            return userUid;
+            return defaultPreset.UnmaskUser(userUid);
         }
 
         /// <summary>
@@ -111,16 +107,7 @@ namespace Maestrano
         /// </returns>
         public static string MaskUser(string userUid, string groupUid)
         {
-            string sanitizedUserUid = UnmaskUser(userUid);
-
-            if (Sso.CreationMode == "virtual")
-            {
-                return sanitizedUserUid + '.' + groupUid;
-            }
-            else
-            {
-                return sanitizedUserUid;
-            }
+            return defaultPreset.MaskUser(userUid, groupUid);
         }
 
         /// <summary>
@@ -129,8 +116,7 @@ namespace Maestrano
         /// <returns>true for production and production-sandbox</returns>
         public static Boolean isProduction()
         {
-            return Environment.Equals("production", StringComparison.InvariantCultureIgnoreCase)
-                || Environment.Equals("production-sandbox", StringComparison.InvariantCultureIgnoreCase);
+            return defaultPreset.isProduction();
         }
 
         /// <summary>
@@ -139,7 +125,7 @@ namespace Maestrano
         /// <returns>true for production and production-sandbox</returns>
         public static Boolean isDevelopment()
         {
-            return !isProduction();
+            return defaultPreset.isDevelopment();
         }
 
         /// <summary>
@@ -151,62 +137,7 @@ namespace Maestrano
         /// <returns>JObject which can be converted to JSON using ToString()</returns>
         public static JObject ToMetadata()
         {
-            JObject metadata = new JObject(
-                new JProperty("environment", MnoHelper.Environment),
-                new JProperty("app", new JObject(new JProperty("host", MnoHelper.App.Host))),
-                new JProperty("api", new JObject(
-                    new JProperty("id", MnoHelper.Api.Id),
-                    new JProperty("lang", MnoHelper.Api.Lang),
-                    new JProperty("version", MnoHelper.Api.Version),
-                    new JProperty("lang_version", MnoHelper.Api.LangVersion))),
-                new JProperty("sso", new JObject(
-                    new JProperty("enabled", MnoHelper.Sso.Enabled),
-                    new JProperty("creation_mode", MnoHelper.Sso.CreationMode),
-                    new JProperty("init_path", MnoHelper.Sso.InitPath),
-                    new JProperty("consume_path", MnoHelper.Sso.ConsumePath),
-                    new JProperty("idm", MnoHelper.Sso.Idm),
-                    new JProperty("idp", MnoHelper.Sso.Idp),
-                    new JProperty("name_id_format", MnoHelper.Sso.NameIdFormat),
-                    new JProperty("x509_fingerprint", MnoHelper.Sso.X509Fingerprint),
-                    new JProperty("x509_certificate", MnoHelper.Sso.X509Certificate))),
-                new JProperty("webhook", new JObject(
-                    new JProperty("account", new JObject(
-                        new JProperty("groups_path", MnoHelper.Webhook.Account.GroupsPath),
-                        new JProperty("group_users_path", MnoHelper.Webhook.Account.GroupUsersPath)
-                        )),
-                    new JProperty("connec", new JObject(
-                        new JProperty("notifications_path", MnoHelper.Webhook.Connec.NotificationsPath),
-                        new JProperty("subscriptions", new JObject(
-                                new JProperty("accounts", MnoHelper.Webhook.Connec.Subscriptions.Accounts),
-                                new JProperty("company", MnoHelper.Webhook.Connec.Subscriptions.Company),
-                                new JProperty("invoices", MnoHelper.Webhook.Connec.Subscriptions.Invoices),
-                                new JProperty("sales_orders", MnoHelper.Webhook.Connec.Subscriptions.SalesOrders),
-                                new JProperty("purchase_orders", MnoHelper.Webhook.Connec.Subscriptions.PurchaseOrders),
-                                new JProperty("quotes", MnoHelper.Webhook.Connec.Subscriptions.Quotes),
-                                new JProperty("payments", MnoHelper.Webhook.Connec.Subscriptions.Payments),
-                                new JProperty("journals", MnoHelper.Webhook.Connec.Subscriptions.Journals),
-                                new JProperty("items", MnoHelper.Webhook.Connec.Subscriptions.Items),
-                                new JProperty("organizations", MnoHelper.Webhook.Connec.Subscriptions.Organizations),
-                                new JProperty("people", MnoHelper.Webhook.Connec.Subscriptions.People),
-                                new JProperty("projects", MnoHelper.Webhook.Connec.Subscriptions.Projects),
-                                new JProperty("tax_codes", MnoHelper.Webhook.Connec.Subscriptions.TaxCodes),
-                                new JProperty("tax_rates", MnoHelper.Webhook.Connec.Subscriptions.TaxRates),
-                                new JProperty("events", MnoHelper.Webhook.Connec.Subscriptions.Events),
-                                new JProperty("venues", MnoHelper.Webhook.Connec.Subscriptions.Venues),
-                                new JProperty("event_orders", MnoHelper.Webhook.Connec.Subscriptions.EventOrders),
-                                new JProperty("work_locations", MnoHelper.Webhook.Connec.Subscriptions.WorkLocations),
-                                new JProperty("pay_items", MnoHelper.Webhook.Connec.Subscriptions.PayItems),
-                                new JProperty("employees", MnoHelper.Webhook.Connec.Subscriptions.Employees),
-                                new JProperty("pay_schedules", MnoHelper.Webhook.Connec.Subscriptions.PaySchedules),
-                                new JProperty("time_sheets", MnoHelper.Webhook.Connec.Subscriptions.TimeSheets),
-                                new JProperty("time_activities", MnoHelper.Webhook.Connec.Subscriptions.TimeActivities),
-                                new JProperty("pay_runs", MnoHelper.Webhook.Connec.Subscriptions.PayRuns),
-                                new JProperty("pay_stubs", MnoHelper.Webhook.Connec.Subscriptions.PayStubs)
-                            ))
-                        ))))
-            );
-
-            return metadata;
+            return defaultPreset.ToMetadata();
         }
     }
 }

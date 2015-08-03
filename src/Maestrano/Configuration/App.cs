@@ -13,9 +13,9 @@ namespace Maestrano.Configuration
         /// Load App configuration into a App configuration object
         /// </summary>
         /// <returns>A App configuration object</returns>
-        public static App Load()
+        public static App Load(string preset = "maestrano")
         {
-            var config = ConfigurationManager.GetSection("maestrano/app") as App;
+            var config = ConfigurationManager.GetSection(preset + "/app") as App;
             if (config == null) config = new App();
 
             return config;

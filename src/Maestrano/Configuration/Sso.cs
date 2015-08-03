@@ -16,9 +16,9 @@ namespace Maestrano.Configuration
         /// Load Sso configuration into a Sso configuration object
         /// </summary>
         /// <returns>A Sso configuration object</returns>
-        public static Sso Load()
+        public static Sso Load(string preset = "maestrano")
         {
-            var config = ConfigurationManager.GetSection("maestrano/sso") as Sso;
+            var config = ConfigurationManager.GetSection(preset + "/sso") as Sso;
             if (config == null) config = new Sso();
 
             return config;

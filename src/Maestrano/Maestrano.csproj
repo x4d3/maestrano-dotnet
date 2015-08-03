@@ -84,6 +84,7 @@
     <Compile Include="Configuration\Api.cs" />
     <Compile Include="Configuration\App.cs" />
     <Compile Include="Configuration\Connec.cs" />
+    <Compile Include="Configuration\Preset.cs" />
     <Compile Include="Configuration\Sso.cs" />
     <Compile Include="Configuration\Webhook.cs" />
     <Compile Include="Configuration\WebhookAccount.cs" />

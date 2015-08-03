@@ -17,9 +17,9 @@ namespace Maestrano.Configuration
         /// Load WebhookConnec configuration into a WebhookConnec configuration object
         /// </summary>
         /// <returns>A WebhooAccount configuration object</returns>
-        public static WebhookConnec Load()
+        public static WebhookConnec Load(string preset = "maestrano")
         {
-            var config =  ConfigurationManager.GetSection("maestrano/webhook/connec") as WebhookConnec;
+            var config =  ConfigurationManager.GetSection(preset + "/webhook/connec") as WebhookConnec;
             if (config == null) config = new WebhookConnec();
             config.Subscriptions = WebhookConnecSubscriptions.Load();
 

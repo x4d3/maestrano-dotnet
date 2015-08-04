@@ -79,6 +79,7 @@
     <Compile Include="Account\RecurringBill.cs" />
     <Compile Include="Account\User.cs" />
     <Compile Include="Api\MnoClient.cs" />
+    <Compile Include="Api\MnoCollection.cs" />
     <Compile Include="Api\MnoObject.cs" />
     <Compile Include="Api\ResourceException.cs" />
     <Compile Include="Configuration\Api.cs" />

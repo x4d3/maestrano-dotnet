@@ -33,9 +33,9 @@ namespace Maestrano.Connec
         /// <param name="presetName"></param>
         /// <returns></returns>
         public static Client With(string presetName = "maestrano") {
-            Client prepClient = new Client();
-            prepClient.presetName = presetName;
-            return prepClient;
+            Client scopedClient = new Client();
+            scopedClient.presetName = presetName;
+            return scopedClient;
         }
 
         /// <summary>

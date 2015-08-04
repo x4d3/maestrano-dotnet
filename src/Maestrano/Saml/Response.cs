@@ -11,17 +11,53 @@ namespace Maestrano.Saml
 {
     public class Response
     {
+        private string presetName;
         public XmlDocument XmlDoc { get; private set; }
         public Settings settings { get; private set; }
-        public Certificate Cert { get; private set; }
+        private Certificate certificate;
         protected NameValueCollection _cachedAttributes;
 
         public Response()
         {
-            settings = MnoHelper.Sso.SamlSettings();
-            string strCert = settings.IdpCertificate;
-            Cert = new Certificate();
-            Cert.LoadCertificate(strCert);
+            this.New();
+        }
+
+        /// <summary>
+        /// Scope a Request to a specific configuration preset
+        /// </summary>
+        /// <param name="presetName"></param>
+        /// <returns></returns>
+        public static Response With(string presetName = "maestrano")
+        {
+            Response scopedResponse = new Response();
+            scopedResponse.presetName = presetName;
+
+            return scopedResponse;
+        }
+
+        /// <summary>
+        /// Initialize a new Response
+        /// </summary>
+        /// <returns></returns>
+        public Response New()
+        {
+            certificate = null;
+            return this;
+        }
+
+        /// <summary>
+        /// Return the Certificate used by the Response object
+        /// </summary>
+        /// <returns></returns>
+        public Certificate SamlCertificate()
+        {
+            if (certificate == null)
+            {
+                certificate = new Certificate();
+                certificate.LoadCertificate(MnoHelper.With(presetName).Sso.SamlSettings().IdpCertificate);
+            }
+
+            return certificate;
         }
 
         /// <summary>
@@ -77,7 +113,7 @@ namespace Maestrano.Saml
             {
                 try {
                     signedXml.LoadXml((XmlElement)node);
-                    status = signedXml.CheckSignature(Cert.cert, true);
+                    status = signedXml.CheckSignature(SamlCertificate().cert, true);
                 } catch (System.FormatException){
                     status = false;
                 }

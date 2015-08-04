@@ -12,6 +12,8 @@ namespace Maestrano.Account
 {
     public class Group
     {
+        public string PresetName { get; set; }
+
         [JsonProperty("id")]
         public String Id {get;set;}
 
@@ -73,13 +75,23 @@ namespace Maestrano.Account
         }
 
         /// <summary>
+        /// Scope REST calls to specific configuration presets
+        /// </summary>
+        /// <param name="presetName">name of preset to use</param>
+        /// <returns></returns>
+        public static GroupRequestor With(string presetName = "maestrano")
+        {
+            return new GroupRequestor(presetName);
+        }
+
+        /// <summary>
         /// Retrieve all Maestrano groups having access to your application
         /// </summary>
         /// <param name="filters">User attributes to filter on</param>
         /// <returns></returns>
         public static List<Group> All(NameValueCollection filters = null)
         {
-            return MnoClient.All<Group>(IndexPath(), filters);
+            return (new GroupRequestor()).All(filters);
         }
 
         /// <summary>
@@ -89,7 +101,7 @@ namespace Maestrano.Account
         /// <returns></returns>
         public static Group Retrieve(string groupId)
         {
-            return MnoClient.Retrieve<Group>(ResourcePath(), groupId);
+            return (new GroupRequestor()).Retrieve(groupId);
         }
     }
 }

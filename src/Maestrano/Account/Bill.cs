@@ -68,6 +68,11 @@ namespace Maestrano.Account
             return IndexPath() + "/{id}";
         }
 
+        /// <summary>
+        /// Scope REST calls to specific configuration presets
+        /// </summary>
+        /// <param name="presetName">name of preset to use</param>
+        /// <returns></returns>
         public static BillRequestor With(string presetName = "maestrano")
         {
             return new BillRequestor(presetName);

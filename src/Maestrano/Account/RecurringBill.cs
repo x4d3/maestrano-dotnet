@@ -11,6 +11,8 @@ namespace Maestrano.Account
 {
     public class RecurringBill
     {
+        public string PresetName { get; set; }
+
         [JsonProperty("id")]
         public string Id { get; set; }
 
@@ -73,32 +75,38 @@ namespace Maestrano.Account
             return IndexPath() + "/{id}";
         }
 
+        /// <summary>
+        /// Scope REST calls to specific configuration presets
+        /// </summary>
+        /// <param name="presetName">name of preset to use</param>
+        /// <returns></returns>
+        public static RecurringBillRequestor With(string presetName = "maestrano")
+        {
+            return new RecurringBillRequestor(presetName);
+        }
+
         public static List<RecurringBill> All(NameValueCollection filters = null)
         {
-            return MnoClient.All<RecurringBill>(IndexPath(), filters);
+            return (new RecurringBillRequestor()).All(filters);
         }
 
         public static RecurringBill Retrieve(string billId)
         {
-            return MnoClient.Retrieve<RecurringBill>(ResourcePath(), billId);
+            return (new RecurringBillRequestor()).Retrieve(billId);
         }
 
         public static RecurringBill Create(String groupId, Int32 priceCents, String description, String currency = "AUD", Int32 initialCents = 0, Int16? frequency = null, Int16? cycles = null, DateTime? startDate = null)
         {
-            var att = new NameValueCollection();
-            att.Add("groupId", groupId);
-            att.Add("priceCents", priceCents.ToString());
-            att.Add("description", description);
-            att.Add("currency", currency);
-            att.Add("initialCents", initialCents.ToString());
-            if (frequency.HasValue)
-                att.Add("frequency", frequency.Value.ToString());
-            if (cycles.HasValue)
-                att.Add("cycles", cycles.Value.ToString());
-            if (startDate.HasValue)
-                att.Add("startDate", startDate.Value.ToString("s"));
-
-            return MnoClient.Create<RecurringBill>(IndexPath(), att);
+            return (new RecurringBillRequestor()).Create(
+                groupId: groupId,
+                priceCents: priceCents,
+                description: description,
+                currency: currency,
+                initialCents: initialCents,
+                frequency: frequency,
+                cycles: cycles,
+                startDate: startDate
+                );
         }
 
         public Boolean Cancel()

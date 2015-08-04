@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Account
 {
-    class RecurringBillRequestor
+    public class RecurringBillRequestor
     {
 
         private string presetName;

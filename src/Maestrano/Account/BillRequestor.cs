@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Account
 {
-    class BillRequestor
+    public class BillRequestor
     {
         private string presetName;
 

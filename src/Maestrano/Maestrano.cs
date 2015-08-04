@@ -44,6 +44,11 @@ namespace Maestrano
         /// Scope the MnoHelper to a specific configuration preset
         /// </summary>
         public static Preset With(string presetName = "maestrano") {
+            if (presetName == null)
+            {
+                presetName = "maestrano";
+            }
+            
             if (!presetDict.ContainsKey(presetName))
             {
                 presetDict.Add(presetName, new Preset(presetName));

@@ -16,6 +16,7 @@ namespace Maestrano.Api
 
         static MnoClient()
         {
+            clientDict = new Dictionary<string, RestClient>();
         }
 
         private static RestClient Client(string presetName = "maestrano")

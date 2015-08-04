@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Account
 {
-    class UserRequestor
+    public class UserRequestor
     {
 
         private string presetName;

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Account
 {
-    class GroupRequestor
+    public class GroupRequestor
     {
         private string presetName;
 

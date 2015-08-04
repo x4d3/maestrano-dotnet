@@ -16,7 +16,7 @@ namespace Maestrano.Tests.Saml
 
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");
             Response resp = new Response();
-            resp.Cert.LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
+            resp.SamlCertificate().LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);
 
             Assert.IsFalse(resp.IsValid());
@@ -32,7 +32,7 @@ namespace Maestrano.Tests.Saml
             // Prepare response
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response2.xml.base64");
             Response resp = new Response();
-            resp.Cert.LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
+            resp.SamlCertificate().LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);
 
             Assert.IsFalse(resp.IsValid());
@@ -47,7 +47,7 @@ namespace Maestrano.Tests.Saml
             // Prepare response
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response4.xml.base64");
             Response resp = new Response();
-            resp.Cert.LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
+            resp.SamlCertificate().LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);
 
             Assert.IsTrue(resp.IsValid());
@@ -63,7 +63,7 @@ namespace Maestrano.Tests.Saml
             // Prepare response
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");
             Response resp = new Response();
-            resp.Cert.LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
+            resp.SamlCertificate().LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);
 
             Assert.AreEqual("demo", resp.GetAttributes().Get("uid"));

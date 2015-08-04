@@ -16,11 +16,11 @@ namespace Maestrano.Api
         public void AssignPreset(string presetName)
         {
             foreach(T item in Data) {
-                System.Reflection.PropertyInfo propertyInfo = Data.GetType().GetProperty("PresetName");
+                System.Reflection.PropertyInfo propertyInfo = item.GetType().GetProperty("PresetName");
                 // make sure object has the property
                 if (propertyInfo != null)
                 {
-                    propertyInfo.SetValue(Data, presetName, null);
+                    propertyInfo.SetValue(item, presetName, null);
                 }
             }
         }

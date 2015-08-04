@@ -89,9 +89,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Account\BillWithPresetTest.cs" />
     <Compile Include="Account\BillTest.cs" />
+    <Compile Include="Account\GroupWithPresetTest.cs" />
+    <Compile Include="Account\RecurringBillWithPresetTest.cs" />
     <Compile Include="Account\RecurringBillTest.cs" />
     <Compile Include="Account\GroupTest.cs" />
+    <Compile Include="Account\UserWithPresetTest.cs" />
     <Compile Include="Account\UserTest.cs" />
     <Compile Include="Connec\ClientTest.cs" />
     <Compile Include="MaestranoConfigurationWithPresetTests.cs" />

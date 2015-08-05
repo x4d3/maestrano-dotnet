@@ -5,9 +5,9 @@
 </p>
 
 Maestrano Cloud Integration is currently in closed beta. Want to know more? Send us an email to <contact@maestrano.com>.
-  
-  
-  
+
+
+
 - - -
 
 1.  [Getting Setup](#getting-setup)
@@ -59,19 +59,23 @@ PM> Install-Package Maestrano
 
 ### Configuration
 The best way to configure the Maestrano api is to add a section in your config file (Web.config) as
-shown below
+shown below.
 
-The initializer should look like this:
+You can add configuration presets by putting additional "sectionGroup" blocks in your Web.config. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
+
+If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by scoping method calls to a specific configuration preset.
+
+Your Web.config may look like this:
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-  
+
   ...
-  
+
     <configSections>
-    
+
       ...
-      
+
       <sectionGroup name="maestrano">
         <section name="app" type="Maestrano.Configuration.App, Maestrano" />
         <section name="sso" type="Maestrano.Configuration.Sso, Maestrano" />
@@ -82,25 +86,25 @@ The initializer should look like this:
           <section name="connecSubscriptions" type="Maestrano.Configuration.WebhookConnecSubscriptions, Maestrano" />
         </sectionGroup>
       </sectionGroup>
-      
+
       ...
-      
+
     </configSections>
-  
+
   ...
-  
+
   <maestrano>
     <!--
       ===> App Configuration
-      
+
       => environment
       The environment to connect to.
-      Accepted values are: 
+      Accepted values are:
       - production: actual Maestrano production environment
       - production-sandbox: production-like environment to use in your UAT/staging environment
       - development: direct requests to our development sandbox (http://api-sandbox.maestrano.io)
       - test: same as development (deprecated)
-      
+
       => host
       This is your application host (e.g: my-app.com) which is ultimately
       used to redirect users to the right SAML url during SSO handshake.
@@ -109,41 +113,41 @@ The initializer should look like this:
       environment="development"
       host="http://localhost"
       />
-    
+
     <!--
       ===> Api Configuration
-    
+
       => id and key
       Your application App ID and API key which you can retrieve on http://maestrano.com
       via your cloud partner dashboard.
-      For testing you can retrieve/generate an api.id and api.key from the API Sandbox directly 
+      For testing you can retrieve/generate an api.id and api.key from the API Sandbox directly
       on http://api-sandbox.maestrano.io
     -->
     <api
       id="prod_or_sandbox_app_id"
-      key="prod_or_sandbox_api_key" 
+      key="prod_or_sandbox_api_key"
       />
-      
+
     <!--
       ===> SSO Configuration
-    
+
       => enabled
       Enable/Disable single sign-on. When troubleshooting authentication issues
       you might want to disable SSO temporarily
-      
+
       => sloEnabled
       Enable/Disable single logout. When troubleshooting authentication issues
       you might want to disable SLO temporarily.
       If set to false then Maestrano.Sso.Session#IsValid - which should be
       used in a controller action filter to check user session - always return true
-      
+
       => idm
       By default we consider that the domain managing user identification
       is the same as your application host (see above config.app.host parameter)
       If you have a dedicated domain managing user identification and therefore
       responsible for the single sign-on handshake (e.g: https://idp.my-app.com)
       then you can specify it below
-      
+
       => initPath
       This is your application path to the SAML endpoint that allows users to
       initialize SSO authentication. Upon reaching this endpoint users your
@@ -151,12 +155,12 @@ The initializer should look like this:
       to Maestrano. Maestrano will then authenticate and authorize the user. Upon
       authorization the user gets redirected to your application consumer endpoint
       (see below) for initial setup and/or login.
-      
+
       => consumePath
       This is your application path to the SAML endpoint that allows users to
       finalize SSO authentication. During the 'consume' action your application
       sets users (and associated group) up and/or log them in.
-      
+
       => creationMode
       !IMPORTANT
       On Maestrano users can take several "instances" of your service. You can consider
@@ -164,24 +168,24 @@ The initializer should look like this:
       equivalent to a 'customer account' in a commercial world). When users login to
       your application via single sign-on they actually login via a specific group which
       is then supposed to determine which data they have access to inside your application.
-  
+
       E.g: John and Jack are part of group 1. They should see the same data when they login to
-      your application (employee info, analytics, sales etc..). John is also part of group 2 
+      your application (employee info, analytics, sales etc..). John is also part of group 2
       but not Jack. Therefore only John should be able to see the data belonging to group 2.
-  
+
       In most application this is done via collaboration/sharing/permission groups which is
-      why a group is required to be created when a new user logs in via a new group (and 
-      also for billing purpose - you charge a group, not a user directly). 
-  
+      why a group is required to be created when a new user logs in via a new group (and
+      also for billing purpose - you charge a group, not a user directly).
+
       - mode: 'real'
       In an ideal world a user should be able to belong to several groups in your application.
       In this case you would set the 'sso.creation_mode' to 'real' which means that the uid
       and email we pass to you are the actual user email and maestrano universal id.
-  
+
       - mode: 'virtual'
       Now let's say that due to technical constraints your application cannot authorize a user
       to belong to several groups. Well next time John logs in via a different group there will
-      be a problem: the user already exists (based on uid or email) and cannot be assigned 
+      be a problem: the user already exists (based on uid or email) and cannot be assigned
       to a second group. To fix this you can set the 'sso.creation_mode' to 'virtual'. In this
       mode users get assigned a truly unique uid and email across groups. So next time John logs
       in a whole new user account can be created for him without any validation problem. In this
@@ -197,17 +201,17 @@ The initializer should look like this:
       creationMode="virtual"
       />
      -->
-    
+
     <!--
       ===> Account Webhooks
       Here you can configure various notification endpoints related to service cancellation  
       (account/user deletion) as well as Connec!™ entities updates.
-      
+
     -->
     <webhook>
       <!--
       Single sign on has been setup into your app and Maestrano users are now able
-      to use your service. Great! Wait what happens when a business (group) decides to 
+      to use your service. Great! Wait what happens when a business (group) decides to
       stop using your service? Also what happens when a user gets removed from a business?
       Well the endpoints below are for Maestrano to be able to notify you of such
       events.
@@ -220,14 +224,14 @@ The initializer should look like this:
         groupUsersPath="/maestrano/account/groups/:group_id/users/:id"
         />
        -->
-      
+
       <!--
       This is the path were Connec!™ should post notifications
       <connec
         notificationsPath="/maestrano/connec/notifications"
         />
        -->
-      
+
       <!--
       This is the list of Connec!™ entities for which you want to
       receive updates
@@ -259,13 +263,66 @@ The initializer should look like this:
         payStubs=false
         />
        -->
-      
+
     </webhook>
   </maestrano>
-  
+
   ...
-  
+
 </configuration>
+
+
+Your Web.config in a multi-tenant context may look like this:
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+
+  ...
+
+    <configSections>
+
+      ...
+
+      <sectionGroup name="maestrano">
+        <section name="app" type="Maestrano.Configuration.App, Maestrano" />
+        <section name="sso" type="Maestrano.Configuration.Sso, Maestrano" />
+        <section name="api" type="Maestrano.Configuration.Api, Maestrano" />
+        <sectionGroup name="webhook">
+          <section name="account" type="Maestrano.Configuration.WebhookAccount, Maestrano" />
+          <section name="connec" type="Maestrano.Configuration.WebhookConnec, Maestrano" />
+          <section name="connecSubscriptions" type="Maestrano.Configuration.WebhookConnecSubscriptions, Maestrano" />
+        </sectionGroup>
+      </sectionGroup>
+
+      <sectionGroup name="anotherTenant">
+        <section name="app" type="Maestrano.Configuration.App, Maestrano" />
+        <section name="sso" type="Maestrano.Configuration.Sso, Maestrano" />
+        <section name="api" type="Maestrano.Configuration.Api, Maestrano" />
+        <sectionGroup name="webhook">
+          <section name="account" type="Maestrano.Configuration.WebhookAccount, Maestrano" />
+          <section name="connec" type="Maestrano.Configuration.WebhookConnec, Maestrano" />
+          <section name="connecSubscriptions" type="Maestrano.Configuration.WebhookConnecSubscriptions, Maestrano" />
+        </sectionGroup>
+      </sectionGroup>
+
+      ...
+
+    </configSections>
+
+  ...
+
+  <maestrano>
+    ... Configuration for "maestrano" ...
+  </maestrano>
+
+  <anotherTenant>
+    ... Configuration for "anotherTenant" ...
+  </anotherTenant>
+
+  ...
+
+</configuration>
+
 ```
 
 ### Metadata Endpoint
@@ -286,20 +343,27 @@ using Maestrano;
 
 ...
 
-public partial class _Default : System.Web.UI.Page 
+public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
         Response.ContentType = "text/json";
-      
+
         // Authentication
         var request = HttpContext.Current.Request;
-        
-        if (MnoHelper.Authenticate(request)) 
+
+        // Authenticate
+        var authenticated = MnoHelper.With("somePreset").Authenticate(request)
+        // Using a specific Configuration Preset
+        // var authenticated = MnoHelper.With("somePreset").Authenticate(request);
+
+        if (authenticated)
         {
           Response.Write(MnoHelper.ToMetadata().ToString());
-        } 
-        else 
+          // Using a specific Configuration Preset
+          // Response.Write(MnoHelper.With("somePreset").ToMetadata().ToString());
+        }
+        else
         {
           Response.Write("Failed");
         }
@@ -330,13 +394,16 @@ using Maestrano;
 
 ...
 
-public partial class _Default : System.Web.UI.Page 
+public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
         var request = HttpContext.Current.Request;
-        
+
         var ssoUrl = MnoHelper.Sso.BuildRequest(request.QueryString).RedirectUrl();
+        // Using a specific Configuration Preset
+        // var ssoUrl = MnoHelper.With("somePreset").Sso.BuildRequest(request.QueryString).RedirectUrl();
+
         Response.Redirect(ssoUrl);
     }
 }
@@ -348,33 +415,41 @@ using Maestrano;
 
 ...
 
-public partial class _Default : System.Web.UI.Page 
+public partial class _Default : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
         var request = HttpContext.Current.Request;
-        
+
         // Get SAML response, build maestrano user and group objects
-        var samlResp = MnoHelper.Sso.BuildResponse(request.Params["SAMLResponse"])
-        
+        var samlResp = MnoHelper.Sso.BuildResponse(request.Params["SAMLResponse"]);
+        // Using a specific Configuration Preset
+        // var ssoUrl = MnoHelper.With("somePreset").Sso.BuildResponse(request.Params["SAMLResponse"]);
+
         // Check response validity
         if (samlResp.IsValid()) {
           var mnoUser = new Maestrano.Sso.User(samlResp);
           var mnoGroup = new Maestrano.Sso.Group(samlResp);
-        
+          // Using a specific Configuration Preset
+          // var mnoUser = Maestrano.Sso.User.With("somePreset").New(samlResp);
+          // var mnoGroup = Maestrano.Sso.Group.With("somePreset").New(samlResp);
+
+
           // Build/Map local entities
           var localGroup = MyGroup.FindOrCreateForMaestrano(mnoGroup);
           var localUser = MyUser.FindOrCreateForMaestrano(mnoUser);
-        
+
           // Add localUser to the localGroup if not already part
           // of it
           if (!localGroup.HasMember(localUser)){
-            localGroup.AddMember(localUser)
+            localGroup.AddMember(localUser);
           }
-        
+
           // Set Maestrano session
-          MnoHelper.Sso.SetSession(Session,mnoUser)
-        
+          MnoHelper.Sso.SetSession(Session,mnoUser);
+          // Using a specific Configuration Preset
+          // MnoHelper.With("somePreset").Sso.SetSession(Session,mnoUser)
+
           Response.Redirect("/");
         } else {
           Response.Write("Invalid SAML Response");
@@ -389,9 +464,13 @@ If you want your users to benefit from single logout then you should define the 
 
 ```csharp
 var mnoSession = new Maestrano.Sso.Session(httpContext.Session);
+// Using a specific Configuration Preset
+// var mnoSession = Maestrano.Sso.Session.With("somePreset").New(httpContext.Session);
 
 if (!mnoSession.IsValid()) {
   Response.Redirect(MnoHelper.Sso.InitUrl());
+  // Using a specific Configuration Preset
+  // Response.Redirect(MnoHelper.With("somePreset").Sso.InitUrl());
 }
 ```
 
@@ -429,13 +508,17 @@ public HttpResponseMessage DisableGroup(string groupId)
 {
     // Authentication
     var request = HttpContext.Current.Request;
-    
-    if (MnoHelper.Authenticate(request)) {
+    var authenticated = MnoHelper.With("somePreset").Authenticate(request);
+    // Using a specific Configuration Preset
+    // var authenticated = MnoHelper.With("somePreset").Authenticate(request);
+
+
+    if (authenticated) {
       var mnoGroup = MyGroupModel.findByMnoId(groupId);
       mnoGroup.disableAccess();
     }
-    
-    
+
+
     ...
 }
 ```
@@ -454,12 +537,15 @@ public HttpResponseMessage DisableGroup(string groupId, string userId)
 {
     // Authentication
     var request = HttpContext.Current.Request;
-    
-    if (MnoHelper.Authenticate(request)) {
+    var authenticated = MnoHelper.With("somePreset").Authenticate(request);
+    // Using a specific Configuration Preset
+    // var authenticated = MnoHelper.With("somePreset").Authenticate(request);
+
+    if (authenticated) {
       var mnoGroup = MyGroupModel.findByMnoId(mnoId);
       mnoGroup.removeUserById(userId);
     }
-    
+
     ...
 }
 ```
@@ -468,7 +554,7 @@ public HttpResponseMessage DisableGroup(string groupId, string userId)
 The maestrano package also provides bindings to its REST API allowing you to access, create, update or delete various entities under your account (e.g: billing).
 
 ### Payment API
- 
+
 #### Bill
 A bill represents a single charge on a given group.
 
@@ -532,7 +618,7 @@ Maestrano.Account.Bill
 <td>-</td>
 <td>When the the bill was created</td>
 <tr>
-  
+
 <tr>
 <td><b>UpdatedAt</b></td>
 <td>readonly</td>
@@ -594,22 +680,31 @@ Maestrano.Account.Bill
 List all bills you have created and iterate through the list
 ```csharp
 var bills = Maestrano.Account.Bill.All();
+// Using a specific Configuration Preset
+// var bills = Maestrano.Account.Bill.With("somePreset").All();
 ```
 
 Access a single bill by id
 ```csharp
 var bill = Maestrano.Account.Bill.Retrieve("bill-f1d2s54");
+// Using a specific Configuration Preset
+// var bill = Maestrano.Account.Bill.With("somePreset").Retrieve("bill-f1d2s54");
 ```
 
 Create a new bill
 ```csharp
 var bill = Maestrano.Account.Bill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase");
+// Using a specific Configuration Preset
+// var bill = Maestrano.Account.Bill.With("somePreset").Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase");
 ```
 
 Cancel a bill
 ```csharp
 var bill = Maestrano.Account.Bill.Retrieve("bill-f1d2s54");
 bill.Cancel();
+// Using a specific Configuration Preset
+// var bill = Maestrano.Account.Bill.With("somePreset").Retrieve("bill-f1d2s54");
+// bill.Cancel();
 ```
 
 #### Recurring Bill
@@ -711,7 +806,7 @@ Maestrano.Account.RecurringBill
 <td>-</td>
 <td>When the the bill was created</td>
 <tr>
-  
+
 <tr>
 <td><b>UpdatedAt</b></td>
 <td>readonly</td>
@@ -738,7 +833,7 @@ Maestrano.Account.RecurringBill
 <td>-</td>
 <td>Status of the recurring bill. Either 'submitted', 'active', 'expired' or 'cancelled'.</td>
 <tr>
-  
+
 <tr>
 <td><b>InitialCents</b></td>
 <td>read/write</td>
@@ -755,26 +850,35 @@ Maestrano.Account.RecurringBill
 List all recurring bills you have created and iterate through the list
 ```csharp
 var rec_bills = Maestrano.Account.RecurringBill.All();
+// Using a specific Configuration Preset
+// var rec_bills = Maestrano.Account.RecurringBill.With("somePreset").All();
 ```
 
 Access a single recurring bill by id
 ```csharp
 var rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
+// Using a specific Configuration Preset
+// var rec_bill = Maestrano.Account.RecurringBill.With("somePreset").Retrieve("rbill-f1d2s54");
 ```
 
 Create a new recurring bill
 ```csharp
 var rec_bill = Maestrano.Account.RecurringBill.Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase", period: 'Month', startDate: DateTime.UtcNow);
+// Using a specific Configuration Preset
+// var rec_bill = Maestrano.Account.RecurringBill.With("somePreset").Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase", period: 'Month', startDate: DateTime.UtcNow);
 ```
 
 Cancel a recurring bill
 ```csharp
 var rec_bill = Maestrano.Account.RecurringBill.Retrieve("rbill-f1d2s54");
 rec_bill.Cancel();
+// Using a specific Configuration Preset
+// var rec_bill = Maestrano.Account.RecurringBill.With("somePreset").Retrieve("rbill-f1d2s54");
+// rec_bill.Cancel();
 ```
 
 ### Membership API
- 
+
 #### User
 A user is a member of a group having access to your application. Users are currently readonly.
 
@@ -838,7 +942,7 @@ Maestrano.Account.User
 <td>-</td>
 <td>The user company name as it was entered when they signed up. Nothing related to the user group name.</td>
 <tr>
-  
+
 <tr>
 <td><b>Country</b></td>
 <td>readonly</td>
@@ -856,7 +960,7 @@ Maestrano.Account.User
 <td>-</td>
 <td>When the user was created</td>
 <tr>
-  
+
 <tr>
 <td><b>UpdatedAt</b></td>
 <td>readonly</td>
@@ -873,11 +977,15 @@ Maestrano.Account.User
 List all users having access to your application
 ```csharp
 var users = Maestrano.Account.User.All();
+// Using a specific Configuration Preset
+// var users = Maestrano.Account.User.With("somePreset").All();
 ```
 
 Access a single user by id
 ```csharp
 var user = Maestrano.Account.User.Retrieve("usr-f1d2s54");
+// Using a specific Configuration Preset
+// var user = Maestrano.Account.User.With("somePreset").Retrieve("usr-f1d2s54");
 ```
 
 #### Group
@@ -937,7 +1045,7 @@ Maestrano.Account.Group
 <td>-</td>
 <td>Whether the group has entered a credit card on Maestrano or not</td>
 <tr>
-  
+
 <tr>
 <td><b>FreeTrialEndAt</b></td>
 <td>readonly</td>
@@ -1008,11 +1116,15 @@ Maestrano.Account.Group
 List all groups having access to your application
 ```csharp
 var groups = Maestrano.Account.Group.All();
+// Using a specific Configuration Preset
+// var groups = Maestrano.Account.Group.With("somePreset").All();
 ```
 
 Access a single group by id
 ```csharp
 var group = Maestrano.Account.Group.Retrieve("usr-f1d2s54");
+// Using a specific Configuration Preset
+// var groups = Maestrano.Account.Group.With("somePreset").Retrieve("usr-f1d2s54");
 ```
 
 
@@ -1021,7 +1133,7 @@ Maestrano offers the capability to share actual business data between applicatio
 
 The platform exposes a set of RESTful JSON APIs allowing your application to receive data generated by other applications and update data in other applications as well!
 
-Connec!™ also offers the ability to create webhooks on your side to get automatically notified of changes happening in other systems. 
+Connec!™ also offers the ability to create webhooks on your side to get automatically notified of changes happening in other systems.
 
 Connec!™ enables seamless data sharing between the Maestrano applications as well as popular apps such as QuickBooks and Xero. One connector - tens of integrations!
 
@@ -1034,14 +1146,16 @@ The Maestrano API provides a built-in client - based on Restsharp - for connecti
 
 ```csharp
 // Pass the customer group id as argument
-client = new Maestrano.Connec.Client("cld-f7f5g4")
+var client = new Maestrano.Connec.Client("cld-f7f5g4");
+// Using a specific Configuration Preset
+// var client = Maestrano.Connec.Client.With("somePreset").New("cld-f7f5g4");
 
 // Retrieve all organizations (customers and suppliers) created in other applications
-var resp = client.Get('/organizations')
-resp.Content // returns the raw response "{\"organizations\":[ ... ]}"
+var resp = client.Get('/organizations');
+resp.Content; // returns the raw response "{\"organizations\":[ ... ]}"
 
 // Retrieve a parsed response (assuming model Organization exists in your application)
-RestResponse<Organization> resp = client.Get<Organization>('/organizations')
+RestResponse<Organization> resp = client.Get<Organization>('/organizations');
 resp.Data // returns a native object
 
 // Create a new organization
@@ -1056,10 +1170,10 @@ var updBody = new Dictionary<string, Dictionary<string, bool>>();
 var update = new Dictionary<string, bool>();
 entity.Add("is_customer", true);
 updBody.Add("organizations", entity);
-client.Put('/organizations/e32303c1-5102-0132-661e-600308937d74', JsonConvert.SerializeObject(updBody))
+client.Put('/organizations/e32303c1-5102-0132-661e-600308937d74', JsonConvert.SerializeObject(updBody));
 
 // If you prefer you can also get a Restsharp client (configured for Connec!™)
-var restClient = Maestrano.Connec.Client.RestClient("cld-f7f5g4")
+var restClient = Maestrano.Connec.Client.RestClient("cld-f7f5g4");
 ```
 
 
@@ -1093,4 +1207,3 @@ So if you have any question or need help integrating with us just let us know at
 MIT License. Copyright 2014 Maestrano Pty Ltd. https://maestrano.com
 
 You are not granted rights or licenses to the trademarks of Maestrano.
-

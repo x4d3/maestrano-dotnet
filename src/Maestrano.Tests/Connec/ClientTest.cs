@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Tests.Connec
 {
-    [TestClass]
+    [TestFixture]
     public class ClientTest
     {
         private String groupId { get; set; }
@@ -25,7 +25,7 @@ namespace Maestrano.Tests.Connec
             client = new Maestrano.Connec.Client(this.groupId);
         }
 
-        [TestMethod]
+        [Test]
         public void Get_onCollection_itReturnsTheList()
         {
             RestResponse  resp = this.client.Get("/organizations");
@@ -34,7 +34,7 @@ namespace Maestrano.Tests.Connec
             Assert.IsNotNull(parsed["organizations"]);
         }
 
-        [TestMethod]
+        [Test]
         public void Get_onCollection_withType_itReturnsTheDeserializedResponse()
         {
             RestResponse<Dictionary<string, string>> resp = this.client.Get<Dictionary<string, string>>("/organizations");
@@ -42,7 +42,7 @@ namespace Maestrano.Tests.Connec
             Assert.IsNotNull(resp.Data["organizations"]);
         }
 
-        [TestMethod]
+        [Test]
         public void Post_itCreatesANewEntity()
         {
             var body = new Dictionary<string, Dictionary<string, string>>();
@@ -58,7 +58,7 @@ namespace Maestrano.Tests.Connec
             Assert.IsNotNull(parsed["organizations"]["id"]);
         }
 
-        [TestMethod]
+        [Test]
         public void Put_itUpdatesAnEntity()
         {
             // Create entity

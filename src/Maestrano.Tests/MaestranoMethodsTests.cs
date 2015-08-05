@@ -1,6 +1,7 @@
 ﻿using System;
 using Maestrano.Saml;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+//using NUnit.Framework;
+using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 using System.Web;
 using Maestrano.Sso;
@@ -9,10 +10,9 @@ using System.Collections.Specialized;
 
 namespace Maestrano.Tests
 {
-    [TestClass]
     public class MaestranoMethodsTests
     {
-        [TestMethod]
+        [Test]
         public void Authenticate_ItReturnsTheRightValues()
         {
             MnoHelper.Environment = "production";
@@ -23,7 +23,7 @@ namespace Maestrano.Tests
             Assert.AreEqual(false, MnoHelper.Authenticate(MnoHelper.Api.Id, "someotherrandomkey"));
         }
 
-        [TestMethod]
+        [Test]
         public void isProduction_ItReturnsTheRightValues()
         {
             MnoHelper.Environment = "production";
@@ -36,7 +36,7 @@ namespace Maestrano.Tests
             Assert.IsFalse(MnoHelper.isProduction());
         }
 
-        [TestMethod]
+        [TestCase]
         public void isDevelopment_ItReturnsTheRightValues()
         {
             MnoHelper.Environment = "production";
@@ -49,7 +49,7 @@ namespace Maestrano.Tests
             Assert.IsTrue(MnoHelper.isDevelopment());
         }
 
-        [TestMethod]
+        [TestCase]
         public void UnmaskUser_ItReturnsTheRightValues()
         {
             MnoHelper.Environment = "production";
@@ -57,7 +57,7 @@ namespace Maestrano.Tests
             Assert.AreEqual("usr-1", MnoHelper.UnmaskUser("usr-1.cld-4"));
         }
 
-        [TestMethod]
+        [TestCase]
         public void MaskUser_WhenRealMode_ItReturnsTheRightValues()
         {
             MnoHelper.Environment = "production";
@@ -66,7 +66,7 @@ namespace Maestrano.Tests
             Assert.AreEqual("usr-1", MnoHelper.MaskUser("usr-1", "cld-1"));
         }
 
-        [TestMethod]
+        [TestCase]
         public void MaskUser_WhenVirtualMode_ItReturnsTheRightValues()
         {
             MnoHelper.Environment = "production";
@@ -75,7 +75,7 @@ namespace Maestrano.Tests
             Assert.AreEqual("usr-1.cld-1", MnoHelper.MaskUser("usr-1", "cld-1"));
         }
 
-        [TestMethod]
+        [Test]
         public void ToMetadata_ItReturnsTheRightObject()
         {
             MnoHelper.Environment = "production";
@@ -141,7 +141,7 @@ namespace Maestrano.Tests
             Assert.AreEqual(expected.ToString(), MnoHelper.ToMetadata().ToString());
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_SessionCheckUrl_ItsReturnsTheRightUrl()
         {
             MnoHelper.Environment = "production";
@@ -149,7 +149,7 @@ namespace Maestrano.Tests
             Assert.AreEqual(MnoHelper.Sso.Idp + "/api/v1/auth/saml/usr-1?session=somesessiontoken", MnoHelper.Sso.SessionCheckUrl("usr-1", "somesessiontoken"));
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_IdpUrl_ItsReturnsTheRightUrl()
         {
             MnoHelper.Environment = "production";
@@ -158,7 +158,7 @@ namespace Maestrano.Tests
             Assert.AreEqual(MnoHelper.Sso.Idp + "/api/v1/auth/saml", MnoHelper.Sso.IdpUrl());
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_InitUrl_ItReturnsTheRightUrl()
         {
             MnoHelper.Environment = "production";
@@ -168,7 +168,7 @@ namespace Maestrano.Tests
         }
         
 
-        [TestMethod]
+        [Test]
         public void Sso_ConsumeUrl_ItReturnsTheRightUrl()
         {
             MnoHelper.Environment = "production";
@@ -177,7 +177,7 @@ namespace Maestrano.Tests
             Assert.AreEqual(MnoHelper.Sso.Idm + MnoHelper.Sso.ConsumePath, MnoHelper.Sso.ConsumeUrl());
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_LogoutUrl_ItReturnsTheRightUrl()
         {
             MnoHelper.Environment = "production";
@@ -186,7 +186,7 @@ namespace Maestrano.Tests
             Assert.AreEqual(MnoHelper.Sso.Idp + "/app_logout", MnoHelper.Sso.LogoutUrl());
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_UnauthorizedUrl_ItReturnsTheRightUrl()
         {
             MnoHelper.Environment = "production";
@@ -195,7 +195,7 @@ namespace Maestrano.Tests
             Assert.AreEqual(MnoHelper.Sso.Idp + "/app_access_unauthorized", MnoHelper.Sso.UnauthorizedUrl());
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_SamlSettings_ItReturnsTheRightSamlSettings()
         {
             MnoHelper.Environment = "production";
@@ -211,22 +211,22 @@ namespace Maestrano.Tests
             Assert.AreEqual(MnoHelper.Sso.X509Certificate, settings.IdpCertificate);
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_BuildRequest_ItShouldReturnSamlRequest()
         {
             MnoHelper.Environment = "production";
-            Assert.IsInstanceOfType(MnoHelper.Sso.BuildRequest(), typeof(Request));
+            Assert.IsInstanceOf(typeof(Request), MnoHelper.Sso.BuildRequest());
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_BuildResponse_ItShouldReturnSamlRequest()
         {
             MnoHelper.Environment = "production";
             string samlResponseStr = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");
-            Assert.IsInstanceOfType(MnoHelper.Sso.BuildResponse(samlResponseStr), typeof(Response));
+            Assert.IsInstanceOf(typeof(Response), MnoHelper.Sso.BuildResponse(samlResponseStr));
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_SetSession_ItShouldSetTheUserInSession()
         {
             MnoHelper.Environment = "production";
@@ -249,7 +249,7 @@ namespace Maestrano.Tests
             Assert.AreEqual(user.SsoSessionRecheck, mnoObj.Value<DateTime>("session_recheck"));
         }
 
-        [TestMethod]
+        [Test]
         public void Sso_ClearSession_ItShouldDeleteTheMaestranoSession()
         {
             MnoHelper.Environment = "production";

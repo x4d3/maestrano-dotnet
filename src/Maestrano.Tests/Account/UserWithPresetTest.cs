@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Maestrano.Account;
 using Maestrano.Helpers;
 
 namespace Maestrano.Tests.Account
 {
-    [TestClass]
+    [TestFixture]
     public class UserWithPresetTest
     {
         private string presetName = "maestrano";
@@ -17,7 +17,7 @@ namespace Maestrano.Tests.Account
             MnoHelper.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
         }
 
-        [TestMethod]
+        [Test]
         public void All_ItShouldReturnTheListOfUsers()
         {
             var list = User.With(presetName).All();
@@ -26,7 +26,7 @@ namespace Maestrano.Tests.Account
             Assert.AreEqual(presetName, list[0].PresetName);
         }
 
-        [TestMethod]
+        [Test]
         public void Retrieve_ItShouldReturnASingleUser()
         {
             var obj = User.With(presetName).Retrieve("usr-1");
@@ -34,7 +34,7 @@ namespace Maestrano.Tests.Account
             Assert.AreEqual(presetName, obj.PresetName);
         }
 
-        [TestMethod]
+        [Test]
         public void CheckPassword_ItShouldReturnTheRightValues()
         {
             Assert.IsTrue(User.With(presetName).CheckPassword("usr-1", "password"));

@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Maestrano.Account;
 using Maestrano.Api;
 
 namespace Maestrano.Tests.Account
 {
-    [TestClass]
+    [TestFixture]
     public class RecurringBillWithPresetTest
     {
         private string presetName = "maestrano";
@@ -17,7 +17,7 @@ namespace Maestrano.Tests.Account
             MnoHelper.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
         }
 
-        [TestMethod]
+        [Test]
         public void All_ItShouldReturnTheListOfBills()
         {
             var list = RecurringBill.With(presetName).All();
@@ -26,7 +26,7 @@ namespace Maestrano.Tests.Account
             Assert.AreEqual("rbill-2", list[1].Id);
         }
 
-        [TestMethod]
+        [Test]
         public void Retrieve_ItShouldReturnASingleBill()
         {
             var obj = RecurringBill.With(presetName).Retrieve("rbill-1");
@@ -34,7 +34,7 @@ namespace Maestrano.Tests.Account
             Assert.AreEqual(presetName, obj.PresetName);
         }
 
-        [TestMethod]
+        [Test]
         public void Create_ItShouldCreateABill()
         {
             var obj = RecurringBill.With(presetName).Create(
@@ -47,7 +47,7 @@ namespace Maestrano.Tests.Account
             Assert.AreEqual(presetName, obj.PresetName);
         }
 
-        [TestMethod]
+        [Test]
         public void Cancel_ItShouldCancelABill()
         {
             var obj = RecurringBill.With(presetName).Create(

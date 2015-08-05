@@ -1,12 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System;
 
 namespace Maestrano.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class MaestranoConfigurationWithPresetTests
     {
-        [TestMethod]
+        [Test]
         public void itHasTheRightDefaultTestConfig()
         {
             MnoHelper.Environment = "development";
@@ -54,7 +54,7 @@ namespace Maestrano.Tests
             Assert.IsFalse(MnoHelper.With("sometenant").Webhook.Connec.Subscriptions.TaxRates);
         }
 
-        [TestMethod]
+        [Test]
         public void itSetsTheHostAndIdmProperlyIfDefined()
         {
             MnoHelper.With("sometenant").Environment = "production";
@@ -67,7 +67,7 @@ namespace Maestrano.Tests
             Assert.AreEqual(expected, MnoHelper.With("sometenant").Sso.Idm);
         }
 
-        [TestMethod]
+        [Test]
         public void itSetsTheApiTokenProperly()
         {
             MnoHelper.With("sometenant").Environment = "production";
@@ -77,7 +77,7 @@ namespace Maestrano.Tests
             Assert.AreEqual("app-1:bla", MnoHelper.With("sometenant").Api.Token);
         }
 
-        [TestMethod]
+        [Test]
         public void itGeneratesTheMetadataWithoutError()
         {
             MnoHelper.With("sometenant").Environment = "production";

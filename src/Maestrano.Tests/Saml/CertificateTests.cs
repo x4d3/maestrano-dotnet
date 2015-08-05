@@ -1,14 +1,14 @@
 ﻿using System;
 using Maestrano.Saml;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Maestrano.Tests.Saml
 {
-    [TestClass]
+    [TestFixture]
     public class CertificateTests
     {
-        [TestMethod]
+        [Test]
         public void itLoadsACertificateFromByteArray()
         {
             MnoHelper.Environment = "production";
@@ -27,7 +27,7 @@ namespace Maestrano.Tests.Saml
             Assert.IsTrue(cert.Equals(samlCert.cert));
         }
 
-        [TestMethod]
+        [Test]
         public void ItLoadsACertificateFromString()
         {
             MnoHelper.Environment = "production";

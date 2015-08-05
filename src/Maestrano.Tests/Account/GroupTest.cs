@@ -1,10 +1,10 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Maestrano.Account;
 
 namespace Maestrano.Tests.Account
 {
-    [TestClass]
+    [TestFixture]
     public class GroupTest
     {
         public GroupTest()
@@ -14,7 +14,7 @@ namespace Maestrano.Tests.Account
             MnoHelper.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
         }
 
-        [TestMethod]
+        [Test]
         public void All_ItShouldReturnTheListOfGroups()
         {
             var list = Group.All();
@@ -22,14 +22,14 @@ namespace Maestrano.Tests.Account
             Assert.IsTrue(list[1].Id.Contains("cld-"));
         }
 
-        [TestMethod]
+        [Test]
         public void Retrieve_ItShouldReturnASingleGroup()
         {
             var obj = Group.Retrieve("cld-3");
             Assert.AreEqual("cld-3", obj.Id);
         }
 
-        [TestMethod]
+        [Test]
         public void TimeZone_ItRetrievesATimeZoneObject()
         {
             var obj = Group.Retrieve("cld-3");

@@ -1,13 +1,13 @@
 ﻿using System;
 using Maestrano.Saml;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Maestrano.Tests.Saml
 {
-    [TestClass]
+    [TestFixture]
     public class SettingsTests
     {
-        [TestMethod]
+        [Test]
         public void ItInitializesASettingsObjectProperly()
         {
             Settings settings = new Settings();

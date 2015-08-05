@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web;
 using Maestrano;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Web.SessionState;
 using Newtonsoft.Json.Linq;
 using Maestrano.Sso;
@@ -15,7 +15,7 @@ namespace Maestrano.Tests.Sso
 {
     
 
-    [TestClass]
+    [TestFixture]
     public class SessionTests
     {
 
@@ -24,7 +24,7 @@ namespace Maestrano.Tests.Sso
             MnoHelper.Sso.SloEnabled = true;
         }
 
-        [TestMethod]
+        [Test]
         public void ItContructsAnInstanceFromHttpSessionStateObject()
         {
             HttpContext httpContext = Helpers.FakeHttpContext();
@@ -38,7 +38,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(DateTime.Parse("2014-06-22T01:00:00Z").ToUniversalTime(), mnoSession.Recheck);
         }
 
-        [TestMethod]
+        [Test]
         public void ItContructsAnInstanceFromHttpSessionStateObjectAndSsoUser()
         {
             // Http context
@@ -59,7 +59,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(user.SsoSessionRecheck, mnoSession.Recheck);
         }
 
-        [TestMethod]
+        [Test]
         public void IsRemoteCheckRequired_ItReturnsTrueIfRecheckIsBeforeNow()
         {
             // Http context
@@ -72,7 +72,7 @@ namespace Maestrano.Tests.Sso
             Assert.IsTrue(mnoSession.isRemoteCheckRequired());
         }
 
-        [TestMethod]
+        [Test]
         public void IsRemoteCheckRequired_ItReturnsFalseIfRecheckIsAfterNow()
         {
             // Http context
@@ -85,7 +85,7 @@ namespace Maestrano.Tests.Sso
             Assert.IsFalse(mnoSession.isRemoteCheckRequired());
         }
 
-        [TestMethod]
+        [Test]
         public void PerformRemoteCheck_WhenValid_ItShouldReturnTrueAndAssignRecheckIfValid()
         {   
             // Response preparation
@@ -109,7 +109,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(DateTime.Parse(datetime.ToString("s")), mnoSession.Recheck);
         }
 
-        [TestMethod]
+        [Test]
         public void PerformRemoteCheck_WhenInvalid_ItShouldReturnFalseAndLeaveRecheckUnchanged()
         {
             // Response preparation
@@ -135,7 +135,7 @@ namespace Maestrano.Tests.Sso
         }
 
 
-        [TestMethod]
+        [Test]
         public void Save_ItShouldSaveTheMaestranoSessionInHttpSession()
         {
             // Http context
@@ -159,7 +159,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(mnoSession.Recheck, mnoObj.Value<DateTime>("session_recheck"));
         }
 
-        [TestMethod]
+        [Test]
         public void IsValid_WhenSloDisabled_ItShouldReturnTrue()
         {
             // Disable SLO
@@ -186,7 +186,7 @@ namespace Maestrano.Tests.Sso
             Assert.IsTrue(mnoSession.IsValid());
         }
 
-        [TestMethod]
+        [Test]
         public void IsValid_WhenIfSessionSpecifiedAndNoMnoSession_ItShouldReturnTrue()
         {
             // Http context
@@ -197,7 +197,7 @@ namespace Maestrano.Tests.Sso
             Assert.IsTrue(mnoSession.IsValid(ifSession: true));
         }
 
-        [TestMethod]
+        [Test]
         public void IsValid_WhenNoRecheckRequired_ItShouldReturnTrue()
         {
             // Http context
@@ -210,7 +210,7 @@ namespace Maestrano.Tests.Sso
             Assert.IsTrue(mnoSession.IsValid());
         }
 
-        [TestMethod]
+        [Test]
         public void IsValid_WhenRecheckRequiredAndValid_ItShouldReturnTrueAndSaveTheSession()
         {
             // Response preparation
@@ -241,7 +241,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(datetime.ToString("s"), mnoObj.Value<DateTime>("session_recheck").ToString("s"));
         }
 
-        [TestMethod]
+        [Test]
         public void IsValid_WhenRecheckRequiredAndInvalid_ItShouldReturnFalse()
         {
             // Response preparation

@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Maestrano.Account;
 using Maestrano.Helpers;
 
 namespace Maestrano.Tests.Account
 {
-    [TestClass]
+    [TestFixture]
     public class UserTest
     {
         public UserTest()
@@ -15,7 +15,7 @@ namespace Maestrano.Tests.Account
             MnoHelper.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
         }
 
-        [TestMethod]
+        [Test]
         public void All_ItShouldReturnTheListOfUsers()
         {
             var list = User.All();
@@ -23,14 +23,14 @@ namespace Maestrano.Tests.Account
             Assert.IsTrue(list[1].Id.Contains("usr-"));
         }
 
-        [TestMethod]
+        [Test]
         public void Retrieve_ItShouldReturnASingleUser()
         {
             var obj = User.Retrieve("usr-1");
             Assert.AreEqual("usr-1", obj.Id);
         }
 
-        [TestMethod]
+        [Test]
         public void CheckPassword_ItShouldReturnTheRightValues()
         {
             Assert.IsTrue(User.CheckPassword("usr-1", "password"));

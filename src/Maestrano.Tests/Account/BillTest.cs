@@ -1,11 +1,11 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Maestrano.Account;
 using Newtonsoft.Json;
 
 namespace Maestrano.Tests.Account
 {
-    [TestClass]
+    [TestFixture]
     public class BillTest
     {
         public BillTest()
@@ -15,7 +15,7 @@ namespace Maestrano.Tests.Account
             MnoHelper.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
         }
 
-        [TestMethod]
+        [Test]
         public void All_ItShouldReturnTheListOfBills()
         {
             var list = Bill.All();
@@ -23,14 +23,14 @@ namespace Maestrano.Tests.Account
             Assert.AreEqual("bill-2", list[1].Id);
         }
 
-        [TestMethod]
+        [Test]
         public void Retrieve_ItShouldReturnASingleBill()
         {
             var obj = Bill.Retrieve("bill-1");
             Assert.AreEqual("bill-1", obj.Id);
         }
 
-        [TestMethod]
+        [Test]
         public void Create_ItShouldCreateABill()
         {
             var obj = Bill.Create(
@@ -41,7 +41,7 @@ namespace Maestrano.Tests.Account
             Assert.IsNotNull(obj.Id);
         }
 
-        [TestMethod]
+        [Test]
         public void Cancel_ItShouldCancelABill()
         {
             var obj = Bill.Create(

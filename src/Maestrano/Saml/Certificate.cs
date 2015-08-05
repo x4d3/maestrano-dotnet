@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,8 +18,7 @@ namespace Maestrano.Saml
         /// <param name="certificate">Certificate in byte array format</param>
         public void LoadCertificate(byte[] certificate)
         {
-            cert = new X509Certificate2();
-            cert.Import(certificate);
+            cert = new X509Certificate2(certificate);
         }
 
         /// <summary>
@@ -38,9 +37,8 @@ namespace Maestrano.Saml
         /// <returns></returns>
         private byte[] StringToByteArray(string st)
         {
-            byte[] byteArray = new byte[st.Length * sizeof(char)];
-            System.Buffer.BlockCopy(st.ToCharArray(), 0, byteArray, 0, byteArray.Length);
-            return byteArray;
+            ASCIIEncoding ascii = new ASCIIEncoding();
+            return ascii.GetBytes(st);
         }
     }
 }

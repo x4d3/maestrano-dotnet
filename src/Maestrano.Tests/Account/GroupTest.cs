@@ -33,7 +33,7 @@ namespace Maestrano.Tests.Account
         public void TimeZone_ItRetrievesATimeZoneObject()
         {
             var obj = Group.Retrieve("cld-3");
-            Assert.AreEqual(typeof(TimeZoneInfo),obj.TimeZone.GetType());
+            Assert.IsInstanceOf(typeof(TimeZoneInfo),obj.TimeZone);
         }
     }
 }

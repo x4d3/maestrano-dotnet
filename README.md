@@ -6,7 +6,7 @@
 
 Maestrano Cloud Integration is currently in closed beta. Want to know more? Send us an email to <contact@maestrano.com>.
 
-
+<img src="https://ci.appveyor.com/api/projects/status/github/maestrano/maestrano-dotnet?branch=master&amp;svg=true" alt="Grunt status">
 
 - - -
 

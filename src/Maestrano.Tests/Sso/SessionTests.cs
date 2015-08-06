@@ -13,7 +13,7 @@ using RestSharp;
 
 namespace Maestrano.Tests.Sso
 {
-    
+
 
     [TestFixture]
     public class SessionTests
@@ -22,16 +22,29 @@ namespace Maestrano.Tests.Sso
         public SessionTests()
         {
             MnoHelper.Sso.SloEnabled = true;
+            Helpers.destroyMnoSession();
+        }
+
+        [Test]
+        public void ItContructsAnInstanceFromHttpSessionStateBaseObject()
+        {
+            Helpers.injectMnoSession();
+            var httpSession = Helpers.FakeHttpSessionState();
+            Session mnoSession = new Session(httpSession);
+
+            Assert.AreEqual(httpSession, mnoSession.HttpSession);
+            Assert.AreEqual("usr-1", mnoSession.Uid);
+            Assert.AreEqual("cld-1", mnoSession.GroupUid);
+            Assert.AreEqual("sessiontoken", mnoSession.SessionToken);
+            Assert.AreEqual(DateTime.Parse("2014-06-22T01:00:00Z").ToUniversalTime(), mnoSession.Recheck);
         }
 
         [Test]
         public void ItContructsAnInstanceFromHttpSessionStateObject()
         {
-            HttpContext httpContext = Helpers.FakeHttpContext();
-            Helpers.injectMnoSession(httpContext);
-            Session mnoSession = new Session(httpContext.Session);
+            Helpers.injectMnoSession();
+            Session mnoSession = new Session(Helpers.FakeHttpSessionState());
 
-            Assert.AreEqual(httpContext.Session, mnoSession.HttpSession);
             Assert.AreEqual("usr-1", mnoSession.Uid);
             Assert.AreEqual("cld-1", mnoSession.GroupUid);
             Assert.AreEqual("sessiontoken", mnoSession.SessionToken);
@@ -42,17 +55,17 @@ namespace Maestrano.Tests.Sso
         public void ItContructsAnInstanceFromHttpSessionStateObjectAndSsoUser()
         {
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
-            Helpers.injectMnoSession(httpContext);
+            Helpers.injectMnoSession();
+            var httpSession = Helpers.FakeHttpSessionState();
 
             // User
             var samlResp = new SsoResponseStub();
             var user = new User(samlResp);
 
 
-            Session mnoSession = new Session(httpContext.Session, user);
+            Session mnoSession = new Session(httpSession, user);
 
-            Assert.AreEqual(httpContext.Session, mnoSession.HttpSession);
+            Assert.AreEqual(httpSession, mnoSession.HttpSession);
             Assert.AreEqual(user.Uid, mnoSession.Uid);
             Assert.AreEqual(user.GroupUid, mnoSession.GroupUid);
             Assert.AreEqual(user.SsoSession, mnoSession.SessionToken);
@@ -63,12 +76,12 @@ namespace Maestrano.Tests.Sso
         public void IsRemoteCheckRequired_ItReturnsTrueIfRecheckIsBeforeNow()
         {
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
-            var recheck = DateTime.UtcNow.AddMinutes(-1);
-            Helpers.injectMnoSession(httpContext, recheck);
+            var recheck = DateTime.UtcNow.AddMinutes(-2);
+            Helpers.injectMnoSession(recheck);
+            var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpContext.Session);
+            Session mnoSession = new Session(httpSession);
             Assert.IsTrue(mnoSession.isRemoteCheckRequired());
         }
 
@@ -76,18 +89,19 @@ namespace Maestrano.Tests.Sso
         public void IsRemoteCheckRequired_ItReturnsFalseIfRecheckIsAfterNow()
         {
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(1);
-            Helpers.injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(recheck);
+            var httpSession = Helpers.FakeHttpSessionState();
+
 
             // test
-            Session mnoSession = new Session(httpContext.Session);
+            Session mnoSession = new Session(httpSession);
             Assert.IsFalse(mnoSession.isRemoteCheckRequired());
         }
 
         [Test]
         public void PerformRemoteCheck_WhenValid_ItShouldReturnTrueAndAssignRecheckIfValid()
-        {   
+        {
             // Response preparation
             RestResponse response = new RestResponse();
             var datetime = DateTime.UtcNow;
@@ -100,9 +114,9 @@ namespace Maestrano.Tests.Sso
             mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
 
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
-            Helpers.injectMnoSession(httpContext);
-            Session mnoSession = new Session(httpContext.Session);
+            Helpers.injectMnoSession();
+            var httpSession = Helpers.FakeHttpSessionState();
+            Session mnoSession = new Session(httpSession);
 
             // Tests
             Assert.IsTrue(mnoSession.PerformRemoteCheck(mockRestClient.Object));
@@ -124,9 +138,9 @@ namespace Maestrano.Tests.Sso
             mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
 
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
-            Helpers.injectMnoSession(httpContext);
-            Session mnoSession = new Session(httpContext.Session);
+            Helpers.injectMnoSession();
+            var httpSession = Helpers.FakeHttpSessionState();
+            Session mnoSession = new Session(httpSession);
 
             // Tests
             var recheck = mnoSession.Recheck;
@@ -139,18 +153,18 @@ namespace Maestrano.Tests.Sso
         public void Save_ItShouldSaveTheMaestranoSessionInHttpSession()
         {
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(1);
-            Helpers.injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(recheck);
+            var httpSession = Helpers.FakeHttpSessionState();
 
             // Create Mno session and save it
-            Session mnoSession = new Session(httpContext.Session);
+            Session mnoSession = new Session(httpSession);
             mnoSession.SessionToken = "anothertoken";
             mnoSession.Save();
 
             // Decrypt session and test
             var enc = System.Text.Encoding.UTF8;
-            var json = enc.GetString(Convert.FromBase64String(httpContext.Session["maestrano"].ToString()));
+            var json = enc.GetString(Convert.FromBase64String(httpSession["maestrano"].ToString()));
             var mnoObj = JObject.Parse(json);
 
             Assert.AreEqual(mnoSession.SessionToken, mnoObj.Value<String>("session"));
@@ -177,12 +191,12 @@ namespace Maestrano.Tests.Sso
             mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
 
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(-1);
-            Helpers.injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(recheck);
+            var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpContext.Session);
+            Session mnoSession = new Session(httpSession);
             Assert.IsTrue(mnoSession.IsValid());
         }
 
@@ -190,10 +204,11 @@ namespace Maestrano.Tests.Sso
         public void IsValid_WhenIfSessionSpecifiedAndNoMnoSession_ItShouldReturnTrue()
         {
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
+            Helpers.destroyMnoSession();
+            var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpContext.Session);
+            Session mnoSession = new Session(httpSession);
             Assert.IsTrue(mnoSession.IsValid(ifSession: true));
         }
 
@@ -201,12 +216,12 @@ namespace Maestrano.Tests.Sso
         public void IsValid_WhenNoRecheckRequired_ItShouldReturnTrue()
         {
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(1);
-            Helpers.injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(recheck);
+            var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpContext.Session);
+            Session mnoSession = new Session(httpSession);
             Assert.IsTrue(mnoSession.IsValid());
         }
 
@@ -216,7 +231,10 @@ namespace Maestrano.Tests.Sso
             // Response preparation
             RestResponse response = new RestResponse();
             var datetime = DateTime.UtcNow;
-            JObject respObj = new JObject(new JProperty("valid", "true"), new JProperty("recheck", datetime.ToString("s")));
+            JObject respObj = new JObject(
+              new JProperty("valid", "true"),
+              new JProperty("recheck", datetime.ToString("s"))
+              );
             response.Content = respObj.ToString();
             response.ResponseStatus = ResponseStatus.Completed;
 
@@ -225,17 +243,17 @@ namespace Maestrano.Tests.Sso
             mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
 
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(-1);
-            Helpers.injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(recheck);
+            var httpSession = Helpers.FakeHttpSessionState();
 
             // Test mno session
-            Session mnoSession = new Session(httpContext.Session);
+            Session mnoSession = new Session(httpSession);
             Assert.IsTrue(mnoSession.IsValid(mockRestClient.Object));
 
             // Decrypt session and test recheck
             var enc = System.Text.Encoding.UTF8;
-            var json = enc.GetString(Convert.FromBase64String(httpContext.Session["maestrano"].ToString()));
+            var json = enc.GetString(Convert.FromBase64String(httpSession["maestrano"].ToString()));
             var mnoObj = JObject.Parse(json);
 
             Assert.AreEqual(datetime.ToString("s"), mnoObj.Value<DateTime>("session_recheck").ToString("s"));
@@ -256,12 +274,12 @@ namespace Maestrano.Tests.Sso
             mockRestClient.Setup(c => c.Execute(It.IsAny<RestRequest>())).Returns(response);
 
             // Http context
-            HttpContext httpContext = Helpers.FakeHttpContext();
             var recheck = DateTime.UtcNow.AddMinutes(-1);
-            Helpers.injectMnoSession(httpContext, recheck);
+            Helpers.injectMnoSession(recheck);
+            var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpContext.Session);
+            Session mnoSession = new Session(httpSession);
             Assert.IsFalse(mnoSession.IsValid(mockRestClient.Object));
         }
     }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.SessionState;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using System.Web;
 
 namespace Maestrano.Sso
 {
@@ -16,7 +17,17 @@ namespace Maestrano.Sso
         public string GroupUid { get; set; }
         public DateTime Recheck { get; set; }
         public string SessionToken { get; set; }
-        public HttpSessionState HttpSession { get; set; }
+        public HttpSessionStateBase HttpSession { get; set; }
+
+        /// <summary>
+        /// Contructor retrieving maestrano session from
+        /// http session
+        /// </summary>
+        /// <param name="httpSessionObj"></param>
+        public Session(HttpSessionStateBase httpSessionObj = null)
+        {
+            this.New(httpSessionObj);
+        }
 
         /// <summary>
         /// Contructor retrieving maestrano session from
@@ -26,6 +37,16 @@ namespace Maestrano.Sso
         public Session(HttpSessionState httpSessionObj = null)
         {
             this.New(httpSessionObj);
+        }
+
+        /// <summary>
+        /// Contructor retrieving maestrano session from user
+        /// </summary>
+        /// <param name="httpSessionObj"></param>
+        /// <param name="user"></param>
+        public Session(HttpSessionStateBase httpSessionObj, User user)
+        {
+            this.New(httpSessionObj, user);
         }
 
         /// <summary>
@@ -45,17 +66,36 @@ namespace Maestrano.Sso
         /// <returns></returns>
         public static Session With(string presetName = "maestrano")
         {
-            Session scopedSession = new Session();
+            Session scopedSession = new Session((HttpSessionStateBase)null);
             scopedSession.presetName = presetName;
 
             return scopedSession;
         }
+
 
         /// <summary>
         /// Initialize the Session
         /// </summary>
         /// <returns></returns>
         public Session New(HttpSessionState httpSessionObj = null)
+        {
+          return this.New(new HttpSessionStateWrapper(httpSessionObj));
+        }
+
+        /// <summary>
+        /// Initialize the Session
+        /// </summary>
+        /// <returns></returns>
+        public Session New(HttpSessionState httpSessionObj, User user)
+        {
+          return this.New(new HttpSessionStateWrapper(httpSessionObj),user);
+        }
+
+        /// <summary>
+        /// Initialize the Session
+        /// </summary>
+        /// <returns></returns>
+        public Session New(HttpSessionStateBase httpSessionObj = null)
         {
             HttpSession = httpSessionObj;
 
@@ -95,7 +135,7 @@ namespace Maestrano.Sso
         /// </summary>
         /// <param name="httpSessionObj"></param>
         /// <param name="user"></param>
-        public Session New(HttpSessionState httpSessionObj, User user)
+        public Session New(HttpSessionStateBase httpSessionObj, User user)
         {
             HttpSession = httpSessionObj;
 
@@ -145,10 +185,10 @@ namespace Maestrano.Sso
                 catch (Exception) { }
 
                 bool valid = Convert.ToBoolean(resp.Value<String>("valid"));
-                string dateStr = resp.Value<String>("recheck");
-                if ( valid && dateStr != null && dateStr.Length > 0)
+                DateTime dateResp = resp.Value<DateTime>("recheck");
+                if ( valid && dateResp != null)
                 {
-                    Recheck = DateTime.Parse(dateStr);
+                    Recheck = dateResp;
                     return true;
                 }
             }

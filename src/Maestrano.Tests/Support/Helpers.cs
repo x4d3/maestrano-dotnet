@@ -8,21 +8,28 @@ using System.Web;
 using System.Web.SessionState;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
+using Moq;
 
 namespace Maestrano.Tests
 {
     public class Helpers
     {
 
-        // Used to build HttpSession
-        public static HttpContext injectMnoSession(HttpContext context)
+        public static string CurrentMnoSession;
+
+        public static void destroyMnoSession()
         {
-            return injectMnoSession(context, DateTime.Parse("2014-06-22T01:00:00Z").ToUniversalTime());
+          CurrentMnoSession = null;
         }
 
-        public static HttpContext injectMnoSession(HttpContext context, DateTime datetime)
+        // Used to build HttpSession
+        public static void injectMnoSession()
         {
-            HttpSessionState httpSession = context.Session;
+            injectMnoSession(DateTime.Parse("2014-06-22T01:00:00Z").ToUniversalTime());
+        }
+
+        public static void injectMnoSession(DateTime datetime)
+        {
             JObject mnoContent = new JObject(
                     new JProperty("uid", "usr-1"),
                     new JProperty("session", "sessiontoken"),
@@ -31,7 +38,22 @@ namespace Maestrano.Tests
                 );
 
             var enc = System.Text.Encoding.UTF8;
-            httpSession["maestrano"] = Convert.ToBase64String(enc.GetBytes(mnoContent.ToString()));
+            //httpSession["maestrano"] = Convert.ToBase64String(enc.GetBytes(mnoContent.ToString()));
+            CurrentMnoSession = Convert.ToBase64String(enc.GetBytes(mnoContent.ToString()));
+        }
+
+        public static HttpContextBase injectMnoSession(HttpContextBase context, DateTime datetime)
+        {
+            var httpSession = context.Session;
+            JObject mnoContent = new JObject(
+                    new JProperty("uid", "usr-1"),
+                    new JProperty("session", "sessiontoken"),
+                    new JProperty("group_uid", "cld-1"),
+                    new JProperty("session_recheck", datetime.ToString("s"))
+                );
+
+            var enc = System.Text.Encoding.UTF8;
+            CurrentMnoSession = Convert.ToBase64String(enc.GetBytes(mnoContent.ToString()));
 
             return context;
         }
@@ -67,26 +89,39 @@ namespace Maestrano.Tests
         /// Create a HttpContext with session
         /// </summary>
         /// <returns></returns>
-        public static HttpContext FakeHttpContext()
+        public static HttpContextBase FakeHttpContext()
         {
-            var httpRequest = new HttpRequest("", "http://stackoverflow/", "");
-            var stringWriter = new StringWriter();
-            var httpResponse = new System.Web.HttpResponse(stringWriter);
-            var httpContext = new HttpContext(httpRequest, httpResponse);
+            var mockHttpContext = new Mock<HttpContextBase>();
+            var mockSession = new Mock<HttpSessionStateBase>();
+            mockSession.SetupGet(c => c["maestrano"]).Returns(CurrentMnoSession);
+            mockSession.SetupSet(c => c["maestrano"] = It.IsAny<string>()).Callback<string,object>((val,obj) => mockSession.SetupGet(c => c["maestrano"]).Returns(obj));
+            mockHttpContext.SetupGet(c => c.Session).Returns(mockSession.Object);
 
+            return mockHttpContext.Object;
+        }
+
+
+        /// <summary>
+        /// Create a HttpContext with session
+        /// </summary>
+        /// <returns></returns>
+        public static HttpSessionState FakeHttpSessionState()
+        {
             var sessionContainer = new HttpSessionStateContainer("id", new SessionStateItemCollection(),
                                                     new HttpStaticObjectsCollection(), 10, true,
                                                     HttpCookieMode.AutoDetect,
                                                     SessionStateMode.InProc, false);
 
-            httpContext.Items["AspSession"] = typeof(HttpSessionState).GetConstructor(
+            var sess = (HttpSessionState)typeof(HttpSessionState).GetConstructor(
                                         BindingFlags.NonPublic | BindingFlags.Instance,
                                         null, CallingConventions.Standard,
                                         new[] { typeof(HttpSessionStateContainer) },
                                         null)
                                 .Invoke(new object[] { sessionContainer });
 
-            return httpContext;
+            sess["maestrano"] = CurrentMnoSession;
+
+            return sess;
         }
     }
 

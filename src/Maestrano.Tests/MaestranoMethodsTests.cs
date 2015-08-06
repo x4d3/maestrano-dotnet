@@ -7,11 +7,18 @@ using System.Web;
 using Maestrano.Sso;
 using System.Configuration;
 using System.Collections.Specialized;
+using System.Web.SessionState;
 
 namespace Maestrano.Tests
 {
     public class MaestranoMethodsTests
     {
+
+        public MaestranoMethodsTests()
+        {
+            Helpers.destroyMnoSession();
+        }
+
         [Test]
         public void Authenticate_ItReturnsTheRightValues()
         {
@@ -166,7 +173,7 @@ namespace Maestrano.Tests
 
             Assert.AreEqual(MnoHelper.Sso.Idm + MnoHelper.Sso.InitPath, MnoHelper.Sso.InitUrl());
         }
-        
+
 
         [Test]
         public void Sso_ConsumeUrl_ItReturnsTheRightUrl()
@@ -232,15 +239,15 @@ namespace Maestrano.Tests
             MnoHelper.Environment = "production";
 
             // Build context
-            var httpContext = Helpers.FakeHttpContext();
             var samlResp = new SsoResponseStub();
             var att = samlResp.GetAttributes();
             var user = new User(samlResp);
-            MnoHelper.Sso.SetSession(httpContext.Session, user);
+            var session = Helpers.FakeHttpSessionState();
+            MnoHelper.Sso.SetSession(session, user);
 
             // Decrypt session
             var enc = System.Text.Encoding.UTF8;
-            var json = enc.GetString(Convert.FromBase64String(httpContext.Session["maestrano"].ToString()));
+            var json = enc.GetString(Convert.FromBase64String(session["maestrano"].ToString()));
             var mnoObj = JObject.Parse(json);
 
             Assert.AreEqual(user.SsoSession, mnoObj.Value<String>("session"));
@@ -255,16 +262,16 @@ namespace Maestrano.Tests
             MnoHelper.Environment = "production";
 
             // Build context
-            var httpContext = Helpers.FakeHttpContext();
             var samlResp = new SsoResponseStub();
             var att = samlResp.GetAttributes();
             var user = new User(samlResp);
-            MnoHelper.Sso.SetSession(httpContext.Session, user);
+            var session = Helpers.FakeHttpSessionState();
+            MnoHelper.Sso.SetSession(session, user);
 
             // Test
-            MnoHelper.Sso.ClearSession(httpContext.Session);
-            Assert.IsNull(httpContext.Session["maestrano"]);
-            
+            MnoHelper.Sso.ClearSession(session);
+            Assert.IsNull(session["maestrano"]);
+
         }
     }
 }

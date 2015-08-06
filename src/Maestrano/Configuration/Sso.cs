@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.SessionState;
 
 namespace Maestrano.Configuration
@@ -38,7 +39,7 @@ namespace Maestrano.Configuration
         /// </summary>
         [ConfigurationProperty("enabled", DefaultValue = true, IsRequired = false)]
         public bool Enabled
-        { 
+        {
             get { return (Boolean)this["enabled"]; }
             set { this["enabled"] = value; }
         }
@@ -111,12 +112,12 @@ namespace Maestrano.Configuration
         /// </summary>
         [ConfigurationProperty("idp", DefaultValue = null, IsRequired = false)]
         public string Idp
-        { 
+        {
             get
             {
                 var _idp = (String)this["idp"];
                 if(string.IsNullOrEmpty(_idp)) {
-                    if (MnoHelper.isProduction()) 
+                    if (MnoHelper.isProduction())
                     {
                         return "https://maestrano.com";
                     } else {
@@ -129,29 +130,29 @@ namespace Maestrano.Configuration
             set { this["idp"] = value; }
         }
 
-        
+
         /// <summary>
         /// The nameid format for SAML handshake
         /// </summary>
         [ConfigurationProperty("nameIdFormat", DefaultValue = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent", IsRequired = false)]
-        public string NameIdFormat 
+        public string NameIdFormat
         {
             get { return (String)this["nameIdFormat"]; }
             set { this["nameIdFormat"] = value; }
         }
 
-        
+
         /// <summary>
         /// Fingerprint of x509 certificate used for SAML
         /// </summary>
         [ConfigurationProperty("x509Fingerprint", DefaultValue = null, IsRequired = false)]
         public string X509Fingerprint
-        { 
+        {
             get
             {
                 var _x509fingerprint = (String)this["x509Fingerprint"];
                 if(string.IsNullOrEmpty(_x509fingerprint)) {
-                    if (MnoHelper.isProduction()) 
+                    if (MnoHelper.isProduction())
                     {
                         return "2f:57:71:e4:40:19:57:37:a6:2c:f0:c5:82:52:2f:2e:41:b7:9d:7e";
                     } else {
@@ -167,13 +168,13 @@ namespace Maestrano.Configuration
         // Actual x509 certificate
         [ConfigurationProperty("x509Certificate", DefaultValue = null, IsRequired = false)]
         public string X509Certificate
-        { 
+        {
             get
             {
                 var _509certificate = (String)this["x509Certificate"];
                 if (string.IsNullOrEmpty(_509certificate))
                 {
-                    if (MnoHelper.isProduction()) 
+                    if (MnoHelper.isProduction())
                     {
                         return "-----BEGIN CERTIFICATE-----\nMIIDezCCAuSgAwIBAgIJAPFpcH2rW0pyMA0GCSqGSIb3DQEBBQUAMIGGMQswCQYD\nVQQGEwJBVTEMMAoGA1UECBMDTlNXMQ8wDQYDVQQHEwZTeWRuZXkxGjAYBgNVBAoT\nEU1hZXN0cmFubyBQdHkgTHRkMRYwFAYDVQQDEw1tYWVzdHJhbm8uY29tMSQwIgYJ\nKoZIhvcNAQkBFhVzdXBwb3J0QG1hZXN0cmFuby5jb20wHhcNMTQwMTA0MDUyNDEw\nWhcNMzMxMjMwMDUyNDEwWjCBhjELMAkGA1UEBhMCQVUxDDAKBgNVBAgTA05TVzEP\nMA0GA1UEBxMGU3lkbmV5MRowGAYDVQQKExFNYWVzdHJhbm8gUHR5IEx0ZDEWMBQG\nA1UEAxMNbWFlc3RyYW5vLmNvbTEkMCIGCSqGSIb3DQEJARYVc3VwcG9ydEBtYWVz\ndHJhbm8uY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD3feNNn2xfEz5/\nQvkBIu2keh9NNhobpre8U4r1qC7h7OeInTldmxGL4cLHw4ZAqKbJVrlFWqNevM5V\nZBkDe4mjuVkK6rYK1ZK7eVk59BicRksVKRmdhXbANk/C5sESUsQv1wLZyrF5Iq8m\na9Oy4oYrIsEF2uHzCouTKM5n+O4DkwIDAQABo4HuMIHrMB0GA1UdDgQWBBSd/X0L\n/Pq+ZkHvItMtLnxMCAMdhjCBuwYDVR0jBIGzMIGwgBSd/X0L/Pq+ZkHvItMtLnxM\nCAMdhqGBjKSBiTCBhjELMAkGA1UEBhMCQVUxDDAKBgNVBAgTA05TVzEPMA0GA1UE\nBxMGU3lkbmV5MRowGAYDVQQKExFNYWVzdHJhbm8gUHR5IEx0ZDEWMBQGA1UEAxMN\nbWFlc3RyYW5vLmNvbTEkMCIGCSqGSIb3DQEJARYVc3VwcG9ydEBtYWVzdHJhbm8u\nY29tggkA8WlwfatbSnIwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOBgQDE\nhe/18oRh8EqIhOl0bPk6BG49AkjhZZezrRJkCFp4dZxaBjwZTddwo8O5KHwkFGdy\nyLiPV326dtvXoKa9RFJvoJiSTQLEn5mO1NzWYnBMLtrDWojOe6Ltvn3x0HVo/iHh\nJShjAn6ZYX43Tjl1YXDd1H9O+7/VgEWAQQ32v8p5lA==\n-----END CERTIFICATE-----";
                     } else {
@@ -295,10 +296,28 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Set the maestrano user in session
         /// </summary>
+        public void SetSession(HttpSessionStateBase httpSessionObj, User user)
+        {
+            var mnoSession = new Session(httpSessionObj, user);
+            mnoSession.Save();
+        }
+
+        /// <summary>
+        /// Set the maestrano user in session
+        /// </summary>
         public void SetSession(HttpSessionState httpSessionObj, User user)
         {
             var mnoSession = new Session(httpSessionObj, user);
             mnoSession.Save();
+        }
+
+        /// <summary>
+        /// Clear the maestrano session
+        /// </summary>
+        /// <param name="httpSessionObj"></param>
+        public void ClearSession(HttpSessionStateBase httpSessionObj)
+        {
+            httpSessionObj.Remove("maestrano");
         }
 
         /// <summary>

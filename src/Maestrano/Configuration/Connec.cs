@@ -14,9 +14,9 @@ namespace Maestrano.Configuration
         /// Load configuration into a Connec configuration object
         /// </summary>
         /// <returns>A Connec configuration object</returns>
-        public static Connec Load()
+        public static Connec Load(string preset = "maestrano")
         {
-            var config = ConfigurationManager.GetSection("maestrano/connec") as Connec;
+            var config = ConfigurationManager.GetSection(preset + "/connec") as Connec;
             if (config == null) config = new Connec();
 
             return config;

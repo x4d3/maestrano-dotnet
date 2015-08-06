@@ -4,16 +4,16 @@ using System.IO;
 using System.Xml;
 using System.Web;
 using Maestrano.Saml;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.IO.Compression;
 
 namespace Maestrano.Tests.Saml
 {
-    [TestClass]
+    [TestFixture]
     public class RequestTests
     {
         
-        [TestMethod]
+        [Test]
         public void GetRequest_ItReturnsTheRightBased64EncodedXmlRequest()
         {
             MnoHelper.Environment = "production";
@@ -25,7 +25,7 @@ namespace Maestrano.Tests.Saml
             Assert.AreEqual(XmlRequestBase64Encoded(req.Id, req.IssueInstant), req.GetXmlBase64Request());
         }
 
-        [TestMethod]
+        [Test]
         public void RedirectUrl_WithNoParameters_ItReturnsTheRightUrl()
         {
             MnoHelper.Environment = "production";
@@ -50,7 +50,7 @@ namespace Maestrano.Tests.Saml
             Assert.AreEqual(expectedUrl, req.RedirectUrl());
         }
 
-        [TestMethod]
+        [Test]
         public void RedirectUrl_WithParameters_ItReturnsTheRightUrl()
         {
             MnoHelper.Environment = "production";

@@ -1,16 +1,16 @@
 ﻿using System;
 using Maestrano.Sso;
 using Maestrano.Saml;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Collections.Specialized;
 
 namespace Maestrano.Tests.Sso
 {
 
-    [TestClass]
+    [TestFixture]
     public class UserTests
     {
-        [TestMethod]
+        [Test]
         public void ItShouldExtractTheRightAttributesFromTheSamlResponse()
         {
             var samlResp = new SsoResponseStub();
@@ -31,7 +31,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(att["company_name"], user.CompanyName);
         }
 
-        [TestMethod]
+        [Test]
         public void ToUid_WhenReal_ShouldReturnTheRightUid()
         {
             // Configure environment
@@ -45,7 +45,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(user.Uid, user.ToUid());
         }
 
-        [TestMethod]
+        [Test]
         public void ToUid_WhenVirtual_ShouldReturnTheRightUid()
         {
             // Configure environment
@@ -59,7 +59,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(user.VirtualUid, user.ToUid());
         }
 
-        [TestMethod]
+        [Test]
         public void ToEmail_WhenReal_ShouldReturnTheRightEmail()
         {
             // Configure environment
@@ -73,7 +73,7 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(user.Email, user.ToEmail());
         }
 
-        [TestMethod]
+        [Test]
         public void ToEmail_WhenVirtual_ShouldReturnTheRightEmail()
         {
             // Configure environment

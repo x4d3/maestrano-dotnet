@@ -14,9 +14,9 @@ namespace Maestrano.Configuration
         /// Load Api configuration into a Api configuration object
         /// </summary>
         /// <returns>A Api configuration object</returns>
-        public static Api Load()
+        public static Api Load(string preset = "maestrano")
         {
-            var config = ConfigurationManager.GetSection("maestrano/api") as Api;
+            var config = ConfigurationManager.GetSection(preset + "/api") as Api;
             if (config == null) config = new Api();
 
             return config;

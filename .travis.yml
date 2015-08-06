@@ -1,0 +1,6 @@
+language: csharp
+sudo: false
+solution: src/Maestrano.sln
+script:
+  - xbuild /p:Configuration=Release src/Maestrano.sln
+  - mono ./src/packages/NUnit.Runners.2.6.4/tools/nunit-console.exe ./src/Maestrano.Tests/bin/Debug/Maestrano.Tests.dll

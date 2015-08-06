@@ -13,6 +13,8 @@ namespace Maestrano.Account
 {
     public class User
     {
+        public string PresetName { get; set; }
+
         [JsonProperty("id")]
         public String Id {get; set;}
 
@@ -58,6 +60,11 @@ namespace Maestrano.Account
             return IndexPath() + "/{id}";
         }
 
+        public static UserRequestor With(string presetName = "maestrano")
+        {
+            return new UserRequestor(presetName);
+        }
+
         /// <summary>
         /// Retrieve all Maestrano users having access to your application
         /// </summary>
@@ -65,7 +72,7 @@ namespace Maestrano.Account
         /// <returns></returns>
         public static List<User> All(NameValueCollection filters = null)
         {
-            return MnoClient.All<User>(IndexPath(), filters);
+            return (new UserRequestor()).All(filters);
         }
 
         /// <summary>
@@ -75,7 +82,7 @@ namespace Maestrano.Account
         /// <returns></returns>
         public static User Retrieve(string userId)
         {
-            return MnoClient.Retrieve<User>(ResourcePath(), userId);
+            return (new UserRequestor()).Retrieve(userId);
         }
 
         /// <summary>
@@ -87,25 +94,10 @@ namespace Maestrano.Account
         /// <returns></returns>
         public static Boolean CheckPassword(string userIdOrEmail, string password)
         {
-            var rgx = new Regex(@".*@.*\.(\w+)");
-            var att = new NameValueCollection();
-            att.Add("password", MnoEncryptor.encrypt(password,MnoHelper.Api.Key));
-
-            // Check if we should match the password against the id or email
-            if (rgx.IsMatch(userIdOrEmail)) {
-                att.Add("email", userIdOrEmail);
-            } else {
-                att.Add("id", userIdOrEmail);
-            }
-
-            try
-            {
-                // Raise an error on failure
-                MnoClient.Create<User>(IndexPath() + "/authenticate", att);
-                return true;
-            } catch (Maestrano.Api.ResourceException) {
-                return false;
-            }
+            return (new UserRequestor()).CheckPassword(
+                userIdOrEmail: userIdOrEmail,
+                password: password
+                );
         }
     }
 }

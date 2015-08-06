@@ -1,15 +1,15 @@
 ﻿using System;
 using Maestrano.Sso;
 using Maestrano.Saml;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Collections.Specialized;
 
 namespace Maestrano.Tests.Sso
 {
-    [TestClass]
+    [TestFixture]
     public class MembershipTests
     {
-        [TestMethod]
+        [Test]
         public void ItShouldExtractTheRightAttributesFromTheSamlResponse()
         {
             SsoResponseStub samlResp = new SsoResponseStub();

@@ -1,0 +1,14 @@
+#!/bin/bash
+xbuild /p:Configuration=Release src/Maestrano.sln
+
+if [ $? -eq 0 ]; then
+  # -fixture:Maestrano.Tests.Saml.CertificateTests
+  # -stoponerror
+  mono ./src/packages/NUnit.Runners.2.6.4/tools/nunit-console.exe \
+    ./src/Maestrano.Tests/bin/Debug/Maestrano.Tests.dll \
+    -trace=Verbose -output=/tmp/.nunit-output $@
+  cat /tmp/.nunit-output
+  echo "
+  "
+  rm -f /tmp/.nunit-output
+fi

@@ -11,6 +11,7 @@ namespace Maestrano.Sso
 {
     public class Group
     {
+        private string presetName;
         public string Uid { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -27,32 +28,59 @@ namespace Maestrano.Sso
         /// Constructor loading group attributes from a Saml.Response
         /// </summary>
         /// <param name="samlResponse"></param>
-        public Group(Saml.Response samlResponse)
+        public Group(Saml.Response samlResponse = null)
         {
-            NameValueCollection att = samlResponse.GetAttributes();
-            
-            // General info
-            Uid = att["group_uid"];
-            Name = att["group_name"];
-            Email = att["group_email"];
-            CompanyName = att["company_name"];
-            HasCreditCard = att["group_has_credit_card"].Equals("true");
+            this.New(samlResponse);
+        }
 
-            // Set Free trial in the past on failure
-            try 
+        /// <summary>
+        /// Scope a Group to a specific configuration preset
+        /// </summary>
+        /// <param name="presetName"></param>
+        /// <returns></returns>
+        public static Group With(string presetName = "maestrano")
+        {
+            Group scopedGroup = new Group();
+            scopedGroup.presetName = presetName;
+
+            return scopedGroup;
+        }
+
+        /// <summary>
+        /// Initialize the Group
+        /// </summary>
+        /// <returns></returns>
+        public Group New(Saml.Response samlResponse)
+        {
+            if (samlResponse != null)
             {
-                FreeTrialEndAt = DateTime.Parse(att["group_end_free_trial"]);
-            }
-            catch
-            {
-                FreeTrialEndAt = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                NameValueCollection att = samlResponse.GetAttributes();
+
+                // General info
+                Uid = att["group_uid"];
+                Name = att["group_name"];
+                Email = att["group_email"];
+                CompanyName = att["company_name"];
+                HasCreditCard = att["group_has_credit_card"].Equals("true");
+
+                // Set Free trial in the past on failure
+                try
+                {
+                    FreeTrialEndAt = DateTime.Parse(att["group_end_free_trial"]);
+                }
+                catch
+                {
+                    FreeTrialEndAt = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                }
+
+                // Geo info
+                Currency = att["group_currency"];
+                Timezone = TimeZoneConverter.fromOlsonTz(att["group_timezone"]);
+                Country = att["group_country"];
+                City = att["group_city"];
             }
 
-            // Geo info
-            Currency = att["group_currency"];
-            Timezone = TimeZoneConverter.fromOlsonTz(att["group_timezone"]);
-            Country = att["group_country"];
-            City = att["group_city"];
+            return this;
         }
 
         /// <summary>

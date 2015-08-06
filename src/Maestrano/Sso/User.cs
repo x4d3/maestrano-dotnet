@@ -11,6 +11,7 @@ namespace Maestrano.Sso
 
     public class User
     {
+        private string presetName;
         public string SsoSession { get; set; }
         public DateTime SsoSessionRecheck { get; set; }
         public string GroupUid { get; set; }
@@ -29,22 +30,48 @@ namespace Maestrano.Sso
         /// Constructor loading user attributes from a Saml.Response
         /// </summary>
         /// <param name="samlResponse"></param>
-        public User(Saml.Response samlResponse)
+        public User(Saml.Response samlResponse = null)
         {
-            NameValueCollection att = samlResponse.GetAttributes();
-            SsoSession = att["mno_session"];
-            SsoSessionRecheck = DateTime.Parse(att["mno_session_recheck"]);
-            GroupUid = att["group_uid"];
-            GroupRole = att["group_role"];
-            Uid = att["uid"];
-            VirtualUid = att["virtual_uid"];
-            Email = att["email"];
-            VirtualEmail = att["virtual_email"];
-            FirstName = att["name"];
-            LastName = att["surname"];
-            Country = att["country"];
-            CompanyName = att["company_name"];
+            this.New(samlResponse);
+        }
 
+        /// <summary>
+        /// Scope a User to a specific configuration preset
+        /// </summary>
+        /// <param name="presetName"></param>
+        /// <returns></returns>
+        public static User With(string presetName = "maestrano")
+        {
+            User scopedUser = new User();
+            scopedUser.presetName = presetName;
+
+            return scopedUser;
+        }
+
+        /// <summary>
+        /// Initialize a new User
+        /// </summary>
+        /// <returns></returns>
+        public User New(Saml.Response samlResponse)
+        {
+            if (samlResponse != null)
+            {
+                NameValueCollection att = samlResponse.GetAttributes();
+                SsoSession = att["mno_session"];
+                SsoSessionRecheck = DateTime.Parse(att["mno_session_recheck"]);
+                GroupUid = att["group_uid"];
+                GroupRole = att["group_role"];
+                Uid = att["uid"];
+                VirtualUid = att["virtual_uid"];
+                Email = att["email"];
+                VirtualEmail = att["virtual_email"];
+                FirstName = att["name"];
+                LastName = att["surname"];
+                Country = att["country"];
+                CompanyName = att["company_name"];
+            }
+            
+            return this;
         }
 
         /// <summary>
@@ -53,7 +80,7 @@ namespace Maestrano.Sso
         /// </summary>
         public string ToUid()
         {
-            if (MnoHelper.Sso.CreationMode.Equals("real"))
+            if (MnoHelper.With(presetName).Sso.CreationMode.Equals("real"))
                 return Uid;
             else
                 return VirtualUid;
@@ -65,7 +92,7 @@ namespace Maestrano.Sso
         /// </summary>
         public string ToEmail()
         {
-            if (MnoHelper.Sso.CreationMode.Equals("real"))
+            if (MnoHelper.With(presetName).Sso.CreationMode.Equals("real"))
                 return Email;
             else
                 return VirtualEmail;

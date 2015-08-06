@@ -15,15 +15,15 @@ namespace Maestrano.Configuration
         /// Load Webhook configuration into a Webhook configuration object
         /// </summary>
         /// <returns>A Webhook configuration object</returns>
-        public static Webhook Load()
+        public static Webhook Load(string preset = "maestrano")
         {
             return (new Webhook());
         }
 
-        public Webhook()
+        public Webhook(string preset = "maestrano")
         {
-            Account = WebhookAccount.Load();
-            Connec = WebhookConnec.Load();
+            Account = WebhookAccount.Load(preset);
+            Connec = WebhookConnec.Load(preset);
         }
     }
 }

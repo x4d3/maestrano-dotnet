@@ -1,14 +1,16 @@
 ﻿using System;
 using NUnit.Framework;
 using Maestrano.Account;
-using Maestrano.Api;
+using Newtonsoft.Json;
 
 namespace Maestrano.Tests.Account
 {
     [TestFixture]
-    public class RecurringBillTest
+    public class BillWithPresetTest
     {
-        public RecurringBillTest()
+        private string presetName = "maestrano";
+
+        public BillWithPresetTest()
         {
             MnoHelper.Environment = "development";
             MnoHelper.Api.Id = "app-1";
@@ -18,42 +20,43 @@ namespace Maestrano.Tests.Account
         [Test]
         public void All_ItShouldReturnTheListOfBills()
         {
-            var list = RecurringBill.All();
-            Assert.AreEqual("rbill-1", list[0].Id);
-            Assert.AreEqual("rbill-2", list[1].Id);
+            var list = Bill.With(presetName).All();
+            Assert.AreEqual(presetName, list[0].PresetName);
+            Assert.AreEqual("bill-1", list[0].Id);
+            Assert.AreEqual("bill-2", list[1].Id);
         }
 
         [Test]
         public void Retrieve_ItShouldReturnASingleBill()
         {
-            var obj = RecurringBill.Retrieve("rbill-1");
-            Assert.AreEqual("rbill-1", obj.Id);
+            var obj = Bill.With(presetName).Retrieve("bill-1");
+            Assert.AreEqual("bill-1", obj.Id);
+            Assert.AreEqual(presetName, obj.PresetName);
         }
 
         [Test]
         public void Create_ItShouldCreateABill()
         {
-            var obj = RecurringBill.Create(
+            var obj = Bill.With(presetName).Create(
                 groupId: "cld-3",
                 priceCents: 1500,
                 description: "Some Bill"
                 );
             Assert.IsNotNull(obj.Id);
-            Assert.IsNotNull(obj.CreatedAt);
+            Assert.AreEqual(presetName, obj.PresetName);
         }
 
         [Test]
         public void Cancel_ItShouldCancelABill()
         {
-            var obj = RecurringBill.Create(
+            var obj = Bill.With(presetName).Create(
                 groupId: "cld-3",
                 priceCents: 1500,
                 description: "Some Bill"
                 );
-            var updatedAt = obj.UpdatedAt;
             obj.Cancel();
             Assert.AreEqual("cancelled", obj.Status);
-            Assert.IsTrue(obj.UpdatedAt.HasValue);
+            Assert.AreEqual(presetName, obj.PresetName);
         }
     }
 }

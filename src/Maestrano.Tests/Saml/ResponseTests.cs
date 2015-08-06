@@ -1,28 +1,28 @@
 ﻿using System;
 using Maestrano.Saml;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Text;
 using System.IO;
 
 namespace Maestrano.Tests.Saml
 {
-    [TestClass]
+    [TestFixture]
     public class ResponseTests
     {
-        [TestMethod]
+        [Test]
         public void ItShouldConsiderResponse1AsInvalid()
         {
             MnoHelper.Environment = "production";
 
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");
             Response resp = new Response();
-            resp.Cert.LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
+            resp.SamlCertificate().LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);
 
             Assert.IsFalse(resp.IsValid());
         }
 
-        [TestMethod]
+        [Test]
         public void ItShouldLoadResponseWithSpecialNewlineCharacters()
         {
             // Response2 contains \n and \r characters that should break base64.decode usually
@@ -32,14 +32,14 @@ namespace Maestrano.Tests.Saml
             // Prepare response
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response2.xml.base64");
             Response resp = new Response();
-            resp.Cert.LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
+            resp.SamlCertificate().LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);
 
             Assert.IsFalse(resp.IsValid());
             Assert.AreEqual("wibble@wibble.com", resp.GetNameID());
         }
 
-        [TestMethod]
+        [Test]
         public void ItShouldLoadResponse4Properly()
         {
             MnoHelper.Environment = "production";
@@ -47,7 +47,7 @@ namespace Maestrano.Tests.Saml
             // Prepare response
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response4.xml.base64");
             Response resp = new Response();
-            resp.Cert.LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
+            resp.SamlCertificate().LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);
 
             Assert.IsTrue(resp.IsValid());
@@ -55,7 +55,7 @@ namespace Maestrano.Tests.Saml
         }
 
 
-        [TestMethod]
+        [Test]
         public void ItShouldLoadTheResponseAttributesProperly()
         {
             MnoHelper.Environment = "production";
@@ -63,7 +63,7 @@ namespace Maestrano.Tests.Saml
             // Prepare response
             string samlResponse = Helpers.ReadSamlSupportFiles("Responses/response1.xml.base64");
             Response resp = new Response();
-            resp.Cert.LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
+            resp.SamlCertificate().LoadCertificate(Helpers.ReadSamlSupportFiles("Certificates/certificate1"));
             resp.LoadXmlFromBase64(samlResponse);
 
             Assert.AreEqual("demo", resp.GetAttributes().Get("uid"));

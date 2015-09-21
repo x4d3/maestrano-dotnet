@@ -65,6 +65,8 @@ You can add configuration presets by putting additional "sectionGroup" blocks in
 
 If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by scoping method calls to a specific configuration preset.
 
+More information about multi-tenant integration can be found on [Our Multi-Tenant Integration Guide](https://maestrano.atlassian.net/wiki/display/CONNECAPIV2/Multi-Tenant+Integration)
+
 Your Web.config may look like this:
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>

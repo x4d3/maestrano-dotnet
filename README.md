@@ -149,6 +149,10 @@ Your Web.config may look like this:
       If you have a dedicated domain managing user identification and therefore
       responsible for the single sign-on handshake (e.g: https://idp.my-app.com)
       then you can specify it below
+      
+      
+      => idp
+      This is the URL of the identity provider to use when triggering a SSO handshake. With a multi-tenant integration, each tenant would have its own URL. Defaults to https://maestrano.com
 
       => initPath
       This is your application path to the SAML endpoint that allows users to
@@ -198,6 +202,7 @@ Your Web.config may look like this:
     <sso
       enabled="true"
       idm="https://idp.myapp.com"
+      idp="https://maestrano.com"
       initPath="/maestrano/auth/saml/init.aspx"
       consumePath="/maestrano/auth/saml/consume"
       creationMode="virtual"

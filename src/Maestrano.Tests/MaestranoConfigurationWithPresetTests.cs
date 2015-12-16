@@ -24,8 +24,8 @@ namespace Maestrano.Tests
             // SSO
             Assert.IsTrue(MnoHelper.With("sometenant").Sso.Enabled);
             Assert.IsTrue(MnoHelper.With("sometenant").Sso.SloEnabled);
-            Assert.AreEqual("http://api-sandbox.maestrano.io", MnoHelper.With("sometenant").Sso.Idp);
-            Assert.AreEqual("https://idp.sometenant.com", MnoHelper.With("sometenant").Sso.Idm);
+            Assert.AreEqual("https://idp.sometenant.com", MnoHelper.With("sometenant").Sso.Idp);
+            Assert.AreEqual("https://idm.myapp.com", MnoHelper.With("sometenant").Sso.Idm);
             Assert.AreEqual("virtual", MnoHelper.With("sometenant").Sso.CreationMode);
             Assert.AreEqual("/sometenant/auth/saml/init.aspx", MnoHelper.With("sometenant").Sso.InitPath);
             Assert.AreEqual("/sometenant/auth/saml/consume", MnoHelper.With("sometenant").Sso.ConsumePath);
@@ -85,6 +85,15 @@ namespace Maestrano.Tests
             MnoHelper.With("sometenant").Api.Key = "bla";
 
             Assert.IsNotNull(MnoHelper.With("sometenant").ToMetadata());
+        }
+
+        [Test]
+        public void ItBuildsTheRightSamlRequest()
+        {
+            MnoHelper.With("sometenant").Environment = "production";
+
+            var ssoIdpUrl = MnoHelper.With("sometenant").Sso.BuildRequest(null).RedirectUrl();
+            Assert.IsTrue(ssoIdpUrl.StartsWith("https://idp.sometenant.com"));
         }
     }
 }

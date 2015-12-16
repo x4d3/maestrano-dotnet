@@ -98,8 +98,9 @@ namespace Maestrano.Sso
         public Session New(HttpSessionStateBase httpSessionObj = null)
         {
             HttpSession = httpSessionObj;
+            if (this.presetName == null) { this.presetName = "maestrano"; }
 
-            if (HttpSession != null && HttpSession["maestrano"] != null)
+            if (HttpSession != null && HttpSession[presetName] != null)
             {
                 var enc = System.Text.Encoding.UTF8;
                 JObject sessionObject = new JObject();
@@ -221,7 +222,7 @@ namespace Maestrano.Sso
 
             // Return true if maestrano session not set
             // and ifSession option enabled
-            if (ifSession && (HttpSession == null || HttpSession["maestrano"] == null))
+            if (ifSession && (HttpSession == null || HttpSession[presetName] == null))
                 return true;
 
             // Return false if HttpSession is nil
@@ -269,7 +270,7 @@ namespace Maestrano.Sso
                 new JProperty("group_uid",GroupUid));
 
             // Finally store the maestrano session
-            HttpSession["maestrano"] = Convert.ToBase64String(enc.GetBytes(sessionObject.ToString()));
+            HttpSession[presetName] = Convert.ToBase64String(enc.GetBytes(sessionObject.ToString()));
         }
 
     }

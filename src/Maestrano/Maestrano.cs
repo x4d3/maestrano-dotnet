@@ -144,5 +144,16 @@ namespace Maestrano
         {
             return defaultPreset.ToMetadata();
         }
+
+        /// <summary>
+        /// Clear a preset configuration
+        /// </summary>
+        /// <param name="presetName">name of preset to clear</param>
+        public static void ClearPreset(string presetName) {
+            if (presetDict.ContainsKey(presetName))
+            {
+                presetDict.Remove(presetName);
+            }
+        }
     }
 }

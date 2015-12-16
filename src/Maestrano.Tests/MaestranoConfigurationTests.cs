@@ -6,6 +6,11 @@ namespace Maestrano.Tests
     [TestFixture]
     public class MaestranoConfigurationTests
     {
+        public MaestranoConfigurationTests()
+        {
+            MnoHelper.ClearPreset("maestrano");
+        }
+
         [Test]
         public void itHasTheRightDefaultTestConfig()
         {

@@ -13,6 +13,8 @@ namespace Maestrano.Configuration
 {
     public class Sso : ConfigurationSection
     {
+        private string presetName;
+
         /// <summary>
         /// Load Sso configuration into a Sso configuration object
         /// </summary>
@@ -21,6 +23,7 @@ namespace Maestrano.Configuration
         {
             var config = ConfigurationManager.GetSection(preset + "/sso") as Sso;
             if (config == null) config = new Sso();
+            config.presetName = preset;
 
             return config;
         }
@@ -277,7 +280,7 @@ namespace Maestrano.Configuration
         /// <returns></returns>
         public Saml.Request BuildRequest(NameValueCollection parameters = null)
         {
-            return (new Saml.Request(parameters));
+            return Saml.Request.With(presetName).New(parameters);
         }
 
         /// <summary>
@@ -287,7 +290,7 @@ namespace Maestrano.Configuration
         /// <returns></returns>
         public Saml.Response BuildResponse(String samlPostParam)
         {
-            var resp = new Saml.Response();
+            var resp = Saml.Response.With(presetName).New();
             resp.LoadXmlFromBase64(samlPostParam);
 
             return resp;
@@ -298,7 +301,7 @@ namespace Maestrano.Configuration
         /// </summary>
         public void SetSession(HttpSessionStateBase httpSessionObj, User user)
         {
-            var mnoSession = new Session(httpSessionObj, user);
+            var mnoSession = Session.With(presetName).New(httpSessionObj, user);
             mnoSession.Save();
         }
 
@@ -307,7 +310,7 @@ namespace Maestrano.Configuration
         /// </summary>
         public void SetSession(HttpSessionState httpSessionObj, User user)
         {
-            var mnoSession = new Session(httpSessionObj, user);
+            var mnoSession = Session.With(presetName).New(httpSessionObj, user);
             mnoSession.Save();
         }
 
@@ -317,7 +320,7 @@ namespace Maestrano.Configuration
         /// <param name="httpSessionObj"></param>
         public void ClearSession(HttpSessionStateBase httpSessionObj)
         {
-            httpSessionObj.Remove("maestrano");
+            httpSessionObj.Remove(presetName);
         }
 
         /// <summary>
@@ -326,7 +329,7 @@ namespace Maestrano.Configuration
         /// <param name="httpSessionObj"></param>
         public void ClearSession(HttpSessionState httpSessionObj)
         {
-            httpSessionObj.Remove("maestrano");
+            httpSessionObj.Remove(presetName);
         }
     }
 }

@@ -6,7 +6,7 @@
 
 Maestrano Cloud Integration is currently in closed beta. Want to know more? Send us an email to <contact@maestrano.com>.
 
-<img src="https://ci.appveyor.com/api/projects/status/github/maestrano/maestrano-dotnet?branch=master&amp;svg=true" alt="Grunt status">
+<img src="https://ci.appveyor.com/api/projects/status/github/maestrano/maestrano-dotnet?branch=master&amp;svg=true" alt="maestrano-dotnet status">
 
 - - -
 
@@ -64,6 +64,8 @@ shown below.
 You can add configuration presets by putting additional "sectionGroup" blocks in your Web.config. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
 
 If this is the first time you integrate with Maestrano, we recommend adopting a multi-tenant approach. All code samples in this documentation provide examples on how to handle multi-tenancy by scoping method calls to a specific configuration preset.
+
+More information about multi-tenant integration can be found on [Our Multi-Tenant Integration Guide](https://maestrano.atlassian.net/wiki/display/CONNECAPIV2/Multi-Tenant+Integration)
 
 Your Web.config may look like this:
 ```xml
@@ -147,6 +149,10 @@ Your Web.config may look like this:
       If you have a dedicated domain managing user identification and therefore
       responsible for the single sign-on handshake (e.g: https://idp.my-app.com)
       then you can specify it below
+      
+      
+      => idp
+      This is the URL of the identity provider to use when triggering a SSO handshake. With a multi-tenant integration, each tenant would have its own URL. Defaults to https://maestrano.com
 
       => initPath
       This is your application path to the SAML endpoint that allows users to
@@ -196,6 +202,7 @@ Your Web.config may look like this:
     <sso
       enabled="true"
       idm="https://idp.myapp.com"
+      idp="https://maestrano.com"
       initPath="/maestrano/auth/saml/init.aspx"
       consumePath="/maestrano/auth/saml/consume"
       creationMode="virtual"

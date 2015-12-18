@@ -6,14 +6,11 @@ namespace Maestrano.Tests
     [TestFixture]
     public class MaestranoConfigurationTests
     {
-        public MaestranoConfigurationTests()
-        {
-            MnoHelper.ClearPreset("maestrano");
-        }
 
         [Test]
         public void itHasTheRightDefaultTestConfig()
         {
+            MnoHelper.ClearPreset("sometenant");
             MnoHelper.Environment = "development";
 
             // App
@@ -62,6 +59,7 @@ namespace Maestrano.Tests
         [Test]
         public void itHasTheRightDefaultProductionConfig()
         {
+            MnoHelper.ClearPreset("sometenant");
             MnoHelper.Environment = "production";
 
             // App

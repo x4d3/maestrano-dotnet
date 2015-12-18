@@ -264,7 +264,7 @@ namespace Maestrano.Configuration
             settings.AssertionConsumerServiceUrl = ConsumeUrl();
             settings.IdpSsoTargetUrl = IdpUrl();
             settings.IdpCertificate = X509Certificate;
-            settings.Issuer = MnoHelper.Api.Id;
+            settings.Issuer = MnoHelper.With(presetName).Api.Id;
             settings.NameIdentifierFormat = NameIdFormat;
 
             return settings;

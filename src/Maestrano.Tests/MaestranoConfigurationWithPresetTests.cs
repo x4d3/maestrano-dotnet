@@ -6,9 +6,11 @@ namespace Maestrano.Tests
     [TestFixture]
     public class MaestranoConfigurationWithPresetTests
     {
+
         [Test]
         public void itHasTheRightDefaultTestConfig()
         {
+            MnoHelper.ClearPreset("sometenant");
             MnoHelper.Environment = "development";
 
             // App
@@ -88,12 +90,28 @@ namespace Maestrano.Tests
         }
 
         [Test]
-        public void ItBuildsTheRightSamlRequest()
+        public void Sso_ItBuildsTheRightSamlRequest()
         {
             MnoHelper.With("sometenant").Environment = "production";
 
             var ssoIdpUrl = MnoHelper.With("sometenant").Sso.BuildRequest(null).RedirectUrl();
             Assert.IsTrue(ssoIdpUrl.StartsWith("https://idp.sometenant.com"));
         }
+
+        [Test]
+        public void Sso_ItBuildsTheRightSamlSettings()
+        {
+            MnoHelper.With("sometenant").Environment = "production";
+            MnoHelper.With("sometenant").Api.Id = "app-tenant1";
+            MnoHelper.With("sometenant").Sso.Idp = "https://idp.sometenantspecificendpoint.com";
+            MnoHelper.With("sometenant").Sso.Idm = "https://somespecificapphost.com";
+            MnoHelper.With("sometenant").Sso.ConsumePath = "/somespecifictenant/auth/saml/consume";
+
+            var samlSettings = MnoHelper.With("sometenant").Sso.SamlSettings();
+            Assert.AreEqual("app-tenant1", samlSettings.Issuer);
+            Assert.AreEqual("https://idp.sometenantspecificendpoint.com/api/v1/auth/saml", samlSettings.IdpSsoTargetUrl);
+            Assert.AreEqual("https://somespecificapphost.com/somespecifictenant/auth/saml/consume", samlSettings.AssertionConsumerServiceUrl);
+        }
+
     }
 }

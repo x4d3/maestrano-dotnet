@@ -9,6 +9,12 @@ namespace Maestrano.Configuration
 {
     public class Connec : ConfigurationSection
     {
+        private const string ProdDefaultApiHost = "https://api-connec.maestrano.com";
+        private const string ProdDefaultBasePath = "/api/v2";
+        private const string TestDefaultApiHost = "http://api-sandbox.maestrano.io";
+        private const string TestDefaultBasePath = "/connec/api/v2";
+
+        private string presetName;
 
         /// <summary>
         /// Load configuration into a Connec configuration object
@@ -16,8 +22,10 @@ namespace Maestrano.Configuration
         /// <returns>A Connec configuration object</returns>
         public static Connec Load(string preset = "maestrano")
         {
+            ConfigurationManager.RefreshSection(preset + "/connec");
             var config = ConfigurationManager.GetSection(preset + "/connec") as Connec;
             if (config == null) config = new Connec();
+            config.presetName = preset;
 
             return config;
         }
@@ -33,13 +41,13 @@ namespace Maestrano.Configuration
                 var _host = (String)this["host"];
                 if (string.IsNullOrEmpty(_host))
                 {
-                    if (MnoHelper.isProduction())
+                    if (MnoHelper.With(this.presetName).isProduction())
                     {
-                        return "https://api-connec.maestrano.com";
+                        return ProdDefaultApiHost;
                     }
                     else
                     {
-                        return "http://api-sandbox.maestrano.io";
+                        return TestDefaultApiHost;
                     }
                 }
                 return _host;
@@ -59,13 +67,13 @@ namespace Maestrano.Configuration
                 var _path = (String)this["base-path"];
                 if (string.IsNullOrEmpty(_path))
                 {
-                    if (MnoHelper.isProduction())
+                    if (MnoHelper.With(this.presetName).isProduction())
                     {
-                        return "/api/v2";
+                        return ProdDefaultBasePath;
                     }
                     else
                     {
-                        return "/connec/api/v2";
+                        return TestDefaultBasePath;
                     }
                 }
                 return _path;

@@ -12,7 +12,7 @@ namespace Maestrano
     public static class MnoHelper
     {
         // VERSION
-        public static string Version { get { return "0.14.1"; } }
+        public static string Version { get { return "0.15.0"; } }
 
         private static Dictionary<string,Preset> presetDict;
         private static Preset defaultPreset;
@@ -153,6 +153,20 @@ namespace Maestrano
             if (presetDict.ContainsKey(presetName))
             {
                 presetDict.Remove(presetName);
+            }
+
+            if (presetName.Equals("maestrano"))
+            {
+                defaultPreset = new Preset("maestrano");
+                presetDict.Add("maestrano", defaultPreset);
+
+                // Emulate old configuration behaviour for backward 
+                // compatibility
+                App = defaultPreset.App;
+                Api = defaultPreset.Api;
+                Connec = defaultPreset.Connec;
+                Webhook = defaultPreset.Webhook;
+                Sso = defaultPreset.Sso;
             }
         }
     }

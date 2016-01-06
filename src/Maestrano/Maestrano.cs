@@ -154,6 +154,20 @@ namespace Maestrano
             {
                 presetDict.Remove(presetName);
             }
+
+            if (presetName.Equals("maestrano"))
+            {
+                defaultPreset = new Preset("maestrano");
+                presetDict.Add("maestrano", defaultPreset);
+
+                // Emulate old configuration behaviour for backward 
+                // compatibility
+                App = defaultPreset.App;
+                Api = defaultPreset.Api;
+                Connec = defaultPreset.Connec;
+                Webhook = defaultPreset.Webhook;
+                Sso = defaultPreset.Sso;
+            }
         }
     }
 }

@@ -9,6 +9,10 @@ namespace Maestrano.Configuration
 {
     public class Api : ConfigurationSection
     {
+        private const string ProdDefaultApiHost = "https://maestrano.com";
+        private const string TestDefaultApiHost = "http://api-sandbox.maestrano.io";
+
+        private string presetName;
 
         /// <summary>
         /// Load Api configuration into a Api configuration object
@@ -16,8 +20,10 @@ namespace Maestrano.Configuration
         /// <returns>A Api configuration object</returns>
         public static Api Load(string preset = "maestrano")
         {
+            ConfigurationManager.RefreshSection(preset + "/api");
             var config = ConfigurationManager.GetSection(preset + "/api") as Api;
             if (config == null) config = new Api();
+            config.presetName = preset;
 
             return config;
         }
@@ -95,13 +101,13 @@ namespace Maestrano.Configuration
                 var _idp = (String)this["host"];
                 if (string.IsNullOrEmpty(_idp))
                 {
-                    if (MnoHelper.isProduction())
+                    if (MnoHelper.With(this.presetName).isProduction())
                     {
-                        return "https://maestrano.com";
+                        return ProdDefaultApiHost;
                     }
                     else
                     {
-                        return "http://api-sandbox.maestrano.io";
+                        return TestDefaultApiHost;
                     }
                 }
                 return _idp;

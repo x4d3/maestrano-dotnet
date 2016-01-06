@@ -10,7 +10,7 @@ namespace Maestrano.Tests
         [Test]
         public void itHasTheRightDefaultTestConfig()
         {
-            MnoHelper.ClearPreset("sometenant");
+            MnoHelper.ClearPreset("maestrano");
             MnoHelper.Environment = "development";
 
             // App
@@ -59,7 +59,7 @@ namespace Maestrano.Tests
         [Test]
         public void itHasTheRightDefaultProductionConfig()
         {
-            MnoHelper.ClearPreset("sometenant");
+            MnoHelper.ClearPreset("maestrano");
             MnoHelper.Environment = "production";
 
             // App
@@ -125,6 +125,7 @@ namespace Maestrano.Tests
         [Test]
         public void itSetsTheHostAndIdmProperlyIfDefined()
         {
+            MnoHelper.ClearPreset("maestrano");
             MnoHelper.Environment = "production";
 
             string expected = "https://mysuperapp.com";

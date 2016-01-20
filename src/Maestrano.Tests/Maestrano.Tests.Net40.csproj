@@ -61,6 +61,7 @@
     <Compile Include="Account\RecurringBillTest.cs" />
     <Compile Include="Account\UserTest.cs" />
     <Compile Include="Connec\ClientTest.cs" />
+    <Compile Include="Helpers\TimeZoneConverterTests.cs" />
     <Compile Include="MaestranoConfigurationTests.cs" />
     <Compile Include="Properties\Assembly.cs" />
     <Compile Include="MaestranoMethodsTests.cs" />

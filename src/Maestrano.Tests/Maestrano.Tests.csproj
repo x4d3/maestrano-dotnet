@@ -98,6 +98,7 @@
     <Compile Include="Account\UserWithPresetTest.cs" />
     <Compile Include="Account\UserTest.cs" />
     <Compile Include="Connec\ClientTest.cs" />
+    <Compile Include="Helpers\TimeZoneConverterTests.cs" />
     <Compile Include="MaestranoConfigurationWithPresetTests.cs" />
     <Compile Include="MaestranoConfigurationTests.cs" />
     <Compile Include="Properties\Assembly.cs" />

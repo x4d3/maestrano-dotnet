@@ -11,6 +11,7 @@ namespace Maestrano.Helpers
     {
         static Dictionary<string, string> olsonWindowsTimes;
         static bool isUnix;
+        const string DefaultTimeZone = "Pacific Standard Time";
 
         public static TimeZoneInfo fromOlsonTz(string olsonTimeZoneId)
         {
@@ -21,6 +22,12 @@ namespace Maestrano.Helpers
               windowsTimeZoneId = olsonTimeZoneId;
             } else {
               olsonWindowsTimes.TryGetValue(olsonTimeZoneId, out windowsTimeZoneId);
+            }
+
+            // Select default timezone
+            if (windowsTimeZoneId == null)
+            {
+                windowsTimeZoneId = DefaultTimeZone;
             }
             
             try { windowsTimeZone = TimeZoneInfo.FindSystemTimeZoneById(windowsTimeZoneId); }

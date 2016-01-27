@@ -210,6 +210,19 @@ Your Web.config may look like this:
      -->
 
     <!--
+      ===> Connec!™ Configuration
+       host and API paths (optional)
+       The Connec!™ endpoint to use if you need to overwrite it (i.e. if you want to proxy requests or use a stub)
+    -->
+    <!--
+    <connec>
+      enabled="true"
+      host="http://connec.maestrano.io"
+      base-path="/api/v2"
+    </connec>
+    -->
+    
+    <!--
       ===> Account Webhooks
       Here you can configure various notification endpoints related to service cancellation  
       (account/user deletion) as well as Connec!™ entities updates.

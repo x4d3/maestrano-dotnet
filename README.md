@@ -206,7 +206,7 @@ Your Web.config may look like this:
       initPath="/maestrano/auth/saml/init.aspx"
       consumePath="/maestrano/auth/saml/consume"
       creationMode="virtual"
-      />
+    />
      -->
 
     <!--
@@ -215,11 +215,11 @@ Your Web.config may look like this:
        The Connec!™ endpoint to use if you need to overwrite it (i.e. if you want to proxy requests or use a stub)
     -->
     <!--
-    <connec>
+    <connec
       enabled="true"
       host="http://connec.maestrano.io"
       base-path="/api/v2"
-    </connec>
+    />
     -->
     
     <!--

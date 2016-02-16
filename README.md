@@ -166,7 +166,12 @@ Your Web.config may look like this:
       This is your application path to the SAML endpoint that allows users to
       finalize SSO authentication. During the 'consume' action your application
       sets users (and associated group) up and/or log them in.
-
+      
+      => x509Fingerprint
+      => x509Certificate
+      During the SSO handshake, the SSL certificate is validated and must match the IDP provider.
+      For multi-tenant integration, the certificates may change per environment.
+      
       => creationMode
       !IMPORTANT
       On Maestrano users can take several "instances" of your service. You can consider
@@ -206,6 +211,8 @@ Your Web.config may look like this:
       initPath="/maestrano/auth/saml/init.aspx"
       consumePath="/maestrano/auth/saml/consume"
       creationMode="virtual"
+      x509Fingerprint="2f:57:71:e4:40:19:57:37:a6:2c:f0:c5:82:52:2f:2e:41:b7:9d:7e"
+      x509Certificate="-----BEGIN CERTIFICATE-----\nCERTIFICATE CONTENT==\n-----END CERTIFICATE-----"
     />
      -->
 

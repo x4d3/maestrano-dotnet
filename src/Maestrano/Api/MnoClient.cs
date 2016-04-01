@@ -13,10 +13,11 @@ namespace Maestrano.Api
     public static class MnoClient
     {
         private static Dictionary<string, RestClient> clientDict;
-
+        private static JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
         static MnoClient()
         {
             clientDict = new Dictionary<string, RestClient>();
+            jsonSerializerSettings.Converters.Add(new CorrectedIsoDateTimeConverter());
         }
 
         private static RestClient Client(string presetName = "maestrano")
@@ -56,13 +57,19 @@ namespace Maestrano.Api
             };
 
             var response = Client(presetName).Execute(request);
-            var respObj = JsonConvert.DeserializeObject<MnoObject<T>>(response.Content);
+            var respObj = DeserializeObject<MnoObject<T>>(response.Content);
             respObj.ThrowIfErrors();
             respObj.AssignPreset(presetName);
 
             return respObj.Data;
         }
-
+        /// <summary>
+        /// Deserializes the JSON to the specified .NET type
+        /// </summary>
+        public static U DeserializeObject<U>(string s)
+        {
+            return JsonConvert.DeserializeObject<U>(s, jsonSerializerSettings);
+        }
         /// <summary>
         /// Execute a manual REST request
         /// </summary>
@@ -79,7 +86,7 @@ namespace Maestrano.Api
             };
 
             var response = Client(presetName).Execute(request);
-            var respObj = JsonConvert.DeserializeObject<MnoCollection<T>>(response.Content);
+            var respObj = DeserializeObject<MnoCollection<T>>(response.Content);
             respObj.ThrowIfErrors();
             respObj.AssignPreset(presetName);
 

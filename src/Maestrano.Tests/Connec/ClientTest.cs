@@ -84,7 +84,7 @@ namespace Maestrano.Tests.Connec
 
             Assert.IsNotNull(parsed["organizations"]);
             Assert.AreEqual(id, parsed["organizations"]["id"]);
-            Assert.AreEqual("True",parsed["organizations"]["is_customer"]);
+            Assert.AreEqual("true",parsed["organizations"]["is_customer"]);
         }
     }
 }

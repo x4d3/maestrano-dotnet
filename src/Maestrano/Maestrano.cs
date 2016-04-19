@@ -12,7 +12,7 @@ namespace Maestrano
     public static class MnoHelper
     {
         // VERSION
-        public static string Version { get { return "0.15.1"; } }
+        public static string Version { get { return "0.15.2"; } }
 
         private static Dictionary<string,Preset> presetDict;
         private static Preset defaultPreset;

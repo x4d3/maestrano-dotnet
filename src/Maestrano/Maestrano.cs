@@ -1,20 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using System.Net.Http.Headers;
 using Maestrano.Configuration;
+using Maestrano.Net;
+using RestSharp;
 
 namespace Maestrano
 {
+
+    public class AutoConfigureException : Exception
+    {
+        public AutoConfigureException(string message) : base(message)
+        {
+        }
+
+        public AutoConfigureException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+    }
     public static class MnoHelper
     {
         // VERSION
         public static string Version { get { return "0.15.3"; } }
 
-        private static Dictionary<string,Preset> presetDict;
+        private static Dictionary<string, Preset> presetDict;
         private static Preset defaultPreset;
         public static Configuration.Sso Sso { get; private set; }
         public static Configuration.App App { get; private set; }
@@ -41,14 +50,74 @@ namespace Maestrano
         }
 
         /// <summary>
+        /// Autoconfigure Maestrano using the Developer platform.
+        /// Parameters are taken from Environment variable names, or from the Configuration if not found
+        /// Environment name: 
+        /// MNO_DEVPL_HOST=<developer platform host>
+        /// MNO_DEVPL_API_PATH=<developer platform host>
+        /// MNO_DEVPL_ENV_NAME=<your environment nid>
+        /// MNO_DEVPL_ENV_KEY=<your environment key>
+        /// MNO_DEVPL_ENV_SECRET=<your environment secret>
+        /// </summary>
+        ///  <exception cref="AutoConfigureException">If the developer platform could not be reached.</exception>
+        public static void AutoConfigure()
+        {
+            var config = DevPlatform.Load();
+            var host = System.Environment.GetEnvironmentVariable("MNO_DEVPL_HOST") ?? config.Host;
+            var path = System.Environment.GetEnvironmentVariable("MNO_DEVPL_API_PATH") ?? config.ApiPath;
+            var environmentName = System.Environment.GetEnvironmentVariable("MNO_DEVPL_ENV_NAME") ?? config.Environment.Name;
+            var key = System.Environment.GetEnvironmentVariable("MNO_DEVPL_ENV_KEY") ?? config.Environment.ApiKey;
+            var secret = System.Environment.GetEnvironmentVariable("MNO_DEVPL_ENV_SECRET") ?? config.Environment.ApiSecret;
+            AutoConfigure(host, path, key, secret);
+        }
+
+        /// <summary>
+        /// Autoconfigure Maestrano using the Developer platform
+        /// </summary>
+        /// <param name="host"> developer platform host.</param>
+        /// <param name="path"> developer platform api path</param>
+        /// <param name="key"> environment key.</param>
+        /// <param name="secret"> environment secret.</param>
+        public static void AutoConfigure(string host, string path, string key, string secret)
+        {
+            var client = new JsonClient(host, path, key, secret);
+            RestResponse response = client.Get("marketplaces");
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new AutoConfigureException("Could not authenticate. Check your key and secret");
+            }
+            if (response.ErrorException != null)
+            {
+                const string message = "Error retrieving response. Check inner details for more info.";
+                throw new AutoConfigureException(message, response.ErrorException);
+            }
+            if (String.IsNullOrEmpty(response.Content))
+            {
+                throw new AutoConfigureException("Could not retrieve any result from the developer platform.");
+            }
+            var content = JObject.Parse(response.Content);
+            if (content["marketplaces"] == null)
+            {
+                throw new AutoConfigureException("Could not find marketplaces in the json response");
+            }
+            var marketplaces = content["marketplaces"].Value<JArray>();
+            foreach (var marketplace in marketplaces)
+            {
+                var preset = new Preset(marketplace.Value<JObject>());
+                presetDict.Add(preset.Name, preset);
+            }
+        }
+
+        /// <summary>
         /// Scope the MnoHelper to a specific configuration preset
         /// </summary>
-        public static Preset With(string presetName = "maestrano") {
+        public static Preset With(string presetName = "maestrano")
+        {
             if (presetName == null)
             {
                 presetName = "maestrano";
             }
-            
+
             if (!presetDict.ContainsKey(presetName))
             {
                 presetDict.Add(presetName, new Preset(presetName));
@@ -60,7 +129,8 @@ namespace Maestrano
         /// <summary>
         /// App environment: 'test' or 'production'
         /// </summary>
-        public static string Environment {
+        public static string Environment
+        {
             get { return defaultPreset.App.Environment; }
             set { defaultPreset.App.Environment = value; }
         }
@@ -75,7 +145,7 @@ namespace Maestrano
         /// <returns>true if the authentication is successful, false otherwise</returns>
         public static bool Authenticate(string apiId, string apiKey)
         {
-            return defaultPreset.Authenticate(apiId,apiKey);
+            return defaultPreset.Authenticate(apiId, apiKey);
         }
 
         /// <summary>
@@ -149,7 +219,8 @@ namespace Maestrano
         /// Clear a preset configuration
         /// </summary>
         /// <param name="presetName">name of preset to clear</param>
-        public static void ClearPreset(string presetName) {
+        public static void ClearPreset(string presetName)
+        {
             if (presetDict.ContainsKey(presetName))
             {
                 presetDict.Remove(presetName);

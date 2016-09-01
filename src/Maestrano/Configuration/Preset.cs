@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 
@@ -12,11 +10,11 @@ namespace Maestrano.Configuration
     {
         public string Name { get; set; }
 
-        public Configuration.Sso Sso { get; private set; }
-        public Configuration.App App { get; private set; }
-        public Configuration.Api Api { get; private set; }
-        public Configuration.Connec Connec { get; private set; }
-        public Configuration.Webhook Webhook { get; private set; }
+        public Sso Sso { get; private set; }
+        public App App { get; private set; }
+        public Api Api { get; private set; }
+        public Connec Connec { get; private set; }
+        public Webhook Webhook { get; private set; }
 
         /// <summary>
         /// Constructor
@@ -25,12 +23,23 @@ namespace Maestrano.Configuration
         public Preset(string name)
         {
             Name = name;
-            App = Configuration.App.Load(name);
-            Api = Configuration.Api.Load(name);
-            Connec = Configuration.Connec.Load(name);
-            Webhook = Configuration.Webhook.Load(name);
-            Sso = Configuration.Sso.Load(name);
+            App = App.Load(name);
+            Api = Api.Load(name);
+            Connec = Connec.Load(name);
+            Webhook = Webhook.Load(name);
+            Sso = Sso.Load(name);
         }
+
+        public Preset(JObject obj)
+        {
+            Name = obj["marketplace"].Value<string>();
+            App = App.LoadFromJson(Name, obj["app"].Value<JObject>());
+            Api = Api.LoadFromJson(Name, obj["api"].Value<JObject>());
+            Connec = Connec.LoadFromJson(Name, obj["connec"].Value<JObject>());
+            Webhook = Webhook.LoadFromJson(Name, obj["webhooks"].Value<JObject>());
+            Sso = Sso.LoadFromJson(Name, obj["sso"].Value<JObject>());
+        }
+
 
         /// <summary>
         /// App environment: 'test' or 'production'

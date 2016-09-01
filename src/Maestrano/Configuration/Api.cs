@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maestrano.Configuration
 {
@@ -25,6 +22,20 @@ namespace Maestrano.Configuration
             if (config == null) config = new Api();
             config.presetName = preset;
 
+            return config;
+        }
+        /// <summary>
+        /// Load Api configuration into a Api configuration object from a Json Object
+        /// </summary>
+        /// <returns>A Api configuration object</returns>
+        public static Api LoadFromJson(string preset, JObject obj)
+        {
+            var config = new Api();
+            config.presetName = preset;
+            config.Id = obj["id"].Value<string>();
+            config.Key = obj["key"].Value<string>();
+            config.Base = obj["key"].Value<string>();
+            config.Host = obj["host"].Value<string>();
             return config;
         }
 

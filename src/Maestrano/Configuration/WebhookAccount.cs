@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maestrano.Configuration
 {
@@ -21,6 +18,19 @@ namespace Maestrano.Configuration
 
             return config;
         }
+
+        /// <summary>
+        /// Load Webhook into a WebhookAccount configuration object from a JObject 
+        /// </summary>
+        /// <returns>A WebhookAccount configuration object</returns>
+        public static WebhookAccount LoadFromJson(String preset, JObject obj)
+        {
+            var config = new WebhookAccount();
+            config.GroupsPath = obj["group_path"].Value<string>();
+            config.GroupUsersPath = obj["group_user_path"].Value<string>();
+            return config;
+        }
+
 
         /// <summary>
         /// Return False (object not read only)

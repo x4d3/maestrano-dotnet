@@ -1,40 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Web.Script.Serialization;
 using RestSharp;
 using System.Collections.Specialized;
 using Newtonsoft.Json;
 using Maestrano.Helpers;
+using Maestrano.Net;
 
 namespace Maestrano.Api
 {
     public static class MnoClient
     {
-        private static Dictionary<string, RestClient> clientDict;
+        private static Dictionary<string, JsonClient> clientDict;
         private static JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+
         static MnoClient()
         {
-            clientDict = new Dictionary<string, RestClient>();
+            clientDict = new Dictionary<string, JsonClient>();
             jsonSerializerSettings.Converters.Add(new CorrectedIsoDateTimeConverter());
         }
 
-        private static RestClient Client(string presetName = "maestrano")
+        private static JsonClient Client(string presetName = "maestrano")
         {
             if (!clientDict.ContainsKey(presetName))
             {
-                var client = new RestClient();
-
-                // silverlight friendly way to get current version
-                var assembly = Assembly.GetExecutingAssembly();
-                AssemblyName assemblyName = new AssemblyName(assembly.FullName);
-                var version = assemblyName.Version;
-
-                client = new RestClient();
-                client.UserAgent = "maestrano-dotnet/" + version;
-                client.Authenticator = new HttpBasicAuthenticator(MnoHelper.With(presetName).Api.Id, MnoHelper.With(presetName).Api.Key);
-                client.BaseUrl = String.Format("{0}{1}", MnoHelper.With(presetName).Api.Host, MnoHelper.With(presetName).Api.Base);
+                var preset = MnoHelper.With(presetName);
+                string host = preset.Api.Host;
+                string path = preset.Api.Base;
+                string key = preset.Api.Id;
+                string secret = preset.Api.Key;
+                var client = new JsonClient(host, path, key, secret);
                 clientDict.Add(presetName, client);
             }
 
@@ -104,7 +98,7 @@ namespace Maestrano.Api
                 foreach (String k in filters.AllKeys)
                     request.AddParameter(k, filters[k]);
 
-            return MnoClient.ProcessList<T>(request, presetName);
+            return ProcessList<T>(request, presetName);
         }
 
         public static T Retrieve<T>(string path, string resourceId, string presetName = "maestrano")
@@ -114,7 +108,7 @@ namespace Maestrano.Api
             request.Method = Method.GET;
             request.AddUrlSegment("id", resourceId);
 
-            return MnoClient.ProjectSingleObject<T>(request, presetName);
+            return ProjectSingleObject<T>(request, presetName);
         }
 
         public static T Create<T>(string path, NameValueCollection parameters, string presetName = "maestrano")
@@ -126,7 +120,7 @@ namespace Maestrano.Api
             foreach (var k in parameters.AllKeys)
                 request.AddParameter(StringExtensions.ToSnakeCase(k), parameters[k]);
 
-            return MnoClient.ProjectSingleObject<T>(request,presetName);
+            return ProjectSingleObject<T>(request, presetName);
         }
 
         public static T Delete<T>(string path, string resourceId, string presetName = "maestrano")
@@ -136,7 +130,7 @@ namespace Maestrano.Api
             request.Method = Method.DELETE;
             request.AddUrlSegment("id", resourceId);
 
-            return MnoClient.ProjectSingleObject<T>(request,presetName);
+            return ProjectSingleObject<T>(request, presetName);
         }
     }
 }

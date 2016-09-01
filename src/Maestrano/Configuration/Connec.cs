@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maestrano.Configuration
 {
@@ -27,6 +24,18 @@ namespace Maestrano.Configuration
             if (config == null) config = new Connec();
             config.presetName = preset;
 
+            return config;
+        }
+
+        /// <summary>
+        /// Load configuration into a Connec configuration object from a JObject 
+        /// </summary>
+        /// <returns>A Connec configuration object</returns>
+        public static Connec LoadFromJson(string preset, JObject obj)
+        {
+            var config = new Connec();
+            config.presetName = preset;
+            config.Host = obj["host"].ToString();
             return config;
         }
 

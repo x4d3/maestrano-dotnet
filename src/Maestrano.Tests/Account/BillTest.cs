@@ -10,9 +10,9 @@ namespace Maestrano.Tests.Account
     {
         public BillTest()
         {
-            MnoHelper.Environment = "development";
-            MnoHelper.Api.Id = "app-1";
-            MnoHelper.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
+            MnoHelper.With("maestrano").Environment = "development";
+            MnoHelper.With("maestrano").Api.Id = "app-1";
+            MnoHelper.With("maestrano").Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
         }
 
         [Test]

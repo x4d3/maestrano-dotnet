@@ -38,7 +38,6 @@ namespace Maestrano
 
             // Load "maestrano" preset by default
             defaultPreset = new Preset("maestrano");
-            presetDict.Add("maestrano", defaultPreset);
 
             // Emulate old configuration behaviour for backward 
             // compatibility
@@ -47,6 +46,11 @@ namespace Maestrano
             Connec = defaultPreset.Connec;
             Webhook = defaultPreset.Webhook;
             Sso = defaultPreset.Sso;
+        }
+
+        public static Dictionary<string, Preset> Presets()
+        {
+            return new Dictionary<string, Preset>(presetDict);
         }
 
         /// <summary>
@@ -63,11 +67,11 @@ namespace Maestrano
         public static void AutoConfigure()
         {
             var config = DevPlatform.Load();
-            var host = System.Environment.GetEnvironmentVariable("MNO_DEVPL_HOST") ?? config.Host;
-            var path = System.Environment.GetEnvironmentVariable("MNO_DEVPL_API_PATH") ?? config.ApiPath;
-            var environmentName = System.Environment.GetEnvironmentVariable("MNO_DEVPL_ENV_NAME") ?? config.Environment.Name;
-            var key = System.Environment.GetEnvironmentVariable("MNO_DEVPL_ENV_KEY") ?? config.Environment.ApiKey;
-            var secret = System.Environment.GetEnvironmentVariable("MNO_DEVPL_ENV_SECRET") ?? config.Environment.ApiSecret;
+            var host = System.Environment.GetEnvironmentVariable("MNO_DEVPL_HOST") ?? (config == null ? null: config.Host);
+            var path = System.Environment.GetEnvironmentVariable("MNO_DEVPL_API_PATH") ?? (config == null ? null : config.ApiPath);
+
+            var key = System.Environment.GetEnvironmentVariable("MNO_DEVPL_ENV_KEY") ?? (config == null ? null : config.Environment.ApiKey);
+            var secret = System.Environment.GetEnvironmentVariable("MNO_DEVPL_ENV_SECRET") ?? (config == null ? null : config.Environment.ApiSecret);
             AutoConfigure(host, path, key, secret);
         }
 

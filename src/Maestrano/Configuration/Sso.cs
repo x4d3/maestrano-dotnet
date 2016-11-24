@@ -332,7 +332,7 @@ namespace Maestrano.Configuration
         /// </summary>
         public void SetSession(HttpSessionStateBase httpSessionObj, User user)
         {
-            var mnoSession = Session.With(presetName).New(httpSessionObj, user);
+            var mnoSession = new Session(presetName, httpSessionObj, user);
             mnoSession.Save();
         }
 
@@ -341,7 +341,7 @@ namespace Maestrano.Configuration
         /// </summary>
         public void SetSession(HttpSessionState httpSessionObj, User user)
         {
-            var mnoSession = Session.With(presetName).New(httpSessionObj, user);
+            var mnoSession = new Session(presetName, httpSessionObj, user);
             mnoSession.Save();
         }
 

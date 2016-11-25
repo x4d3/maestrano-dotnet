@@ -10,7 +10,7 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
 
 - - -
 
-1.  [Getting Setup](#getting-setup)
+1. [Getting Setup](#getting-setup)
 2. [Getting Started](#getting-started)
   * [Installation](#installation)
   * [Configuration](#configuration)
@@ -37,6 +37,9 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
   * [Webhook Notifications](#webhook-notifications)
 
 - - -
+
+## Migration to V1.0
+[Migration guide to v1.0](MIGRATION_TO_V1.md)
 
 ## Getting Setup
 Before integrating with us you will need an App ID and API Key. Maestrano Cloud Integration being still in closed beta you will need to contact us beforehand to gain production access.
@@ -103,6 +106,7 @@ You may either:
     />
 
   </maestranoDevPlatform>
+  </maestranoDevPlatform>
 
   ...
 
@@ -112,7 +116,7 @@ You may either:
 - You can also use environment variables as follow to configure your app environment:
 ```
 export MNO_DEVPL_HOST=<developer platform host>
-export MNO_DEVPL_API_PATH=<developer platform host>
+export MNO_DEVPL_API_PATH=/api/config/v1
 export MNO_DEVPL_ENV_NAME=<your environment nid>
 export MNO_DEVPL_ENV_KEY=<your environment key>
 export MNO_DEVPL_ENV_SECRET=<your environment secret>
@@ -207,7 +211,7 @@ Your Web.config may look like this:
       => sloEnabled
       Enable/Disable single logout. When troubleshooting authentication issues
       you might want to disable SLO temporarily.
-      If set to false then Maestrano.Sso.Session#IsValid - which should be
+      If set to false then MnoHelper.With(preset).Sso.Session#IsValid - which should be
       used in a controller action filter to check user session - always return true
 
       => idm
@@ -538,11 +542,11 @@ public partial class _Default : System.Web.UI.Page
           if (!localGroup.HasMember(localUser)){
             localGroup.AddMember(localUser);
           }
-
+          var session = System.Web.HttpContext.Current.Session;
           // Set Maestrano session
-          MnoHelper.Sso.SetSession(Session,mnoUser);
+          MnoHelper.Sso.SetSession(session, mnoUser);
           // Using a specific Configuration Preset
-          // MnoHelper.With("somePreset").Sso.SetSession(Session,mnoUser)
+          // MnoHelper.With("somePreset").Sso.SetSession(session,mnoUser)
 
           Response.Redirect("/");
         } else {
@@ -1240,7 +1244,7 @@ The Maestrano API provides a built-in client - based on Restsharp - for connecti
 
 ```csharp
 // Pass the customer group id as argument
-var client = new Maestrano.Connec.Client.New("cld-f7f5g4");
+var client = Maestrano.Connec.Client.New("cld-f7f5g4");
 // Using a specific Configuration Preset
 // var client = Maestrano.Connec.Client.New("cld-f7f5g4", "somePreset");
 

@@ -36,6 +36,8 @@ namespace Maestrano.Configuration
             var config = new Connec();
             config.presetName = preset;
             config.Host = obj["host"].ToString();
+            config.BasePath = obj["base_path"].ToString();
+
             return config;
         }
 

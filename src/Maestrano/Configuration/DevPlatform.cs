@@ -15,8 +15,8 @@ namespace Maestrano.Configuration
         /// <returns>A DevPlatform configuration object</returns>
         public static DevPlatform Load()
         {
-            ConfigurationManager.RefreshSection("devPlatform");
-            var config = ConfigurationManager.GetSection("devPlatform") as DevPlatform;
+            ConfigurationManager.RefreshSection("maestranoDevPlatform");
+            var config = ConfigurationManager.GetSection("maestranoDevPlatform") as DevPlatform;
             return config;
         }
 

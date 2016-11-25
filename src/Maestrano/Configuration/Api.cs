@@ -34,7 +34,7 @@ namespace Maestrano.Configuration
             config.presetName = preset;
             config.Id = obj["id"].Value<string>();
             config.Key = obj["key"].Value<string>();
-            config.Base = obj["key"].Value<string>();
+            config.Base = obj["base"].Value<string>();
             config.Host = obj["host"].Value<string>();
             return config;
         }

@@ -80,6 +80,16 @@ namespace Maestrano.Api
             };
 
             var response = Client(presetName).Execute(request);
+            if (response.ErrorException != null)
+            {
+                throw new ResourceException("Error retrieving response.", response.ErrorException);
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
+            {
+                throw new ResourceException("Could not process request: " + response.Content);
+            }
+
             var respObj = DeserializeObject<MnoCollection<T>>(response.Content);
             respObj.ThrowIfErrors();
             respObj.AssignPreset(presetName);

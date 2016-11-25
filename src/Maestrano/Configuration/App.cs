@@ -41,7 +41,7 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
-        /// The url of the application
+        /// The environment of the application
         /// e.g: development
         /// </summary>
         [ConfigurationProperty("environment", DefaultValue = "test", IsRequired = false)]

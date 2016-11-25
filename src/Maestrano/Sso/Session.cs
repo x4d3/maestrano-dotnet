@@ -49,7 +49,7 @@ namespace Maestrano.Sso
                 JObject sessionObject = new JObject();
                 try
                 {
-                    string decryptedMnoSession = enc.GetString(Convert.FromBase64String(HttpSession["maestrano"].ToString()));
+                    string decryptedMnoSession = enc.GetString(Convert.FromBase64String(HttpSession[presetName].ToString()));
                     sessionObject = JObject.Parse(decryptedMnoSession);
                 }
                 catch (Exception) { }

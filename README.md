@@ -84,7 +84,7 @@ You may either:
 
       ...
 
-    <section name="devPlatform" type="Maestrano.Configuration.DevPlatform, Maestrano"/>
+    <section name="maestranoDevPlatform" type="Maestrano.Configuration.DevPlatform, Maestrano"/>
 
       ...
 
@@ -92,7 +92,7 @@ You may either:
 
   ...
 
- <devPlatform
+ <maestranoDevPlatform
     host="https://dev-platform.maestrano.com"
     apiPath="/api/config/v1"
   >
@@ -102,7 +102,7 @@ You may either:
       apiSecret="[your environment secret]"
     />
 
-  </devPlatform>
+  </maestranoDevPlatform>
 
   ...
 
@@ -1245,11 +1245,23 @@ var client = new Maestrano.Connec.Client.New("cld-f7f5g4");
 // var client = Maestrano.Connec.Client.New("cld-f7f5g4", "somePreset");
 
 // Retrieve all organizations (customers and suppliers) created in other applications
-var resp = client.Get('/organizations');
+var resp = client.Get("/organizations);
 resp.Content; // returns the raw response "{\"organizations\":[ ... ]}"
 
-// Retrieve a parsed response (assuming model Organization exists in your application)
-RestResponse<Organization> resp = client.Get<Organization>('/organizations');
+// Retrieve a parsed response (assuming models OrganizationsResult and Organization exists in your application) for example
+class OrganizationsResult{
+  [JsonProperty("organizations")]
+  public List<Organization> Organizations { get; set; }
+}
+
+public class Organization
+{
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        //etc...
+} 
+
+RestResponse<Organization> resp = client.Get<OrganizationsResult>('/organizations');
 resp.Data // returns a native object
 
 // Create a new organization

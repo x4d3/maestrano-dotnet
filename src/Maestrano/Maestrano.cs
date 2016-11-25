@@ -84,6 +84,22 @@ namespace Maestrano
         /// <param name="secret"> environment secret.</param>
         public static void AutoConfigure(string host, string path, string key, string secret)
         {
+            if (String.IsNullOrEmpty(host)){
+                throw new AutoConfigureException("Developper Platform Host was not provided.");
+            }
+            if (String.IsNullOrEmpty(path))
+            {
+                throw new AutoConfigureException("Developper Api Path Host was not provided.");
+            }
+            if (String.IsNullOrEmpty(key))
+            {
+                throw new AutoConfigureException("Developper Environment Key was not provided.");
+            }
+            if (String.IsNullOrEmpty(secret))
+            {
+                throw new AutoConfigureException("Developper Environment Secret was not provided.");
+            }
+
             var client = new JsonClient(host, path, key, secret);
             RestResponse response = client.Get("marketplaces");
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)

@@ -20,93 +20,36 @@ namespace Maestrano.Sso
         public HttpSessionStateBase HttpSession { get; set; }
 
         /// <summary>
-        /// Contructor retrieving maestrano session from
-        /// http session
-        /// </summary>
-        /// <param name="httpSessionObj"></param>
-        public Session(HttpSessionStateBase httpSessionObj = null)
-        {
-            this.New(httpSessionObj);
-        }
-
-        /// <summary>
-        /// Contructor retrieving maestrano session from
-        /// http session
-        /// </summary>
-        /// <param name="httpSessionObj"></param>
-        public Session(HttpSessionState httpSessionObj = null)
-        {
-            this.New(httpSessionObj);
-        }
-
-        /// <summary>
-        /// Contructor retrieving maestrano session from user
-        /// </summary>
-        /// <param name="httpSessionObj"></param>
-        /// <param name="user"></param>
-        public Session(HttpSessionStateBase httpSessionObj, User user)
-        {
-            this.New(httpSessionObj, user);
-        }
-
-        /// <summary>
-        /// Contructor retrieving maestrano session from user
-        /// </summary>
-        /// <param name="httpSessionObj"></param>
-        /// <param name="user"></param>
-        public Session(HttpSessionState httpSessionObj, User user)
-        {
-            this.New(httpSessionObj, user);
-        }
-
-        /// <summary>
-        /// Scope a Session to a specific configuration preset
-        /// </summary>
-        /// <param name="presetName"></param>
-        /// <returns></returns>
-        public static Session With(string presetName = "maestrano")
-        {
-            Session scopedSession = new Session((HttpSessionStateBase)null);
-            scopedSession.presetName = presetName;
-
-            return scopedSession;
-        }
-
-
-        /// <summary>
         /// Initialize the Session
         /// </summary>
         /// <returns></returns>
-        public Session New(HttpSessionState httpSessionObj = null)
+        public Session(String presetName, HttpSessionState httpSessionObj = null) : this(presetName, new HttpSessionStateWrapper(httpSessionObj))
         {
-          return this.New(new HttpSessionStateWrapper(httpSessionObj));
         }
 
         /// <summary>
         /// Initialize the Session
         /// </summary>
         /// <returns></returns>
-        public Session New(HttpSessionState httpSessionObj, User user)
+        public Session(String presetName, HttpSessionState httpSessionObj, User user) : this(presetName, new HttpSessionStateWrapper(httpSessionObj), user)
         {
-          return this.New(new HttpSessionStateWrapper(httpSessionObj),user);
         }
 
         /// <summary>
         /// Initialize the Session
         /// </summary>
         /// <returns></returns>
-        public Session New(HttpSessionStateBase httpSessionObj = null)
+        public Session(String presetName, HttpSessionStateBase httpSessionObj = null)
         {
             HttpSession = httpSessionObj;
-            if (this.presetName == null) { this.presetName = "maestrano"; }
-
+            this.presetName = presetName;
             if (HttpSession != null && HttpSession[presetName] != null)
             {
                 var enc = System.Text.Encoding.UTF8;
                 JObject sessionObject = new JObject();
                 try
                 {
-                    string decryptedMnoSession = enc.GetString(Convert.FromBase64String(HttpSession["maestrano"].ToString()));
+                    string decryptedMnoSession = enc.GetString(Convert.FromBase64String(HttpSession[presetName].ToString()));
                     sessionObject = JObject.Parse(decryptedMnoSession);
                 }
                 catch (Exception) { }
@@ -128,7 +71,6 @@ namespace Maestrano.Sso
                     Recheck = DateTime.UtcNow.AddMinutes(-1);
             }
 
-            return this;
         }
 
         /// <summary>
@@ -136,8 +78,9 @@ namespace Maestrano.Sso
         /// </summary>
         /// <param name="httpSessionObj"></param>
         /// <param name="user"></param>
-        public Session New(HttpSessionStateBase httpSessionObj, User user)
+        public Session(String presetName, HttpSessionStateBase httpSessionObj, User user)
         {
+            this.presetName = presetName;
             HttpSession = httpSessionObj;
 
             if (user != null)
@@ -148,7 +91,6 @@ namespace Maestrano.Sso
                 Recheck = user.SsoSessionRecheck;
             }
 
-            return this;
         }
 
         /// <summary>

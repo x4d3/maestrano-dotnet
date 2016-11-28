@@ -30,7 +30,7 @@ namespace Maestrano.Tests.Sso
         {
             Helpers.injectMnoSession();
             var httpSession = Helpers.FakeHttpSessionState();
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
 
             Assert.AreEqual(httpSession, mnoSession.HttpSession);
             Assert.AreEqual("usr-1", mnoSession.Uid);
@@ -43,7 +43,7 @@ namespace Maestrano.Tests.Sso
         public void ItContructsAnInstanceFromHttpSessionStateObject()
         {
             Helpers.injectMnoSession();
-            Session mnoSession = new Session(Helpers.FakeHttpSessionState());
+            Session mnoSession = new Session("maestrano", Helpers.FakeHttpSessionState());
 
             Assert.AreEqual("usr-1", mnoSession.Uid);
             Assert.AreEqual("cld-1", mnoSession.GroupUid);
@@ -63,7 +63,7 @@ namespace Maestrano.Tests.Sso
             var user = new User(samlResp);
 
 
-            Session mnoSession = new Session(httpSession, user);
+            Session mnoSession = new Session("maestrano", httpSession, user);
 
             Assert.AreEqual(httpSession, mnoSession.HttpSession);
             Assert.AreEqual(user.Uid, mnoSession.Uid);
@@ -81,7 +81,7 @@ namespace Maestrano.Tests.Sso
             var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
             Assert.IsTrue(mnoSession.isRemoteCheckRequired());
         }
 
@@ -95,7 +95,7 @@ namespace Maestrano.Tests.Sso
 
 
             // test
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
             Assert.IsFalse(mnoSession.isRemoteCheckRequired());
         }
 
@@ -116,7 +116,7 @@ namespace Maestrano.Tests.Sso
             // Http context
             Helpers.injectMnoSession();
             var httpSession = Helpers.FakeHttpSessionState();
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
 
             // Tests
             Assert.IsTrue(mnoSession.PerformRemoteCheck(mockRestClient.Object));
@@ -140,7 +140,7 @@ namespace Maestrano.Tests.Sso
             // Http context
             Helpers.injectMnoSession();
             var httpSession = Helpers.FakeHttpSessionState();
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
 
             // Tests
             var recheck = mnoSession.Recheck;
@@ -158,7 +158,7 @@ namespace Maestrano.Tests.Sso
             var httpSession = Helpers.FakeHttpSessionState();
 
             // Create Mno session and save it
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
             mnoSession.SessionToken = "anothertoken";
             mnoSession.Save();
 
@@ -196,7 +196,7 @@ namespace Maestrano.Tests.Sso
             var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
             Assert.IsTrue(mnoSession.IsValid());
         }
 
@@ -208,7 +208,7 @@ namespace Maestrano.Tests.Sso
             var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
             Assert.IsTrue(mnoSession.IsValid(ifSession: true));
         }
 
@@ -221,7 +221,7 @@ namespace Maestrano.Tests.Sso
             var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
             Assert.IsTrue(mnoSession.IsValid());
         }
 
@@ -248,7 +248,7 @@ namespace Maestrano.Tests.Sso
             var httpSession = Helpers.FakeHttpSessionState();
 
             // Test mno session
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
             Assert.IsTrue(mnoSession.IsValid(mockRestClient.Object));
 
             // Decrypt session and test recheck
@@ -279,7 +279,7 @@ namespace Maestrano.Tests.Sso
             var httpSession = Helpers.FakeHttpSessionState();
 
             // test
-            Session mnoSession = new Session(httpSession);
+            Session mnoSession = new Session("maestrano", httpSession);
             Assert.IsFalse(mnoSession.IsValid(mockRestClient.Object));
         }
     }

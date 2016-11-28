@@ -10,7 +10,7 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
 
 - - -
 
-1.  [Getting Setup](#getting-setup)
+1. [Getting Setup](#getting-setup)
 2. [Getting Started](#getting-started)
   * [Installation](#installation)
   * [Configuration](#configuration)
@@ -38,6 +38,9 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
 
 - - -
 
+## Migration to V1.0
+[Migration guide to v1.0](MIGRATION_TO_V1.md)
+
 ## Getting Setup
 Before integrating with us you will need an App ID and API Key. Maestrano Cloud Integration being still in closed beta you will need to contact us beforehand to gain production access.
 
@@ -58,8 +61,76 @@ PM> Install-Package Maestrano
 
 
 ### Configuration
-The best way to configure the Maestrano api is to add a section in your config file (Web.config) as
-shown below.
+
+There is several ways to configure Maestrano. You can either use our developer platform, or put additional "sectionGroup" blocks in your Web.config. Maestrano configuration is flexible and you can combine any of those methods to configure the app.
+
+#### Via the developer platform
+
+The [developer platform](https://dev-platform.maestrano.com) is the easiest way to configure Maestrano. The only actions needed from your part is to create your application and environments on the developer platform and to create a config file. The framework will then contact the developer platform and retrieve the marketplaces configuration for your app environment.
+
+At your application startup, just call:
+```csharp
+Maestrano.MnoHelper.AutoConfigure();
+```
+In order to call `AutoConfigure()`, you will need to provide some information.
+
+You may either:
+
+- provide them in your Web.config y adding a new section:
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+
+  ...
+
+    <configSections>
+
+      ...
+
+    <section name="maestranoDevPlatform" type="Maestrano.Configuration.DevPlatform, Maestrano"/>
+
+      ...
+
+    </configSections>
+
+  ...
+
+ <maestranoDevPlatform
+    host="https://dev-platform.maestrano.com"
+    apiPath="/api/config/v1"
+  >
+    <environment
+      name="[your environment nid]"
+      apiKey="[your environment key]"
+      apiSecret="[your environment secret]"
+    />
+
+  </maestranoDevPlatform>
+  </maestranoDevPlatform>
+
+  ...
+
+</configuration>
+```
+
+- You can also use environment variables as follow to configure your app environment:
+```
+export MNO_DEVPL_HOST=<developer platform host>
+export MNO_DEVPL_API_PATH=/api/config/v1
+export MNO_DEVPL_ENV_NAME=<your environment nid>
+export MNO_DEVPL_ENV_KEY=<your environment key>
+export MNO_DEVPL_ENV_SECRET=<your environment secret>
+```
+
+- or you may call directly autoconfigure with your needed parameters
+
+```csharp
+Maestrano.MnoHelper.AutoConfigure(host, apiPath, apiKey, apiSecret);
+```
+
+#### Via Config File
+
+To configure the Maestrano api you may also add a section in your config file (Web.config)
 
 You can add configuration presets by putting additional "sectionGroup" blocks in your Web.config. These additional presets can then be specified when doing particular action, such as initializing a Connec!™ client or triggering a SSO handshake. These presets are particularly useful if you are dealing with multiple Maestrano-style marketplaces (multi-enterprise integration).
 
@@ -140,7 +211,7 @@ Your Web.config may look like this:
       => sloEnabled
       Enable/Disable single logout. When troubleshooting authentication issues
       you might want to disable SLO temporarily.
-      If set to false then Maestrano.Sso.Session#IsValid - which should be
+      If set to false then MnoHelper.With(preset).Sso.Session#IsValid - which should be
       used in a controller action filter to check user session - always return true
 
       => idm
@@ -297,7 +368,7 @@ Your Web.config may look like this:
   ...
 
 </configuration>
-
+```
 
 Your Web.config in a multi-tenant context may look like this:
 ```xml
@@ -471,11 +542,11 @@ public partial class _Default : System.Web.UI.Page
           if (!localGroup.HasMember(localUser)){
             localGroup.AddMember(localUser);
           }
-
+          var session = System.Web.HttpContext.Current.Session;
           // Set Maestrano session
-          MnoHelper.Sso.SetSession(Session,mnoUser);
+          MnoHelper.Sso.SetSession(session, mnoUser);
           // Using a specific Configuration Preset
-          // MnoHelper.With("somePreset").Sso.SetSession(Session,mnoUser)
+          // MnoHelper.With("somePreset").Sso.SetSession(session,mnoUser)
 
           Response.Redirect("/");
         } else {
@@ -1173,16 +1244,28 @@ The Maestrano API provides a built-in client - based on Restsharp - for connecti
 
 ```csharp
 // Pass the customer group id as argument
-var client = new Maestrano.Connec.Client("cld-f7f5g4");
+var client = Maestrano.Connec.Client.New("cld-f7f5g4");
 // Using a specific Configuration Preset
-// var client = Maestrano.Connec.Client.With("somePreset").New("cld-f7f5g4");
+// var client = Maestrano.Connec.Client.New("cld-f7f5g4", "somePreset");
 
 // Retrieve all organizations (customers and suppliers) created in other applications
-var resp = client.Get('/organizations');
+var resp = client.Get("/organizations);
 resp.Content; // returns the raw response "{\"organizations\":[ ... ]}"
 
-// Retrieve a parsed response (assuming model Organization exists in your application)
-RestResponse<Organization> resp = client.Get<Organization>('/organizations');
+// Retrieve a parsed response (assuming models OrganizationsResult and Organization exists in your application) for example
+class OrganizationsResult{
+  [JsonProperty("organizations")]
+  public List<Organization> Organizations { get; set; }
+}
+
+public class Organization
+{
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        //etc...
+} 
+
+RestResponse<Organization> resp = client.Get<OrganizationsResult>('/organizations');
 resp.Data // returns a native object
 
 // Create a new organization
@@ -1199,8 +1282,6 @@ entity.Add("is_customer", true);
 updBody.Add("organizations", entity);
 client.Put('/organizations/e32303c1-5102-0132-661e-600308937d74', JsonConvert.SerializeObject(updBody));
 
-// If you prefer you can also get a Restsharp client (configured for Connec!™)
-var restClient = Maestrano.Connec.Client.RestClient("cld-f7f5g4");
 ```
 
 

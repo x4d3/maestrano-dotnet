@@ -22,7 +22,7 @@ namespace Maestrano.Tests.Connec
             MnoHelper.Api.Id = "app-1";
             MnoHelper.Api.Key = "gfcmbu8269wyi0hjazk4t7o1sndpvrqxl53e1";
             groupId = "cld-3";
-            client = new Maestrano.Connec.Client(this.groupId);
+            client = Maestrano.Connec.Client.New(this.groupId);
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace Maestrano.Tests.Connec
         [Test]
         public void Get_onCollection_withType_itReturnsTheDeserializedResponse()
         {
-            RestResponse<Dictionary<string, string>> resp = this.client.Get<Dictionary<string, string>>("/organizations");
+            var resp = this.client.Get<Dictionary<string, string>>("/organizations");
 
             Assert.IsNotNull(resp.Data["organizations"]);
         }

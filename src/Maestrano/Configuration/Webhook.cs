@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json.Linq;
 
 namespace Maestrano.Configuration
 {
     public class Webhook
     {
-        public Configuration.WebhookAccount Account { get; private set; }
-        public Configuration.WebhookConnec Connec { get; private set; }
+        public WebhookAccount Account { get; private set; }
+        public WebhookConnec Connec { get; private set; }
 
         /// <summary>
         /// Load Webhook configuration into a Webhook configuration object
@@ -17,13 +13,23 @@ namespace Maestrano.Configuration
         /// <returns>A Webhook configuration object</returns>
         public static Webhook Load(string preset = "maestrano")
         {
-            return (new Webhook());
+            var config = new Webhook();
+            config.Account = WebhookAccount.Load(preset);
+            config.Connec = WebhookConnec.Load(preset);
+            return config;
         }
 
-        public Webhook(string preset = "maestrano")
+        /// <summary>
+        /// Load Webhook into a Connec configuration object from a JObject 
+        /// </summary>
+        /// <returns>A Webhook configuration object</returns>
+        public static Webhook LoadFromJson(string preset, JObject obj)
         {
-            Account = WebhookAccount.Load(preset);
-            Connec = WebhookConnec.Load(preset);
+            var config = new Webhook();
+            config.Account = WebhookAccount.LoadFromJson(preset, obj["account"].Value<JObject>());
+            config.Connec = WebhookConnec.LoadFromJson(preset, obj["connec"].Value<JObject>());
+            return config;
         }
+
     }
 }

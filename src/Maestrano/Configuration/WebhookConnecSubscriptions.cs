@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Maestrano.Helpers;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maestrano.Configuration
 {
@@ -22,6 +20,14 @@ namespace Maestrano.Configuration
             return config;
         }
 
+        public static WebhookConnecSubscriptions LoadFromJson(string preset, JObject obj)
+        {
+            var config = new WebhookConnecSubscriptions();
+            foreach(var x in obj) {
+                config[StringExtensions.ToCamelCase(x.Key)] = x.Value.Value<Boolean>();
+            }
+            return config;
+        }
 
         /// <summary>
         /// Whether to receive notifications related to the customer company

@@ -103,6 +103,8 @@
     <Compile Include="Api\MnoCollection.cs" />
     <Compile Include="Api\MnoObject.cs" />
     <Compile Include="Api\ResourceException.cs" />
+    <Compile Include="Configuration\DevPlatformEnvironment.cs" />
+    <Compile Include="Configuration\DevPlatform.cs" />
     <Compile Include="Configuration\Api.cs" />
     <Compile Include="Configuration\App.cs" />
     <Compile Include="Configuration\Connec.cs" />
@@ -113,9 +115,11 @@
     <Compile Include="Configuration\WebhookConnec.cs" />
     <Compile Include="Configuration\WebhookConnecSubscriptions.cs" />
     <Compile Include="Connec\Client.cs" />
+    <Compile Include="Net\JsonClient.cs" />
     <Compile Include="Helpers\MnoEncryptor.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Helpers\TimeZoneConverter.cs" />
+    <Compile Include="Helpers\VersionHelper.cs" />
     <Compile Include="Maestrano.cs" />
     <Compile Include="Properties\Assembly.cs" />
     <Compile Include="Saml\Certificate.cs" />

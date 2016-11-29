@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maestrano.Configuration
 {
@@ -28,6 +25,26 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
+        /// Load Webhook into a WebhookAccount configuration object from a JObject 
+        /// </summary>
+        /// <returns>A WebhookAccount configuration object</returns>
+        public static WebhookConnec LoadFromJson(String preset, JObject obj)
+        {
+            var config = new WebhookConnec();
+            config.NotificationsPath = obj["notification_path"].Value<string>();
+            if (obj["connec_subscriptions"] == null)
+            {
+                config.Subscriptions = WebhookConnecSubscriptions.Load();
+            }
+            else
+            {
+                config.Subscriptions = WebhookConnecSubscriptions.LoadFromJson(preset, obj["connec_subscriptions"].Value<JObject>());
+            }
+            
+            return config;
+        }
+
+        /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
         [ConfigurationProperty("notificationsPath", DefaultValue = "/maestrano/connec/notifications", IsRequired = false)]
@@ -36,5 +53,16 @@ namespace Maestrano.Configuration
             get { return (String)this["notificationsPath"]; }
             set { this["notificationsPath"] = value; }
         }
+
+        /// <summary>
+        /// Whether to receive notifications related to the customer company
+        /// </summary>
+        [ConfigurationProperty("notificationsPath", DefaultValue = "/maestrano/connec/notifications", IsRequired = false)]
+        public string InitializationPath
+        {
+            get { return (String)this["initializationPath"]; }
+            set { this["initializationPath"] = value; }
+        }
+
     }
 }

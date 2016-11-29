@@ -1,11 +1,8 @@
 ﻿using Maestrano.Sso;
+using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.SessionState;
 
@@ -42,6 +39,23 @@ namespace Maestrano.Configuration
             if (config == null) config = new Sso();
             config.presetName = preset;
 
+            return config;
+        }
+
+        /// <summary>
+        /// Load configuration into a Sso configuration object from a JObject 
+        /// </summary>
+        /// <returns>A Sso configuration object</returns>
+        public static Sso LoadFromJson(string preset, JObject obj)
+        {
+            var config = new Sso();
+            config.presetName = preset;
+            config.InitPath = obj["init_path"].Value<String>();
+            config.ConsumePath = obj["consume_path"].Value<String>();
+            config.Idm = obj["idm"].Value<String>();
+            config.Idp = obj["idp"].Value<String>();
+            config.X509Fingerprint = obj["x509_fingerprint"].Value<String>();
+            config.X509Certificate = obj["x509_certificate"].Value<String>();
             return config;
         }
 
@@ -115,7 +129,7 @@ namespace Maestrano.Configuration
                 var _idm = (String)this["idm"];
                 if (string.IsNullOrEmpty(_idm))
                 {
-                    if (!string.IsNullOrEmpty(MnoHelper.App.Host))
+                    if (!string.IsNullOrEmpty(MnoHelper.With(this.presetName).App.Host))
                     {
                         return MnoHelper.App.Host;
                     }
@@ -318,7 +332,7 @@ namespace Maestrano.Configuration
         /// </summary>
         public void SetSession(HttpSessionStateBase httpSessionObj, User user)
         {
-            var mnoSession = Session.With(presetName).New(httpSessionObj, user);
+            var mnoSession = new Session(presetName, httpSessionObj, user);
             mnoSession.Save();
         }
 
@@ -327,7 +341,7 @@ namespace Maestrano.Configuration
         /// </summary>
         public void SetSession(HttpSessionState httpSessionObj, User user)
         {
-            var mnoSession = Session.With(presetName).New(httpSessionObj, user);
+            var mnoSession = new Session(presetName, httpSessionObj, user);
             mnoSession.Save();
         }
 

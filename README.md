@@ -64,7 +64,7 @@ PM> Install-Package Maestrano
 
 ### Configuration
 
-The [developer platform](https://dev-platform.maestrano.com) is the easiest way to configure Maestrano. The only actions needed from your part is to create your application and environments on the developer platform and to create a config file. The framework will then contact the developer platform and retrieve the marketplaces configuration for your app environment.
+The [developer platform](https://developer.maestrano.com) is the easiest way to configure Maestrano. The only actions needed from your part is to create your application and environments on the developer platform and to create a config file. The framework will then contact the developer platform and retrieve the marketplaces configuration for your app environment.
 
 At your application startup, just call:
 ```csharp
@@ -94,7 +94,7 @@ You may either:
   ...
 
  <maestranoDevPlatform
-    host="https://dev-platform.maestrano.com"
+    host="https://developer.maestrano.com"
     apiPath="/api/config/v1"
   >
     <environment

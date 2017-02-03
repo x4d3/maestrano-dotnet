@@ -15,7 +15,7 @@ var client = new Maestrano.Connec.Client("cld-f7f5g4");
 should be replaced by
 
 ```csharp
-var client = new Maestrano.Connec.Client.New("cld-f7f5g4");
+var client = Maestrano.Connec.Client.New("cld-f7f5g4");
 ```
 
 ### With preset/marketplace
@@ -35,10 +35,10 @@ All the `Session.With` and `Session.New` methods have been removed and should be
 For example
 
 ```csharp
-var session = Session.With(preset).New(httpSessionObj, user);
+var session = Session.With(marketplace).New(httpSessionObj, user);
 ```
 
 ```csharp
-var session = new Maestrano.Sso.Session(httpSession);
+var session = new Maestrano.Sso.Session(marketplace, httpSession);
 ```
 

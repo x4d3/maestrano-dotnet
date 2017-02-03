@@ -4,19 +4,10 @@ namespace Maestrano.Api
 {
     class ResourceException : Exception
     {
-        public ResourceException()
-    {
-    }
+        public ResourceException(){}
 
-    public ResourceException(string message)
-        : base(message)
-    {
-    }
+        public ResourceException(string message) : base(message){}
 
-    public ResourceException(string message, Exception inner)
-        : base(message, inner)
-    {
-    }
-
+        public ResourceException(string message, Exception inner): base(message, inner){}
     }
 }

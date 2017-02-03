@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using System.Collections.Specialized;
 using Newtonsoft.Json.Linq;
 using Maestrano.Helpers;
+using Maestrano.Configuration;
 
 namespace Maestrano.Sso
 {
     public class Group
     {
-        private string presetName;
         public string Uid { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -25,32 +25,10 @@ namespace Maestrano.Sso
         public string City { get; set; }
 
         /// <summary>
-        /// Constructor loading group attributes from a Saml.Response
-        /// </summary>
-        /// <param name="samlResponse"></param>
-        public Group(Saml.Response samlResponse = null)
-        {
-            this.New(samlResponse);
-        }
-
-        /// <summary>
-        /// Scope a Group to a specific configuration preset
-        /// </summary>
-        /// <param name="presetName"></param>
-        /// <returns></returns>
-        public static Group With(string presetName = "maestrano")
-        {
-            Group scopedGroup = new Group();
-            scopedGroup.presetName = presetName;
-
-            return scopedGroup;
-        }
-
-        /// <summary>
         /// Initialize the Group
         /// </summary>
         /// <returns></returns>
-        public Group New(Saml.Response samlResponse)
+        public Group(Saml.Response samlResponse)
         {
             if (samlResponse != null)
             {
@@ -80,7 +58,6 @@ namespace Maestrano.Sso
                 City = att["group_city"];
             }
 
-            return this;
         }
 
         /// <summary>

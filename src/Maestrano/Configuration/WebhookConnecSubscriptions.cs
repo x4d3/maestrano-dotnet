@@ -1,26 +1,14 @@
 ﻿using Maestrano.Helpers;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 
 namespace Maestrano.Configuration
 {
-    public class WebhookConnecSubscriptions : ConfigurationSection
+    public class WebhookConnecSubscriptions : Dictionary<String, Boolean>
     {
-        /// <summary>
-        /// Load WebhookConnec configuration into a WebhookConnec configuration object
-        /// </summary>
-        /// <returns>A WebhooAccount configuration object</returns>
-        public static WebhookConnecSubscriptions Load(string preset = "maestrano")
-        {
-            ConfigurationManager.RefreshSection(preset + "/webhook/connecSubscriptions");
-            var config = ConfigurationManager.GetSection(preset + "/webhook/connecSubscriptions") as WebhookConnecSubscriptions;
-            if (config == null) config = new WebhookConnecSubscriptions();
-
-            return config;
-        }
-
-        public static WebhookConnecSubscriptions LoadFromJson(string preset, JObject obj)
+        public static WebhookConnecSubscriptions LoadFromJson(JObject obj)
         {
             var config = new WebhookConnecSubscriptions();
             foreach(var x in obj) {
@@ -32,7 +20,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("accounts", DefaultValue = false, IsRequired = false)]
         public bool Accounts
         {
             get { return (Boolean)this["accounts"]; }
@@ -42,7 +29,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("company", DefaultValue = false, IsRequired = false)]
         public bool Company
         {
             get { return (Boolean)this["company"]; }
@@ -50,7 +36,7 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
-        /// Whether to receive notifications related to the customer company
+        /// Whether to receive notifications related to the customer invoices
         /// </summary>
         [ConfigurationProperty("invoices", DefaultValue = false, IsRequired = false)]
         public bool Invoices
@@ -60,9 +46,8 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
-        /// Whether to receive notifications related to the customer company
+        /// Whether to receive notifications related to the customer sales Orders
         /// </summary>
-        [ConfigurationProperty("salesOrders", DefaultValue = false, IsRequired = false)]
         public bool SalesOrders
         {
             get { return (Boolean)this["salesOrders"]; }
@@ -70,9 +55,8 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
-        /// Whether to receive notifications related to the customer company
+        /// Whether to receive notifications related to the customer purchase Orders
         /// </summary>
-        [ConfigurationProperty("purchaseOrders", DefaultValue = false, IsRequired = false)]
         public bool PurchaseOrders
         {
             get { return (Boolean)this["purchaseOrders"]; }
@@ -80,9 +64,8 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
-        /// Whether to receive notifications related to the customer company
+        /// Whether to receive notifications related to the customer quotes
         /// </summary>
-        [ConfigurationProperty("quotes", DefaultValue = false, IsRequired = false)]
         public bool Quotes
         {
             get { return (Boolean)this["quotes"]; }
@@ -92,7 +75,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("payments", DefaultValue = false, IsRequired = false)]
         public bool Payments
         {
             get { return (Boolean)this["payments"]; }
@@ -102,7 +84,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("journals", DefaultValue = false, IsRequired = false)]
         public bool Journals
         {
             get { return (Boolean)this["journals"]; }
@@ -112,7 +93,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("items", DefaultValue = false, IsRequired = false)]
         public bool Items
         {
             get { return (Boolean)this["items"]; }
@@ -122,7 +102,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("organizations", DefaultValue = false, IsRequired = false)]
         public bool Organizations
         {
             get { return (Boolean)this["organizations"]; }
@@ -132,7 +111,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("people", DefaultValue = false, IsRequired = false)]
         public bool People
         {
             get { return (Boolean)this["people"]; }
@@ -142,7 +120,7 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("projects", DefaultValue = false, IsRequired = false)]
+    
         public bool Projects
         {
             get { return (Boolean)this["projects"]; }
@@ -152,7 +130,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("taxCodes", DefaultValue = false, IsRequired = false)]
         public bool TaxCodes
         {
             get { return (Boolean)this["taxCodes"]; }
@@ -162,7 +139,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("taxRates", DefaultValue = false, IsRequired = false)]
         public bool TaxRates
         {
             get { return (Boolean)this["taxRates"]; }
@@ -172,7 +148,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("events", DefaultValue = false, IsRequired = false)]
         public bool Events
         {
             get { return (Boolean)this["events"]; }
@@ -182,7 +157,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("venues", DefaultValue = false, IsRequired = false)]
         public bool Venues
         {
             get { return (Boolean)this["venues"]; }
@@ -192,7 +166,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("eventOrders", DefaultValue = false, IsRequired = false)]
         public bool EventOrders
         {
             get { return (Boolean)this["eventOrders"]; }
@@ -202,7 +175,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("workLocations", DefaultValue = false, IsRequired = false)]
         public bool WorkLocations
         {
             get { return (Boolean)this["workLocations"]; }
@@ -212,7 +184,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("payItems", DefaultValue = false, IsRequired = false)]
         public bool PayItems
         {
             get { return (Boolean)this["payItems"]; }
@@ -222,7 +193,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("employees", DefaultValue = false, IsRequired = false)]
         public bool Employees
         {
             get { return (Boolean)this["employees"]; }
@@ -232,7 +202,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("paySchedules", DefaultValue = false, IsRequired = false)]
         public bool PaySchedules
         {
             get { return (Boolean)this["paySchedules"]; }
@@ -242,7 +211,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("timeSheets", DefaultValue = false, IsRequired = false)]
         public bool TimeSheets
         {
             get { return (Boolean)this["timeSheets"]; }
@@ -252,7 +220,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("timeActivities", DefaultValue = false, IsRequired = false)]
         public bool TimeActivities
         {
             get { return (Boolean)this["timeActivities"]; }
@@ -262,7 +229,6 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("payRuns", DefaultValue = false, IsRequired = false)]
         public bool PayRuns
         {
             get { return (Boolean)this["payRuns"]; }
@@ -272,13 +238,10 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("payStubs", DefaultValue = false, IsRequired = false)]
         public bool PayStubs
         {
             get { return (Boolean)this["payStubs"]; }
             set { this["payStubs"] = value; }
         }
-
-        
     }
 }

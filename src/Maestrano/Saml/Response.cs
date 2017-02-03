@@ -6,43 +6,67 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Security.Cryptography.Xml;
 using System.Collections.Specialized;
+using Maestrano.Configuration;
+using System.Text.RegularExpressions;
 
 namespace Maestrano.Saml
 {
     public class Response
     {
-        private string presetName;
-        public XmlDocument XmlDoc { get; private set; }
-        public Settings settings { get; private set; }
         private Certificate certificate;
+	    private String xml;
+	    private XmlDocument xmlDoc;
+
+        public Settings settings { get; private set; }
         protected NameValueCollection _cachedAttributes;
 
-        public Response()
+        public static Response LoadFromXML(Preset preset, String xml)
         {
-            this.New();
+            return LoadFromXML(preset.Sso, xml);
+        }
+
+        public static Response LoadFromBase64XML(Preset preset, String xml)
+        {
+            return LoadFromXML(preset.Sso, xml);
+        }
+
+        public static Response LoadFromXML(Configuration.Sso sso, String xml)
+        {
+            return new Response(sso.SamlSettings().IdpCertificate, xml);
+        }
+        
+        public static Response LoadFromBase64XML(Configuration.Sso sso, String response)
+        {
+            //Sanitize the response
+            // Remove newline characters
+            string base64Response = Regex.Replace(response, @"\t|\n|\r", "");
+
+            // Pad the string with '=' to make sure the length is right
+            int mod4 = base64Response.Length % 4;
+            if (mod4 > 0)
+                base64Response += new String('=', 4 - mod4);
+
+            // Decode the response and load the XML document
+            string xml = Encoding.ASCII.GetString(Convert.FromBase64String(base64Response));
+
+            return LoadFromXML(sso, xml);
         }
 
         /// <summary>
-        /// Scope a Request to a specific configuration preset
+        /// Only for tests
         /// </summary>
-        /// <param name="presetName"></param>
-        /// <returns></returns>
-        public static Response With(string presetName = "maestrano")
+        protected Response()
         {
-            Response scopedResponse = new Response();
-            scopedResponse.presetName = presetName;
-
-            return scopedResponse;
         }
 
         /// <summary>
         /// Initialize a new Response
         /// </summary>
-        /// <returns></returns>
-        public Response New()
+        public Response(String idCertificate, String xml)
         {
-            certificate = null;
-            return this;
+            this.xml = xml;
+            this.xmlDoc = loadXml(xml);
+            this.certificate = new Certificate(idCertificate);
         }
 
         /// <summary>
@@ -51,12 +75,6 @@ namespace Maestrano.Saml
         /// <returns></returns>
         public Certificate SamlCertificate()
         {
-            if (certificate == null)
-            {
-                certificate = new Certificate();
-                certificate.LoadCertificate(MnoHelper.With(presetName).Sso.SamlSettings().IdpCertificate);
-            }
-
             return certificate;
         }
 
@@ -64,34 +82,13 @@ namespace Maestrano.Saml
         /// Load a XML document in string format
         /// </summary>
         /// <param name="xml"></param>
-        public void LoadXml(string xml)
+        private static XmlDocument loadXml(string xml)
         {
-            XmlDoc = new XmlDocument();
-            XmlDoc.PreserveWhitespace = true;
-            XmlDoc.XmlResolver = null;
-            XmlDoc.LoadXml(xml);
-        }
-
-        /// <summary>
-        /// Load a base64 encoded XML document
-        /// </summary>
-        /// <param name="response"></param>
-        public void LoadXmlFromBase64(string response)
-        {
-            //Sanitize the response
-            string base64Response = response;
-
-            // Remove newline characters
-            base64Response = base64Response.Replace("\n", String.Empty).Replace("\r", String.Empty).Replace("\t", String.Empty);
-            
-            // Pad the string with '=' to make sure the length is right
-            int mod4 = base64Response.Length % 4;
-            if (mod4 > 0)
-                base64Response += new String('=', 4 - mod4);
-
-            // Decode the response and load the XML document
-            System.Text.ASCIIEncoding enc = new System.Text.ASCIIEncoding();
-            LoadXml(enc.GetString(Convert.FromBase64String(base64Response)));
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.PreserveWhitespace = true;
+            xmlDoc.XmlResolver = null;
+            xmlDoc.LoadXml(xml);
+            return xmlDoc;
         }
 
         /// <summary>
@@ -104,16 +101,16 @@ namespace Maestrano.Saml
         {
             bool status = false;
 
-            XmlNamespaceManager manager = new XmlNamespaceManager(XmlDoc.NameTable);
+            XmlNamespaceManager manager = new XmlNamespaceManager(xmlDoc.NameTable);
             manager.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
-            XmlNodeList nodeList = XmlDoc.SelectNodes("//ds:Signature", manager);
+            XmlNodeList nodeList = xmlDoc.SelectNodes("//ds:Signature", manager);
 
-            SignedXml signedXml = new SignedXml(XmlDoc);
+            SignedXml signedXml = new SignedXml(xmlDoc);
             foreach (XmlNode node in nodeList)
             {
                 try {
                     signedXml.LoadXml((XmlElement)node);
-                    status = signedXml.CheckSignature(SamlCertificate().cert, true);
+                    status = signedXml.CheckSignature(SamlCertificate().Cert, true);
                 } catch (System.FormatException){
                     status = false;
                 }
@@ -130,12 +127,12 @@ namespace Maestrano.Saml
         /// <returns></returns>
         public string GetNameID()
         {
-            XmlNamespaceManager manager = new XmlNamespaceManager(XmlDoc.NameTable);
+            XmlNamespaceManager manager = new XmlNamespaceManager(xmlDoc.NameTable);
             manager.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
             manager.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
             manager.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
 
-            XmlNode node = XmlDoc.SelectSingleNode("/samlp:Response/saml:Assertion/saml:Subject/saml:NameID", manager);
+            XmlNode node = xmlDoc.SelectSingleNode("/samlp:Response/saml:Assertion/saml:Subject/saml:NameID", manager);
             return node.InnerText;
         }
 
@@ -145,15 +142,14 @@ namespace Maestrano.Saml
             {
                 return _cachedAttributes;
             }
-
             _cachedAttributes = new NameValueCollection();
 
-            XmlNamespaceManager manager = new XmlNamespaceManager(XmlDoc.NameTable);
+            XmlNamespaceManager manager = new XmlNamespaceManager(xmlDoc.NameTable);
             manager.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
             manager.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
             manager.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
 
-            XmlNodeList nodeList = XmlDoc.SelectNodes("/samlp:Response/saml:Assertion/saml:AttributeStatement/saml:Attribute", manager);
+            XmlNodeList nodeList = xmlDoc.SelectNodes("/samlp:Response/saml:Assertion/saml:AttributeStatement/saml:Attribute", manager);
 
             foreach (XmlNode node in nodeList)
             {
@@ -176,7 +172,6 @@ namespace Maestrano.Saml
                     }
                 }
             }
-
             return _cachedAttributes;
         }
     }

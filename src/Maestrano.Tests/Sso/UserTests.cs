@@ -3,6 +3,7 @@ using Maestrano.Sso;
 using Maestrano.Saml;
 using NUnit.Framework;
 using System.Collections.Specialized;
+using Maestrano.Configuration;
 
 namespace Maestrano.Tests.Sso
 {
@@ -13,6 +14,7 @@ namespace Maestrano.Tests.Sso
         [Test]
         public void ItShouldExtractTheRightAttributesFromTheSamlResponse()
         {
+            Preset preset = new Preset("test");
             var samlResp = new SsoResponseStub();
             var att = samlResp.GetAttributes();
             var user = new User(samlResp);
@@ -31,60 +33,5 @@ namespace Maestrano.Tests.Sso
             Assert.AreEqual(att["company_name"], user.CompanyName);
         }
 
-        [Test]
-        public void ToUid_WhenReal_ShouldReturnTheRightUid()
-        {
-            // Configure environment
-            MnoHelper.Environment = "production";
-            MnoHelper.Sso.CreationMode = "real";
-
-            // Build user
-            var samlResp = new SsoResponseStub();
-            var user = new User(samlResp);
-
-            Assert.AreEqual(user.Uid, user.ToUid());
-        }
-
-        [Test]
-        public void ToUid_WhenVirtual_ShouldReturnTheRightUid()
-        {
-            // Configure environment
-            MnoHelper.Environment = "production";
-            MnoHelper.Sso.CreationMode = "virtual";
-
-            // Build user
-            var samlResp = new SsoResponseStub();
-            var user = new User(samlResp);
-
-            Assert.AreEqual(user.VirtualUid, user.ToUid());
-        }
-
-        [Test]
-        public void ToEmail_WhenReal_ShouldReturnTheRightEmail()
-        {
-            // Configure environment
-            MnoHelper.Environment = "production";
-            MnoHelper.Sso.CreationMode = "real";
-
-            // Build user
-            var samlResp = new SsoResponseStub();
-            var user = new User(samlResp);
-
-            Assert.AreEqual(user.Email, user.ToEmail());
-        }
-
-        [Test]
-        public void ToEmail_WhenVirtual_ShouldReturnTheRightEmail()
-        {
-            // Configure environment
-            MnoHelper.Environment = "production";
-            MnoHelper.Sso.CreationMode = "virtual";
-
-            // Build user
-            var samlResp = new SsoResponseStub();
-            var user = new User(samlResp);
-
-            Assert.AreEqual(user.VirtualEmail, user.ToEmail());
-        }
     }
 }

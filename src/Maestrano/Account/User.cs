@@ -1,4 +1,5 @@
 ﻿using Maestrano.Api;
+using Maestrano.Configuration;
 using Maestrano.Helpers;
 using Newtonsoft.Json;
 using System;
@@ -11,41 +12,47 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Account
 {
-    public class User
+    public class User : MnoObject
     {
-        public string PresetName { get; set; }
-
-        [JsonProperty("id")]
-        public String Id {get; set;}
-
+        /// <summary>
+        /// The user first name
+        /// </summary>
         [JsonProperty("name")]
         public String FirstName { get; set; }
 
+        /// <summary>
+        /// The user Last name
+        /// </summary>
         [JsonProperty("surname")]
         public String LastName { get; set; }
 
+        /// <summary>
+        ///The user email address
+        /// </summary>
         [JsonProperty("email")]
         public String Email { get; set; }
 
+        /// <summary>
+        ///The user company name as it was entered when they signed up. Nothing related to the user group name.
+        /// </summary>
         [JsonProperty("company_name")]
         public String CompanyName { get; set; }
 
+        /// <summary>
+        ///The country of the user in http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 ISO 3166-1 alpha-2 format</a> (2 letter code). E.g: 'US' for USA, 'AU' for Australia.
+        /// </summary>
         [JsonProperty("country")]
         public String Country { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
         [JsonProperty("sso_session")]
         public String SsoSession { get; set; }
-
-        [JsonProperty("created_at")]
-        public DateTime CreatedAt { get; set; }
-
-        [JsonProperty("updated_at")]
-        public DateTime UpdatedAt { get; set; }
 
         /// <summary>
         /// The Resource name
         /// </summary>
-        /// <returns></returns>
         public static string IndexPath()
         {
             return "account/users";
@@ -54,50 +61,15 @@ namespace Maestrano.Account
         /// <summary>
         /// The Single Resource name
         /// </summary>
-        /// <returns></returns>
         public static string ResourcePath()
         {
             return IndexPath() + "/{id}";
         }
 
-        public static UserRequestor With(string presetName = "maestrano")
+        public static UserRequestor With(Preset preset)
         {
-            return new UserRequestor(presetName);
+            return new UserRequestor(preset);
         }
 
-        /// <summary>
-        /// Retrieve all Maestrano users having access to your application
-        /// </summary>
-        /// <param name="filters">User attributes to filter on</param>
-        /// <returns></returns>
-        public static List<User> All(NameValueCollection filters = null)
-        {
-            return (new UserRequestor()).All(filters);
-        }
-
-        /// <summary>
-        /// Retrieve a single Maestrano user by id
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public static User Retrieve(string userId)
-        {
-            return (new UserRequestor()).Retrieve(userId);
-        }
-
-        /// <summary>
-        /// Check a user password. Useful if you have specific privileged actions
-        /// requiring users to confirm their password.
-        /// </summary>
-        /// <param name="userIdOrEmail">user id or email address</param>
-        /// <param name="password">user password</param>
-        /// <returns></returns>
-        public static Boolean CheckPassword(string userIdOrEmail, string password)
-        {
-            return (new UserRequestor()).CheckPassword(
-                userIdOrEmail: userIdOrEmail,
-                password: password
-                );
-        }
     }
 }

@@ -8,42 +8,28 @@ using System.Web.SessionState;
 
 namespace Maestrano.Configuration
 {
-    public class Sso : ConfigurationSection
+    public class Sso
     {
-
-        private const string ProdIdpHost = "https://api-hub.maestrano.com";
-        private const string ProdX509CertFootprint = "2f:57:71:e4:40:19:57:37:a6:2c:f0:c5:82:52:2f:2e:41:b7:9d:7e";
-        private const string ProdX509Cert = "-----BEGIN CERTIFICATE-----\nMIIDezCCAuSgAwIBAgIJAPFpcH2rW0pyMA0GCSqGSIb3DQEBBQUAMIGGMQswCQYD\nVQQGEwJBVTEMMAoGA1UECBMDTlNXMQ8wDQYDVQQHEwZTeWRuZXkxGjAYBgNVBAoT\nEU1hZXN0cmFubyBQdHkgTHRkMRYwFAYDVQQDEw1tYWVzdHJhbm8uY29tMSQwIgYJ\nKoZIhvcNAQkBFhVzdXBwb3J0QG1hZXN0cmFuby5jb20wHhcNMTQwMTA0MDUyNDEw\nWhcNMzMxMjMwMDUyNDEwWjCBhjELMAkGA1UEBhMCQVUxDDAKBgNVBAgTA05TVzEP\nMA0GA1UEBxMGU3lkbmV5MRowGAYDVQQKExFNYWVzdHJhbm8gUHR5IEx0ZDEWMBQG\nA1UEAxMNbWFlc3RyYW5vLmNvbTEkMCIGCSqGSIb3DQEJARYVc3VwcG9ydEBtYWVz\ndHJhbm8uY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD3feNNn2xfEz5/\nQvkBIu2keh9NNhobpre8U4r1qC7h7OeInTldmxGL4cLHw4ZAqKbJVrlFWqNevM5V\nZBkDe4mjuVkK6rYK1ZK7eVk59BicRksVKRmdhXbANk/C5sESUsQv1wLZyrF5Iq8m\na9Oy4oYrIsEF2uHzCouTKM5n+O4DkwIDAQABo4HuMIHrMB0GA1UdDgQWBBSd/X0L\n/Pq+ZkHvItMtLnxMCAMdhjCBuwYDVR0jBIGzMIGwgBSd/X0L/Pq+ZkHvItMtLnxM\nCAMdhqGBjKSBiTCBhjELMAkGA1UEBhMCQVUxDDAKBgNVBAgTA05TVzEPMA0GA1UE\nBxMGU3lkbmV5MRowGAYDVQQKExFNYWVzdHJhbm8gUHR5IEx0ZDEWMBQGA1UEAxMN\nbWFlc3RyYW5vLmNvbTEkMCIGCSqGSIb3DQEJARYVc3VwcG9ydEBtYWVzdHJhbm8u\nY29tggkA8WlwfatbSnIwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOBgQDE\nhe/18oRh8EqIhOl0bPk6BG49AkjhZZezrRJkCFp4dZxaBjwZTddwo8O5KHwkFGdy\nyLiPV326dtvXoKa9RFJvoJiSTQLEn5mO1NzWYnBMLtrDWojOe6Ltvn3x0HVo/iHh\nJShjAn6ZYX43Tjl1YXDd1H9O+7/VgEWAQQ32v8p5lA==\n-----END CERTIFICATE-----";
-
         private const string IdpDefaultNameId = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent";
         private const string SamlIdpPath = "/api/v1/auth/saml";
         private const string IdpLogoutPath = "/app_logout";
         private const string IdpUnauthorizedPath = "/app_access_unauthorized";
 
-        private string presetName;
+        private readonly Api apiConfiguration;
 
-        /// <summary>
-        /// Load Sso configuration into a Sso configuration object
-        /// </summary>
-        /// <returns>A Sso configuration object</returns>
-        public static Sso Load(string preset = "maestrano")
+        public Sso(string marketplace, Api apiConfiguration)
         {
-            ConfigurationManager.RefreshSection(preset + "/sso");
-            var config = ConfigurationManager.GetSection(preset + "/sso") as Sso;
-            if (config == null) config = new Sso();
-            config.presetName = preset;
-
-            return config;
+            this.Marketplace = marketplace;
+            this.apiConfiguration = apiConfiguration;
         }
 
         /// <summary>
         /// Load configuration into a Sso configuration object from a JObject 
         /// </summary>
         /// <returns>A Sso configuration object</returns>
-        public static Sso LoadFromJson(string preset, JObject obj)
+        public static Sso LoadFromJson(String marketplace, Api apiConfiguration, JObject obj)
         {
-            var config = new Sso();
-            config.presetName = preset;
+            var config = new Sso(marketplace, apiConfiguration);
             config.InitPath = obj["init_path"].Value<String>();
             config.ConsumePath = obj["consume_path"].Value<String>();
             config.Idm = obj["idm"].Value<String>();
@@ -54,151 +40,53 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
-        /// Return False (object not read only)
+        /// Name of the marketplace
         /// </summary>
-        /// <returns></returns>
-        public override bool IsReadOnly()
-        {
-            return false;
-        }
+        public String Marketplace { get; set; }
 
         /// <summary>
         /// Is Single Sign-On enabled - useful for debugging
         /// </summary>
-        [ConfigurationProperty("enabled", DefaultValue = true, IsRequired = false)]
-        public bool Enabled
-        {
-            get { return (Boolean)this["enabled"]; }
-            set { this["enabled"] = value; }
-        }
+        public bool Enabled { get; set; }
 
         /// <summary>
         /// Is Single Logout enabled - useful for debugging
         /// </summary>
-        [ConfigurationProperty("sloEnabled", DefaultValue = true, IsRequired = false)]
-        public bool SloEnabled
-        {
-            get { return (Boolean)this["sloEnabled"]; }
-            set { this["sloEnabled"] = value; }
-        }
-
-        /// <summary>
-        /// SSO user creation mode: 'real' or 'virtual'
-        /// </summary>
-        [ConfigurationProperty("creationMode", DefaultValue = "virtual", IsRequired = false)]
-        public string CreationMode
-        {
-            get { return (String)this["creationMode"]; }
-            set { this["creationMode"] = value; }
-        }
+        public bool SloEnabled { get; set; }
 
         /// <summary>
         /// Path to init action
-        /// </summary>
-        [ConfigurationProperty("initPath", IsRequired = false)]
-        public string InitPath
-        {
-            get { return (String)this["initPath"]; }
-            set { this["initPath"] = value; }
-        }
+        /// </
+        public String InitPath { get; set; }
 
         /// <summary>
         /// Path to consume action
         /// </summary>
-        [ConfigurationProperty("consumePath", IsRequired = false)]
-        public string ConsumePath
-        {
-            get { return (String)this["consumePath"]; }
-            set { this["consumePath"] = value; }
-        }
+        public String ConsumePath { get; set; }
 
         /// <summary>
         /// Address of the identity manager (for your application)
         /// </summary>
-        [ConfigurationProperty("idm", DefaultValue = null, IsRequired = false)]
-        public string Idm
-        {
-            get
-            {
-                var _idm = (String)this["idm"];
-                if (string.IsNullOrEmpty(_idm))
-                {
-                    if (!string.IsNullOrEmpty(MnoHelper.With(this.presetName).App.Host))
-                    {
-                        return MnoHelper.App.Host;
-                    }
-                    return "localhost";
-                }
-                return _idm;
-            }
-
-            set { this["idm"] = value; }
-        }
+        public String Idm { get; set; }
 
         /// <summary>
         /// Address of the identity provider
         /// </summary>
-        [ConfigurationProperty("idp", DefaultValue = null, IsRequired = false)]
-        public string Idp
-        {
-            get
-            {
-                var _idp = (String)this["idp"];
-                if(string.IsNullOrEmpty(_idp)) {
-                    return ProdIdpHost;
-                }
-                return _idp;
-            }
-
-            set { this["idp"] = value; }
-        }
-
+        public String Idp { get; set; }
 
         /// <summary>
         /// The nameid format for SAML handshake
         /// </summary>
-        [ConfigurationProperty("nameIdFormat", DefaultValue = IdpDefaultNameId, IsRequired = false)]
-        public string NameIdFormat
-        {
-            get { return (String)this["nameIdFormat"]; }
-            set { this["nameIdFormat"] = value; }
-        }
+        public String NameIdFormat { get { return IdpDefaultNameId; } }
 
 
         /// <summary>
         /// Fingerprint of x509 certificate used for SAML
         /// </summary>
-        [ConfigurationProperty("x509Fingerprint", DefaultValue = null, IsRequired = false)]
-        public string X509Fingerprint
-        {
-            get
-            {
-                var _x509fingerprint = (String)this["x509Fingerprint"];
-                if(string.IsNullOrEmpty(_x509fingerprint)) {
-                    return ProdX509CertFootprint;
-                }
-                return _x509fingerprint;
-            }
-
-            set { this["x509Fingerprint"] = value; }
-        }
+        public String X509Fingerprint { get; set; }
 
         // Actual x509 certificate
-        [ConfigurationProperty("x509Certificate", DefaultValue = null, IsRequired = false)]
-        public string X509Certificate
-        {
-            get
-            {
-                var _509certificate = (String)this["x509Certificate"];
-                if (string.IsNullOrEmpty(_509certificate))
-                {
-                    return ProdX509Cert;
-                }
-                return _509certificate;
-            }
-
-            set { this["x509Certificate"] = value; }
-        }
+        public String X509Certificate { get; set; }
 
         /// <summary>
         /// Return the IDP url to be used for SSO handshake
@@ -246,12 +134,10 @@ namespace Maestrano.Configuration
         /// <summary>
         /// return the Maestrano logout url to be used for redirecting a user after logout
         /// </summary>
-        public string LogoutUrl(String  userUid)
+        public string LogoutUrl(String userUid)
         {
             return Idp + IdpLogoutPath + "?user_uid=" + userUid;
         }
-
-
 
         /// <summary>
         /// Return the Maestrano unauthorized page url to
@@ -290,7 +176,7 @@ namespace Maestrano.Configuration
             settings.AssertionConsumerServiceUrl = ConsumeUrl();
             settings.IdpSsoTargetUrl = IdpUrl();
             settings.IdpCertificate = X509Certificate;
-            settings.Issuer = MnoHelper.With(presetName).Api.Id;
+            settings.Issuer = apiConfiguration.Id;
             settings.NameIdentifierFormat = NameIdFormat;
 
             return settings;
@@ -306,7 +192,7 @@ namespace Maestrano.Configuration
         /// <returns></returns>
         public Saml.Request BuildRequest(NameValueCollection parameters = null)
         {
-            return Saml.Request.With(presetName).New(parameters);
+            return new Saml.Request(SamlSettings(), parameters);
         }
 
         /// <summary>
@@ -316,10 +202,8 @@ namespace Maestrano.Configuration
         /// <returns></returns>
         public Saml.Response BuildResponse(String samlPostParam)
         {
-            var resp = Saml.Response.With(presetName).New();
-            resp.LoadXmlFromBase64(samlPostParam);
 
-            return resp;
+            return Saml.Response.LoadFromBase64XML(this, samlPostParam);
         }
 
         /// <summary>
@@ -327,7 +211,7 @@ namespace Maestrano.Configuration
         /// </summary>
         public void SetSession(HttpSessionStateBase httpSessionObj, User user)
         {
-            var mnoSession = new Session(presetName, httpSessionObj, user);
+            var mnoSession = new Session(this, httpSessionObj, user);
             mnoSession.Save();
         }
 
@@ -336,7 +220,7 @@ namespace Maestrano.Configuration
         /// </summary>
         public void SetSession(HttpSessionState httpSessionObj, User user)
         {
-            var mnoSession = new Session(presetName, httpSessionObj, user);
+            var mnoSession = new Session(this, httpSessionObj, user);
             mnoSession.Save();
         }
 
@@ -346,7 +230,7 @@ namespace Maestrano.Configuration
         /// <param name="httpSessionObj"></param>
         public void ClearSession(HttpSessionStateBase httpSessionObj)
         {
-            httpSessionObj.Remove(presetName);
+            httpSessionObj.Remove(Marketplace);
         }
 
         /// <summary>
@@ -355,7 +239,7 @@ namespace Maestrano.Configuration
         /// <param name="httpSessionObj"></param>
         public void ClearSession(HttpSessionState httpSessionObj)
         {
-            httpSessionObj.Remove(presetName);
+            httpSessionObj.Remove(Marketplace);
         }
     }
 }

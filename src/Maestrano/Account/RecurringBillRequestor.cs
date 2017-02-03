@@ -1,4 +1,5 @@
 ﻿using Maestrano.Api;
+using Maestrano.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,28 +10,10 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Account
 {
-    public class RecurringBillRequestor
+    public class RecurringBillRequestor:MnoClient<RecurringBill>
     {
-
-        private string presetName;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="preset">Name of a preset</param>
-        public RecurringBillRequestor(string presetName = "maestrano")
+        public RecurringBillRequestor(Preset preset) : base(RecurringBill.IndexPath(), RecurringBill.ResourcePath(), preset)
         {
-            this.presetName = presetName;
-        }
-
-        public List<RecurringBill> All(NameValueCollection filters = null)
-        {
-            return MnoClient.All<RecurringBill>(RecurringBill.IndexPath(), filters, presetName);
-        }
-
-        public RecurringBill Retrieve(string billId)
-        {
-            return MnoClient.Retrieve<RecurringBill>(RecurringBill.ResourcePath(), billId, presetName);
         }
 
         public RecurringBill Create(String groupId, Int32 priceCents, String description, String currency = "AUD", Int32 initialCents = 0, Int16? frequency = null, Int16? cycles = null, DateTime? startDate = null)
@@ -48,7 +31,22 @@ namespace Maestrano.Account
             if (startDate.HasValue)
                 att.Add("startDate", startDate.Value.ToString("s"));
 
-            return MnoClient.Create<RecurringBill>(RecurringBill.IndexPath(), att, presetName);
+            return Create(att);
+        }
+
+        /// <summary>
+        /// Cancel the recurring Bill
+        /// </summary>
+        /// <returns>if the recurring Bill was cancelled</returns>
+        public Boolean Cancel(String id)
+        {
+            if (id != null)
+            {
+                RecurringBill respBill = Delete(id);
+                var Status = respBill.Status;
+                return (Status.Equals("cancelled"));
+            }
+            return false;
         }
     }
 }

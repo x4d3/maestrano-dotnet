@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Maestrano.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -11,7 +12,6 @@ namespace Maestrano.Sso
 
     public class User
     {
-        private string presetName;
         public string SsoSession { get; set; }
         public DateTime SsoSessionRecheck { get; set; }
         public string GroupUid { get; set; }
@@ -25,35 +25,13 @@ namespace Maestrano.Sso
         public string Country { get; set; }
         public string CompanyName { get; set; }
 
-
-        /// <summary>
-        /// Constructor loading user attributes from a Saml.Response
-        /// </summary>
-        /// <param name="samlResponse"></param>
-        public User(Saml.Response samlResponse = null)
-        {
-            this.New(samlResponse);
-        }
-
-        /// <summary>
-        /// Scope a User to a specific configuration preset
-        /// </summary>
-        /// <param name="presetName"></param>
-        /// <returns></returns>
-        public static User With(string presetName = "maestrano")
-        {
-            User scopedUser = new User();
-            scopedUser.presetName = presetName;
-
-            return scopedUser;
-        }
-
         /// <summary>
         /// Initialize a new User
         /// </summary>
         /// <returns></returns>
-        public User New(Saml.Response samlResponse)
+        public User(Saml.Response samlResponse)
         {
+
             if (samlResponse != null)
             {
                 NameValueCollection att = samlResponse.GetAttributes();
@@ -70,32 +48,6 @@ namespace Maestrano.Sso
                 Country = att["country"];
                 CompanyName = att["company_name"];
             }
-            
-            return this;
-        }
-
-        /// <summary>
-        /// Return the real Uid if Maestrano.Sso.CreationMode is set
-        /// to "real" and the VirtualUid otherwise ("virtual" mode)
-        /// </summary>
-        public string ToUid()
-        {
-            if (MnoHelper.With(presetName).Sso.CreationMode.Equals("real"))
-                return Uid;
-            else
-                return VirtualUid;
-        }
-
-        /// <summary>
-        /// Return the real Email if Maestrano.Sso.CreationMode is set
-        /// to "real" and the VirtualEmail otherwise ("virtual" mode)
-        /// </summary>
-        public string ToEmail()
-        {
-            if (MnoHelper.With(presetName).Sso.CreationMode.Equals("real"))
-                return Email;
-            else
-                return VirtualEmail;
         }
 
         /// <summary>

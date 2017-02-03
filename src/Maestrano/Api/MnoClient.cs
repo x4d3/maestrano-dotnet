@@ -5,34 +5,34 @@ using System.Collections.Specialized;
 using Newtonsoft.Json;
 using Maestrano.Helpers;
 using Maestrano.Net;
+using Maestrano.Configuration;
+using Newtonsoft.Json.Linq;
+using Maestrano.Account;
 
 namespace Maestrano.Api
 {
-    public static class MnoClient
+    public class MnoClient<T> where T : MnoObject
     {
-        private static Dictionary<string, JsonClient> clientDict;
-        private static JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-
+        protected readonly Preset preset;
+        private readonly string indexPath;
+        private readonly string resourcePath;
+        private readonly JsonClient jsonClient;
+        private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
         static MnoClient()
         {
-            clientDict = new Dictionary<string, JsonClient>();
             jsonSerializerSettings.Converters.Add(new CorrectedIsoDateTimeConverter());
         }
 
-        private static JsonClient Client(string presetName = "maestrano")
+        protected MnoClient(String indexPath, String resourcePath, Preset preset)
         {
-            if (!clientDict.ContainsKey(presetName))
-            {
-                var preset = MnoHelper.With(presetName);
-                string host = preset.Api.Host;
-                string path = preset.Api.Base;
-                string key = preset.Api.Id;
-                string secret = preset.Api.Key;
-                var client = new JsonClient(host, path, key, secret);
-                clientDict.Add(presetName, client);
-            }
-
-            return clientDict[presetName];
+            this.indexPath = indexPath;
+            this.resourcePath = resourcePath;
+            this.preset = preset;
+            string host = preset.Api.Host;
+            string basePath = preset.Api.Base;
+            string key = preset.Api.Id;
+            string secret = preset.Api.Key;
+            this.jsonClient = new JsonClient(host, basePath, key, secret);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Maestrano.Api
         /// </summary>
         /// <typeparam name="T">The type of object to create and populate with the returned data.</typeparam>
         /// <param name="request">The RestRequest to execute (will use client credentials)</param>
-        public static T ProjectSingleObject<T>(RestRequest request, string presetName = "maestrano")
+        private T ProjectSingleObject(RestRequest request)
         {
             request.OnBeforeDeserialization = (resp) =>
             {
@@ -50,11 +50,10 @@ namespace Maestrano.Api
                     request.RootElement = "";
             };
 
-            var response = Client(presetName).Execute(request);
-            var respObj = DeserializeObject<MnoObject<T>>(response.Content);
-            respObj.ThrowIfErrors();
-            respObj.AssignPreset(presetName);
-
+            var response = jsonClient.Execute(request);
+            var respObj = DeserializeObject<SingleResult>(response.Content);
+            ThrowIfErrors(respObj.Errors);
+            respObj.Data.Marketplace = preset.Marketplace;
             return respObj.Data;
         }
         /// <summary>
@@ -69,17 +68,10 @@ namespace Maestrano.Api
         /// </summary>
         /// <typeparam name="T">The type of object to create and populate with the returned data.</typeparam>
         /// <param name="request">The RestRequest to execute (will use client credentials)</param>
-        public static List<T> ProcessList<T>(RestRequest request, string presetName = "maestrano")
+        protected List<T> ProcessList(RestRequest request)
         {
-            request.OnBeforeDeserialization = (resp) =>
-            {
-                // for individual resources when there's an error to make
-                // sure that RestException props are populated
-                //if (((int)resp.StatusCode) >= 400)
-                //    request.RootElement = "";
-            };
 
-            var response = Client(presetName).Execute(request);
+            var response = jsonClient.Execute(request);
             if (response.ErrorException != null)
             {
                 throw new ResourceException("Error retrieving response.", response.ErrorException);
@@ -90,14 +82,16 @@ namespace Maestrano.Api
                 throw new ResourceException("Could not process request: " + response.Content);
             }
 
-            var respObj = DeserializeObject<MnoCollection<T>>(response.Content);
-            respObj.ThrowIfErrors();
-            respObj.AssignPreset(presetName);
-
+            var respObj = DeserializeObject<CollectionResult>(response.Content);
+            ThrowIfErrors(respObj.Errors);
+            foreach (T item in respObj.Data)
+            {
+                item.Marketplace = preset.Marketplace;
+            }
             return respObj.Data;
         }
 
-        public static List<T> All<T>(string path, NameValueCollection filters = null, string presetName = "maestrano")
+        public List<T> All(string path, NameValueCollection filters = null)
         {
             var request = new RestRequest();
             request.Resource = path;
@@ -108,39 +102,70 @@ namespace Maestrano.Api
                 foreach (String k in filters.AllKeys)
                     request.AddParameter(k, filters[k]);
 
-            return ProcessList<T>(request, presetName);
+            return ProcessList(request);
         }
 
-        public static T Retrieve<T>(string path, string resourceId, string presetName = "maestrano")
+        public T Retrieve(string resourceId)
         {
             var request = new RestRequest();
-            request.Resource = path;
+            request.Resource = resourcePath;
             request.Method = Method.GET;
             request.AddUrlSegment("id", resourceId);
 
-            return ProjectSingleObject<T>(request, presetName);
+            return ProjectSingleObject(request);
         }
 
-        public static T Create<T>(string path, NameValueCollection parameters, string presetName = "maestrano")
+        protected T Create(NameValueCollection parameters)
+        {
+            return Create(this.indexPath, parameters);
+        }
+
+        protected T Create(string path, NameValueCollection parameters)
         {
             var request = new RestRequest();
-            request.Resource = path;
+            request.Resource = indexPath;
             request.Method = Method.POST;
 
             foreach (var k in parameters.AllKeys)
                 request.AddParameter(StringExtensions.ToSnakeCase(k), parameters[k]);
 
-            return ProjectSingleObject<T>(request, presetName);
+            return ProjectSingleObject(request);
         }
 
-        public static T Delete<T>(string path, string resourceId, string presetName = "maestrano")
+        public T Delete(string resourceId)
         {
             var request = new RestRequest();
-            request.Resource = path;
+            request.Resource = indexPath;
             request.Method = Method.DELETE;
             request.AddUrlSegment("id", resourceId);
 
-            return ProjectSingleObject<T>(request, presetName);
+            return ProjectSingleObject(request);
+        }
+
+        private static void ThrowIfErrors(JObject Errors)
+        {
+            if (Errors.Count > 0)
+            {
+                var error = (JProperty)Errors.First;
+                throw new ResourceException(error.Name + " " + error.Value);
+            }
+        }
+
+        class SingleResult
+        {
+            public JObject Errors = null;
+            public T Data = null;
+            public string Success = null;
+
+        }
+
+        public class CollectionResult
+        {
+            public JObject Errors = null;
+            public List<T> Data = null;
+            public string Success = null;
         }
     }
+
+
 }

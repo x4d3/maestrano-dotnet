@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Web;
 using System.IO.Compression;
+using Maestrano.Configuration;
 
 namespace Maestrano.Saml
 {
     public class Request
     {
-        private string presetName;
         public string Id {get; private set;}
         public string IssueInstant { get; private set; }
 
@@ -22,55 +22,26 @@ namespace Maestrano.Saml
 
         public enum RequestFormat
         {
-            Base64 = 1   
+            Base64 = 1
         }
 
+        public Request(Preset preset, NameValueCollection parameters = null):this(preset.Sso.SamlSettings(), parameters)
+        {
+        }
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="parameters">The request GET parameters typically obtained via HttpRequest.Params</param>
-        public Request(NameValueCollection parameters = null)
-        {
-            this.New(parameters);
-        }
-
-        /// <summary>
-        /// Scope a Request to a specific configuration preset
-        /// </summary>
-        /// <param name="presetName"></param>
-        /// <returns></returns>
-        public static Request With(string presetName = "maestrano") {
-            Request scopedRequest = new Request();
-            scopedRequest.presetName = presetName;
-
-            return scopedRequest;
-        }
-
-        /// <summary>
-        /// Initialize a Request
-        /// </summary>
-        /// <returns></returns>
-        public Request New(NameValueCollection parameters = null)
-        {
+        public Request(Settings settings, NameValueCollection parameters = null) {
+  
             this.parameters = parameters;
-            this.settings = null;
-            if (presetName == null)
-            {
-                presetName = "maestrano";
-            }
+            this.settings = settings;
+            this.Id = "_" + Guid.NewGuid().ToString();
+            this.IssueInstant = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
 
-            Id = "_" + Guid.NewGuid().ToString();
-            IssueInstant = DateTime.Now.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
-
-            return this;
         }
 
         public Settings SamlSettings() {
-            if (settings == null)
-            {
-                settings = MnoHelper.With(presetName).Sso.SamlSettings();
-            }
-
             return settings;
         }
 
@@ -130,7 +101,6 @@ namespace Maestrano.Saml
 
             }
         }
-
 
         /// <summary>
         /// Return the SAML request redirection URL that initiates

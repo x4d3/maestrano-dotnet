@@ -58,14 +58,13 @@
     <Compile Include="Account\BillRequestor.cs" />
     <Compile Include="Account\Group.cs" />
     <Compile Include="Account\GroupRequestor.cs" />
+    <Compile Include="Account\MnoObject.cs" />
     <Compile Include="Account\RecurringBill.cs" />
     <Compile Include="Account\RecurringBillRequestor.cs" />
     <Compile Include="Account\User.cs" />
     <Compile Include="Account\UserRequestor.cs" />
     <Compile Include="Api\CorrectedIsoDateTimeConverter.cs" />
     <Compile Include="Api\MnoClient.cs" />
-    <Compile Include="Api\MnoCollection.cs" />
-    <Compile Include="Api\MnoObject.cs" />
     <Compile Include="Api\ResourceException.cs" />
     <Compile Include="Configuration\Api.cs" />
     <Compile Include="Configuration\App.cs" />

@@ -8,7 +8,6 @@ namespace Maestrano.Configuration
         private const string ProdDefaultHost = "https://developer.maestrano.com";
         private const string ProdDefaultApiPath = "/api/config/v1";
 
-
         /// <summary>
         /// Load Api configuration into a DevPlatform configuration object
         /// </summary>
@@ -19,7 +18,6 @@ namespace Maestrano.Configuration
             var config = ConfigurationManager.GetSection("maestranoDevPlatform") as DevPlatform;
             return config;
         }
-
 
         /// <summary>
         /// Return False (object not read only)

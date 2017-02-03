@@ -6,6 +6,7 @@ using System.Web;
 using Maestrano.Saml;
 using NUnit.Framework;
 using System.IO.Compression;
+using Maestrano.Configuration;
 
 namespace Maestrano.Tests.Saml
 {
@@ -16,34 +17,34 @@ namespace Maestrano.Tests.Saml
         [Test]
         public void GetRequest_ItReturnsTheRightBased64EncodedXmlRequest()
         {
-            MnoHelper.Environment = "production";
-            MnoHelper.App.Host = "https://mysuperapp.com";
-            MnoHelper.Api.Id = "app-1";
+            Preset preset = new Preset("test");
+            preset.App.Host = "https://mysuperapp.com";
+            preset.Api.Id = "app-1";
 
-            Request req = new Request();
+            Request req = new Request(preset);
 
-            Assert.AreEqual(XmlRequestBase64Encoded(req.Id, req.IssueInstant), req.GetXmlBase64Request());
+            Assert.AreEqual(XmlRequestBase64Encoded(preset, req.Id, req.IssueInstant), req.GetXmlBase64Request());
         }
 
         [Test]
         public void RedirectUrl_WithNoParameters_ItReturnsTheRightUrl()
         {
-            MnoHelper.Environment = "production";
-            MnoHelper.App.Host = "https://mysuperapp.com";
-            MnoHelper.Api.Id = "app-1";
-
+            Preset preset = new Preset("test");
+            preset.App.Host = "https://mysuperapp.com";
+            preset.Api.Id = "app-1";
+            preset.Sso.Idp = "some-url";
             // Build parameters
             NameValueCollection parameters = new NameValueCollection();
             parameters.Add("group_uid","someparamvalue");
             parameters.Add("someotherparam","someothervalue");
 
             // Build request
-            Request req = new Request(parameters);
+            Request req = new Request(preset, parameters);
 
             // Build expected url
-            string expectedUrl = MnoHelper.Sso.IdpUrl();
+            string expectedUrl = preset.Sso.IdpUrl();
             expectedUrl += "?SAMLRequest=";
-            expectedUrl += HttpUtility.UrlEncode(XmlRequestBase64Encoded(req.Id, req.IssueInstant));
+            expectedUrl += HttpUtility.UrlEncode(XmlRequestBase64Encoded(preset, req.Id, req.IssueInstant));
             expectedUrl += "&group_uid=someparamvalue";
             expectedUrl += "&someotherparam=someothervalue";
 
@@ -53,17 +54,17 @@ namespace Maestrano.Tests.Saml
         [Test]
         public void RedirectUrl_WithParameters_ItReturnsTheRightUrl()
         {
-            MnoHelper.Environment = "production";
-            MnoHelper.App.Host = "https://mysuperapp.com";
-            MnoHelper.Api.Id = "app-1";
+            Preset preset = new Preset("test");
+            preset.App.Host = "https://mysuperapp.com";
+            preset.Api.Id = "app-1";
 
             // Build request
-            Request req = new Request();
+            Request req = new Request(preset);
 
             // Build expected url
-            string expectedUrl = MnoHelper.Sso.IdpUrl();
+            string expectedUrl = preset.Sso.IdpUrl();
             expectedUrl += "?SAMLRequest=";
-            expectedUrl += HttpUtility.UrlEncode(XmlRequestBase64Encoded(req.Id, req.IssueInstant));
+            expectedUrl += HttpUtility.UrlEncode(XmlRequestBase64Encoded(preset, req.Id, req.IssueInstant));
 
             Assert.AreEqual(expectedUrl, req.RedirectUrl());
         }
@@ -78,15 +79,15 @@ namespace Maestrano.Tests.Saml
         /// <param name="issuer"></param>
         /// <param name="nameIdFormat"></param>
         /// <returns></returns>
-        public string XmlRequestBase64Encoded(string id, string issueInstant, string consumeUrl = null, string issuer = null, string nameIdFormat = null)
+        public string XmlRequestBase64Encoded(Preset preset, string id, string issueInstant, string consumeUrl = null, string issuer = null, string nameIdFormat = null)
         {
             // Default values
             if (string.IsNullOrEmpty(consumeUrl))
-                consumeUrl = MnoHelper.Sso.ConsumeUrl();
+                consumeUrl = preset.Sso.ConsumeUrl();
             if (string.IsNullOrEmpty(nameIdFormat))
-                nameIdFormat = MnoHelper.Sso.NameIdFormat;
+                nameIdFormat = preset.Sso.NameIdFormat;
             if (string.IsNullOrEmpty(issuer))
-                issuer = MnoHelper.Api.Id;
+                issuer = preset.Api.Id;
 
             using (StringWriter sw = new StringWriter())
             {

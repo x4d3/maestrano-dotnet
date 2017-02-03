@@ -7,12 +7,13 @@ using System.Web.SessionState;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 using System.Web;
+using Maestrano.Configuration;
 
 namespace Maestrano.Sso
 {
     public class Session
     {
-        private string presetName;
+        private Configuration.Sso ssoConfiguration;
         public string Uid { get; set; }
         public string GroupUid { get; set; }
         public DateTime Recheck { get; set; }
@@ -23,7 +24,7 @@ namespace Maestrano.Sso
         /// Initialize the Session
         /// </summary>
         /// <returns></returns>
-        public Session(String presetName, HttpSessionState httpSessionObj = null) : this(presetName, new HttpSessionStateWrapper(httpSessionObj))
+        public Session(Preset preset, HttpSessionState httpSessionObj = null) : this(preset.Sso, new HttpSessionStateWrapper(httpSessionObj))
         {
         }
 
@@ -31,7 +32,7 @@ namespace Maestrano.Sso
         /// Initialize the Session
         /// </summary>
         /// <returns></returns>
-        public Session(String presetName, HttpSessionState httpSessionObj, User user) : this(presetName, new HttpSessionStateWrapper(httpSessionObj), user)
+        public Session(Preset preset, HttpSessionState httpSessionObj, User user) : this(preset.Sso, new HttpSessionStateWrapper(httpSessionObj), user)
         {
         }
 
@@ -39,17 +40,33 @@ namespace Maestrano.Sso
         /// Initialize the Session
         /// </summary>
         /// <returns></returns>
-        public Session(String presetName, HttpSessionStateBase httpSessionObj = null)
+        public Session(Configuration.Sso ssoConfiguration, HttpSessionState httpSessionObj = null) : this(ssoConfiguration, new HttpSessionStateWrapper(httpSessionObj))
         {
+        }
+
+        /// <summary>
+        /// Initialize the Session
+        /// </summary>
+        /// <returns></returns>
+        public Session(Configuration.Sso ssoConfiguration, HttpSessionState httpSessionObj, User user) : this(ssoConfiguration, new HttpSessionStateWrapper(httpSessionObj), user)
+        {
+        }
+
+        /// <summary>
+        /// Initialize the Session
+        /// </summary>
+        /// <returns></returns>
+        public Session(Configuration.Sso ssoConfiguration, HttpSessionStateBase httpSessionObj = null)
+        {
+            this.ssoConfiguration = ssoConfiguration;
             HttpSession = httpSessionObj;
-            this.presetName = presetName;
-            if (HttpSession != null && HttpSession[presetName] != null)
+            if (HttpSession != null && HttpSession[ssoConfiguration.Marketplace] != null)
             {
                 var enc = System.Text.Encoding.UTF8;
                 JObject sessionObject = new JObject();
                 try
                 {
-                    string decryptedMnoSession = enc.GetString(Convert.FromBase64String(HttpSession[presetName].ToString()));
+                    string decryptedMnoSession = enc.GetString(Convert.FromBase64String(HttpSession[ssoConfiguration.Marketplace].ToString()));
                     sessionObject = JObject.Parse(decryptedMnoSession);
                 }
                 catch (Exception) { }
@@ -78,9 +95,9 @@ namespace Maestrano.Sso
         /// </summary>
         /// <param name="httpSessionObj"></param>
         /// <param name="user"></param>
-        public Session(String presetName, HttpSessionStateBase httpSessionObj, User user)
+        public Session(Configuration.Sso ssoConfiguration, HttpSessionStateBase httpSessionObj, User user)
         {
-            this.presetName = presetName;
+            this.ssoConfiguration = ssoConfiguration;
             HttpSession = httpSessionObj;
 
             if (user != null)
@@ -90,7 +107,6 @@ namespace Maestrano.Sso
                 SessionToken = user.SsoSession;
                 Recheck = user.SsoSessionRecheck;
             }
-
         }
 
         /// <summary>
@@ -145,7 +161,7 @@ namespace Maestrano.Sso
         /// <returns></returns>
         public Boolean PerformRemoteCheck()
         {
-            var client = new RestClient(MnoHelper.With(presetName).Sso.Idp);
+            var client = new RestClient(ssoConfiguration.Idp);
             return PerformRemoteCheck(client);
         }
 
@@ -159,12 +175,12 @@ namespace Maestrano.Sso
         public Boolean IsValid(RestClient client, Boolean ifSession = false)
         {
             // Return true automatically if SLO is disabled
-            if (!MnoHelper.With(presetName).Sso.SloEnabled)
+            if (!ssoConfiguration.SloEnabled)
                 return true;
 
             // Return true if maestrano session not set
             // and ifSession option enabled
-            if (ifSession && (HttpSession == null || HttpSession[presetName] == null))
+            if (ifSession && (HttpSession == null || HttpSession[ssoConfiguration.Marketplace] == null))
                 return true;
 
             // Return false if HttpSession is nil
@@ -191,7 +207,7 @@ namespace Maestrano.Sso
         /// </summary>
         public string LogoutUrl()
         {
-            return MnoHelper.With(presetName).Sso.LogoutUrl(this.Uid);
+            return ssoConfiguration.LogoutUrl(this.Uid);
         }
 
 
@@ -203,7 +219,7 @@ namespace Maestrano.Sso
         /// <returns></returns>
         public Boolean IsValid(Boolean ifSession = false)
         {
-            var client = new RestClient(MnoHelper.With(presetName).Sso.Idp);
+            var client = new RestClient(ssoConfiguration.Idp);
             return IsValid(client,ifSession);
         }
 
@@ -221,7 +237,7 @@ namespace Maestrano.Sso
                 new JProperty("group_uid",GroupUid));
 
             // Finally store the maestrano session
-            HttpSession[presetName] = Convert.ToBase64String(enc.GetBytes(sessionObject.ToString()));
+            HttpSession[ssoConfiguration.Marketplace] = Convert.ToBase64String(enc.GetBytes(sessionObject.ToString()));
         }
 
     }

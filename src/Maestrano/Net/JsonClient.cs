@@ -23,7 +23,6 @@ namespace Maestrano.Net
             client.AddDefaultHeader("Content-Type", "application/vnd.api+json");
             client.Authenticator = new HttpBasicAuthenticator(key, secret);
             client.BaseUrl = new Uri(string.Format("{0}{1}", host, path));
-
         }
 
         public RestResponse Execute(IRestRequest request)
@@ -56,8 +55,6 @@ namespace Maestrano.Net
             return Execute<T>(PrepareRequest(Method.GET, path, parameters, null));
         }
 
-
-
         public IRestResponse Post(string path, string jsonBody)
         {
             return Execute(PrepareRequest(Method.POST, path, null, jsonBody));
@@ -67,7 +64,6 @@ namespace Maestrano.Net
         {
             return Execute<T>(PrepareRequest(Method.POST, path, null, jsonBody));
         }
-
 
         public IRestResponse Put(string path, string jsonBody)
         {

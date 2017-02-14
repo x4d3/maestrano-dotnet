@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Maestrano.Api;
+using Maestrano.Account;
 
 namespace Maestrano.Tests.Api
 {
@@ -18,7 +19,7 @@ namespace Maestrano.Tests.Api
         public void DeserializeObject_DeserializeDate()
         {
             string json = @"{'Date': '0001-01-01T00:00:00Z','IncorrectDate': '0000-01-01T00:00:00Z','IncorrectNullableDate': '-000-01-01T00:00:00Z'}";
-            var result = MnoClient.DeserializeObject<DateContainer>(json);
+            var result = MnoClient<MnoObject>.DeserializeObject< DateContainer>(json);
             Assert.AreEqual(new DateTime(1,1,1), result.IncorrectDate);
             Assert.AreEqual(DateTime.MinValue, result.IncorrectDate);
             Assert.IsNull(result.IncorrectNullableDate);

@@ -37,8 +37,10 @@ Maestrano Cloud Integration is currently in closed beta. Want to know more? Send
 
 - - -
 
-## Migration to V1.0
-[Migration guide to v1.0](MIGRATION_TO_V1.md)
+## Migration guides
+
+* [to v2.0](MIGRATION_TO_V2.md)
+* [to v1.0](MIGRATION_TO_V1.md)
 
 ## Getting Setup
 
@@ -123,7 +125,7 @@ export MNO_DEVPL_ENV_SECRET=<your environment secret>
 - or you may call directly autoconfigure with your needed parameters
 
 ```csharp
-Maestrano.MnoHelper.AutoConfigure(host, apiPath, apiKey, apiSecret);
+Maestrano.MnoHelper.AutoConfigure("https://developer.maestrano.com", "/api/config/v1", apiKey, apiSecret);
 ```
 
 ## Single Sign-On Setup
@@ -184,8 +186,8 @@ public class MaestranoController : Controller
 
         // Check response validity
         if (samlResp.IsValid()) {
-          var mnoUser = Maestrano.Sso.User.With(marketplace).New(samlResp);
-          var mnoGroup = Maestrano.Sso.Group.With(marketplace).New(samlResp);
+          var mnoUser = new Maestrano.Sso.User(samlResp);
+          var mnoGroup = new Maestrano.Sso.Group(samlResp);
 
           // Build/Map local entities
           var localGroup = MyGroup.FindOrCreateForMaestrano(mnoGroup);
@@ -214,8 +216,8 @@ Note that for the consume action you should disable CSRF authenticity if your fr
 If you want your users to benefit from single logout then you should define the following filter in a module and include it in all your controllers except the one handling single sign-on authentication.
 
 ```csharp
-
-var mnoSession = Maestrano.Sso.Session.With(marketplace).New(httpContext.Session);
+var preset = MnoHelper.With(marketplace);
+var mnoSession = new Maestrano.Sso.Session(preset, httpContext.Session);
 
 if (!mnoSession.IsValid()) {
   Response.Redirect(MnoHelper.With(marketplace).Sso.InitUrl());
@@ -267,12 +269,10 @@ public HttpResponseMessage DisableGroup(string groupId)
     var request = HttpContext.Current.Request
     var authenticated = MnoHelper.With(marketplace).Authenticate(request);
 
-
     if (authenticated) {
       var mnoGroup = MyGroupModel.findByMnoId(groupId);
       mnoGroup.disableAccess();
     }
-
 
     ...
 }
@@ -426,28 +426,46 @@ Maestrano.Account.Bill
 <td>If the bill relates to a specific period then specifies when the period ended. Both period_started_at and period_ended_at need to be filled in order to appear on customer invoice.</td>
 <tr>
 
+<tr>
+<td><b>ThirdParty</b></td>
+<td>read/write</td>
+<td>bool</td>
+<td>-</td>
+<td>false</td>
+<td>Flag for third-party bills (e.g.: charge for SMS credits). Third party bills are not subject to commissions.</td>
+<tr>
+
+
 </table>
 
 ##### Actions
 
 List all bills you have created and iterate through the list
 ```csharp
-var bills = Maestrano.Account.Bill.With(marketplace).All();
+var preset = Maestrano.with(marketplace);
+var bills = Maestrano.Account.Bill.With(preset).All();
 ```
+or
+```csharp
+var preset = Maestrano.with(marketplace);
+var bills = preset.Bill.All();
+```
+
 
 Access a single bill by id
 ```csharp
-var bill = Maestrano.Account.Bill.With(marketplace).Retrieve("bill-f1d2s54");
+var preset = Maestrano.with(marketplace);
+var bill = Maestrano.Account.Bill.With(preset).Retrieve("bill-f1d2s54");
 ```
 
 Create a new bill
 ```csharp
-var bill = Maestrano.Account.Bill.With(marketplace).Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase");
+var bill = Maestrano.Account.Bill.With(preset).Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase");
 ```
 
 Cancel a bill
 ```csharp
-var bill = Maestrano.Account.Bill.With(marketplace).Retrieve("bill-f1d2s54");
+var bill = Maestrano.Account.Bill.With(preset).Retrieve("bill-f1d2s54");
 bill.Cancel();
 ```
 
@@ -593,23 +611,30 @@ Maestrano.Account.RecurringBill
 
 List all recurring bills you have created and iterate through the list
 ```csharp
-var rec_bills = Maestrano.Account.RecurringBill.With(marketplace).All();
+var preset = Maestrano.with(marketplace);
+var recBills = Maestrano.Account.RecurringBill.With(preset).All();
 ```
+or
+```csharp
+var preset = Maestrano.with(marketplace);
+var bills = preset.RecurringBill.All();
+```
+
 
 Access a single recurring bill by id
 ```csharp
-var rec_bill = Maestrano.Account.RecurringBill.With(marketplace).Retrieve("rbill-f1d2s54");
+var recBill = Maestrano.Account.RecurringBill.With(preset).Retrieve("rbill-f1d2s54");
 ```
 
 Create a new recurring bill
 ```csharp
-var rec_bill = Maestrano.Account.RecurringBill.With(marketplace).Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase", period: 'Month', startDate: DateTime.UtcNow);
+var recBill = Maestrano.Account.RecurringBill.With(preset).Create(groupId: "cld-3", priceCents: 2000, description: "Product purchase", period: 'Month', startDate: DateTime.UtcNow);
 ```
 
 Cancel a recurring bill
 ```csharp
-var rec_bill = Maestrano.Account.RecurringBill.With(marketplace).Retrieve("rbill-f1d2s54");
-rec_bill.Cancel();
+var recBill = Maestrano.Account.RecurringBill.With(preset).Retrieve("rbill-f1d2s54");
+recBill.Cancel();
 ```
 
 ### Membership API
@@ -711,12 +736,19 @@ Maestrano.Account.User
 
 List all users having access to your application
 ```csharp
-var users = Maestrano.Account.User.With(marketplace).All();
+var preset = Maestrano.with(marketplace);
+var users = Maestrano.Account.User.With(preset).All();
 ```
+or
+```csharp
+var preset = Maestrano.with(marketplace);
+var users = preset.User.All();
+```
+
 
 Access a single user by id
 ```csharp
-var user = Maestrano.Account.User.With(marketplace).Retrieve("usr-f1d2s54");
+var user = Maestrano.Account.User.With(preset).Retrieve("usr-f1d2s54");
 ```
 
 #### Group
@@ -846,12 +878,17 @@ Maestrano.Account.Group
 
 List all groups having access to your application
 ```csharp
-var groups = Maestrano.Account.Group.With(marketplace).All();
+var preset = Maestrano.with(marketplace);
+var groups = Maestrano.Account.Group.With(preset).All();
+```
+```csharp
+var preset = Maestrano.with(marketplace);
+var groups = preset.Group.All();
 ```
 
 Access a single group by id
 ```csharp
-var groups = Maestrano.Account.Group.With(marketplace).Retrieve("usr-f1d2s54");
+var groups = Maestrano.Account.Group.With(preset).Retrieve("usr-f1d2s54");
 ```
 
 
@@ -873,8 +910,11 @@ The Maestrano API provides a built-in client - based on Restsharp - for connecti
 
 ```csharp
 // Pass the customer group id as argument
-var client = Maestrano.Connec.Client.New("cld-f7f5g4", marketplace);
+var preset = Maestrano.with(marketplace);
+var client = Maestrano.Connec.Client.New(preset, "cld-f7f5g4");
 // Using a specific Configuration Preset
+// Or
+var client = preset.ConnecClient("cld-f7f5g4");
 
 
 // Retrieve all organizations (customers and suppliers) created in other applications

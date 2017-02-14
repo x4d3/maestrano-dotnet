@@ -1,4 +1,5 @@
 ﻿using Maestrano.Api;
+using Maestrano.Configuration;
 using Maestrano.Helpers;
 using Newtonsoft.Json;
 using System;
@@ -11,38 +12,10 @@ using System.Threading.Tasks;
 
 namespace Maestrano.Account
 {
-    public class UserRequestor
+    public class UserRequestor:MnoClient<User>
     {
-
-        private string presetName;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="preset">Name of a preset</param>
-        public UserRequestor(string presetName = "maestrano")
+        public UserRequestor(Preset preset) : base(User.IndexPath(), User.ResourcePath(), preset)
         {
-            this.presetName = presetName;
-        }
-
-        /// <summary>
-        /// Retrieve all Maestrano users having access to your application
-        /// </summary>
-        /// <param name="filters">User attributes to filter on</param>
-        /// <returns></returns>
-        public List<User> All(NameValueCollection filters = null)
-        {
-            return MnoClient.All<User>(User.IndexPath(), filters, presetName);
-        }
-
-        /// <summary>
-        /// Retrieve a single Maestrano user by id
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public User Retrieve(string userId)
-        {
-            return MnoClient.Retrieve<User>(User.ResourcePath(), userId, presetName);
         }
 
         /// <summary>
@@ -56,7 +29,7 @@ namespace Maestrano.Account
         {
             var rgx = new Regex(@".*@.*\.(\w+)");
             var att = new NameValueCollection();
-            att.Add("password", MnoEncryptor.encrypt(password,MnoHelper.With(presetName).Api.Key));
+            att.Add("password", MnoEncryptor.encrypt(password, preset.Api.Key));
 
             // Check if we should match the password against the id or email
             if (rgx.IsMatch(userIdOrEmail)) {
@@ -68,9 +41,9 @@ namespace Maestrano.Account
             try
             {
                 // Raise an error on failure
-                MnoClient.Create<User>(User.IndexPath() + "/authenticate", att, presetName);
+                Create(User.IndexPath() + "/authenticate", att);
                 return true;
-            } catch (Maestrano.Api.ResourceException) {
+            } catch (ResourceException) {
                 return false;
             }
         }

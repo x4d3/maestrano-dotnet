@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Specialized;
 using Newtonsoft.Json.Linq;
+using Maestrano.Configuration;
 
 namespace Maestrano.Sso
 {
@@ -38,7 +39,6 @@ namespace Maestrano.Sso
                 new JProperty("user_uid", GroupUid),
                 new JProperty("role", Role)
              );
-
         }
     }
 }

@@ -35,7 +35,6 @@ namespace Maestrano.Configuration
             set { this["apiKey"] = value; }
         }
 
-
         /// <summary>
         /// The environment Api Secret
         /// </summary>

@@ -2,12 +2,20 @@
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using Maestrano.Account;
+
 
 namespace Maestrano.Configuration
 {
+    /// <summary>
+    /// Configuration Preset for a given Marketplace
+    /// </summary>
     public class Preset
     {
-        public string Name { get; set; }
+        /// <summary>
+        /// Id of the marketplace of this configuration
+        /// </summary>
+        public string Marketplace { get; set; }
 
         public Sso Sso { get; private set; }
         public App App { get; private set; }
@@ -16,36 +24,27 @@ namespace Maestrano.Configuration
         public Webhook Webhook { get; private set; }
 
         /// <summary>
-        /// Constructor
+        /// Constructor only used for testing
         /// </summary>
-        /// <param name="name">The preset name (e.g.: maestrano)</param>
-        public Preset(string name)
+        /// <param name="marketplace">The marketplace (e.g.: maestrano)</param>
+        public Preset(string marketplace)
         {
-            Name = name;
-            App = App.Load(name);
-            Api = Api.Load(name);
-            Connec = Connec.Load(name);
-            Webhook = Webhook.Load(name);
-            Sso = Sso.Load(name);
+            Marketplace = marketplace;
+            App = new App();
+            Api = new Api();
+            Connec = new Connec();
+            Webhook = new Webhook();
+            Sso = new Sso(marketplace, Api);
         }
 
         public Preset(JObject obj)
         {
-            Name = obj["marketplace"].Value<string>();
-            App = App.LoadFromJson(Name, obj["app"].Value<JObject>());
-            Api = Api.LoadFromJson(Name, obj["api"].Value<JObject>());
-            Connec = Connec.LoadFromJson(Name, obj["connec"].Value<JObject>());
-            Webhook = Webhook.LoadFromJson(Name, obj["webhooks"].Value<JObject>());
-            Sso = Sso.LoadFromJson(Name, obj["sso"].Value<JObject>());
-        }
-
-
-        /// <summary>
-        /// App environment: 'test' or 'production'
-        /// </summary>
-        public string Environment {
-            get { return App.Environment; }
-            set { App.Environment = value; }
+            Marketplace = obj["marketplace"].Value<string>();
+            App = App.LoadFromJson(obj["app"].Value<JObject>());
+            Api = Api.LoadFromJson(obj["api"].Value<JObject>());
+            Connec = Connec.LoadFromJson(obj["connec"].Value<JObject>());
+            Webhook = Webhook.LoadFromJson(obj["webhooks"].Value<JObject>());
+            Sso = Sso.LoadFromJson(Marketplace, Api, obj["sso"].Value<JObject>());
         }
 
         /// <summary>
@@ -76,9 +75,7 @@ namespace Maestrano.Configuration
                 string encodedUsernamePassword = authHeader.Substring("Basic ".Length).Trim();
                 Encoding encoding = Encoding.GetEncoding("iso-8859-1");
                 string usernamePassword = encoding.GetString(Convert.FromBase64String(encodedUsernamePassword));
-
                 int seperatorIndex = usernamePassword.IndexOf(':');
-
                 var apiId = usernamePassword.Substring(0, seperatorIndex);
                 var apiKey = usernamePassword.Substring(seperatorIndex + 1);
                 authenticated = Authenticate(apiId, apiKey);
@@ -103,53 +100,6 @@ namespace Maestrano.Configuration
         }
 
         /// <summary>
-        /// Take a user uid (either real or virtual) and a group uid
-        /// and return the user uid that should be used within the app
-        /// based on the Sso.CreationMode parameter
-        /// </summary>
-        /// <param name="userUid">a real or virtual user uid</param>
-        /// <param name="groupUid">a group uid</param>
-        /// <returns>
-        /// The real user uid (usr-1) if Sso.CreationMode is set to "real"
-        /// The virtual user uid (user-1.cld-2) if Sso.CreationMode is set to "virtual"
-        /// </returns>
-        public string MaskUser(string userUid, string groupUid)
-        {
-            string sanitizedUserUid = UnmaskUser(userUid);
-
-            if (Sso.CreationMode == "virtual")
-            {
-                return sanitizedUserUid + '.' + groupUid;
-            }
-            else
-            {
-                return sanitizedUserUid;
-            }
-        }
-
-        /// <summary>
-        /// Return whether the environment is production like (production or production sandbox)
-        /// </summary>
-        /// <returns>true for production and production-sandbox</returns>
-        /// 
-        [Obsolete("isProduction is deprecated")]
-        public Boolean isProduction()
-        {
-            return Environment.Equals("production", StringComparison.InvariantCultureIgnoreCase)
-                || Environment.Equals("production-sandbox", StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        /// <summary>
-        /// Return whether the environment is production like (production or production sandbox)
-        /// </summary>
-        /// <returns>true for production and production-sandbox</returns>
-        [Obsolete("isDevelopment is deprecated")]
-        public Boolean isDevelopment()
-        {
-            return !isProduction();
-        }
-
-        /// <summary>
         /// Return a json serializable object describing the current 
         /// Maestrano configuration. The metadata will be fetched remotely
         /// by Maestrano. Note that the metadata exclude any info
@@ -159,7 +109,6 @@ namespace Maestrano.Configuration
         public JObject ToMetadata()
         {
             JObject metadata = new JObject(
-                new JProperty("environment", Environment),
                 new JProperty("app", new JObject(new JProperty("host", App.Host))),
                 new JProperty("api", new JObject(
                     new JProperty("id", Api.Id),
@@ -168,7 +117,6 @@ namespace Maestrano.Configuration
                     new JProperty("lang_version", Api.LangVersion))),
                 new JProperty("sso", new JObject(
                     new JProperty("enabled", Sso.Enabled),
-                    new JProperty("creation_mode", Sso.CreationMode),
                     new JProperty("init_path", Sso.InitPath),
                     new JProperty("consume_path", Sso.ConsumePath),
                     new JProperty("idm", Sso.Idm),
@@ -214,6 +162,19 @@ namespace Maestrano.Configuration
             );
 
             return metadata;
+        }
+
+        public BillRequestor Bill { get { return new BillRequestor(this); } }
+
+        public GroupRequestor Group { get { return new GroupRequestor(this); } }
+
+        public RecurringBillRequestor RecurringBill { get { return new RecurringBillRequestor(this); } }
+
+        public UserRequestor User { get { return new UserRequestor(this); } }
+
+        public Maestrano.Connec.Client ConnecClient(String groupId)
+        {
+            return Maestrano.Connec.Client.New(this, groupId);
         }
     }
 }

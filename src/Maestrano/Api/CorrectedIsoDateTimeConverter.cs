@@ -11,7 +11,6 @@ namespace Maestrano.Api
     /// </summary>
     class CorrectedIsoDateTimeConverter : IsoDateTimeConverter
     {
-
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.String)

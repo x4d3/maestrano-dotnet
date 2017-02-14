@@ -4,42 +4,28 @@ using System.Configuration;
 
 namespace Maestrano.Configuration
 {
-    public class WebhookConnec : ConfigurationSection
+    public class WebhookConnec
     {
-
         public WebhookConnecSubscriptions Subscriptions { get; set; }
-
-
-        /// <summary>
-        /// Load WebhookConnec configuration into a WebhookConnec configuration object
-        /// </summary>
-        /// <returns>A WebhooAccount configuration object</returns>
-        public static WebhookConnec Load(string preset = "maestrano")
-        {
-            ConfigurationManager.RefreshSection(preset + "/webhook/connec");
-            var config =  ConfigurationManager.GetSection(preset + "/webhook/connec") as WebhookConnec;
-            if (config == null) config = new WebhookConnec();
-            config.Subscriptions = WebhookConnecSubscriptions.Load();
-
-            return config;
-        }
 
         /// <summary>
         /// Load Webhook into a WebhookAccount configuration object from a JObject 
         /// </summary>
         /// <returns>A WebhookAccount configuration object</returns>
-        public static WebhookConnec LoadFromJson(String preset, JObject obj)
+        public static WebhookConnec LoadFromJson(JObject obj)
         {
             var config = new WebhookConnec();
             config.NotificationsPath = obj["notification_path"].Value<string>();
-            if (obj["connec_subscriptions"] == null)
+            var subscriptions = obj["connec_subscriptions"];
+            if (subscriptions != null)
             {
-                config.Subscriptions = WebhookConnecSubscriptions.Load();
+                config.Subscriptions = WebhookConnecSubscriptions.LoadFromJson(subscriptions.Value<JObject>());
             }
             else
             {
-                config.Subscriptions = WebhookConnecSubscriptions.LoadFromJson(preset, obj["connec_subscriptions"].Value<JObject>());
+                config.Subscriptions = new WebhookConnecSubscriptions();
             }
+
             
             return config;
         }
@@ -47,22 +33,12 @@ namespace Maestrano.Configuration
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("notificationsPath", DefaultValue = "/maestrano/connec/notifications", IsRequired = false)]
-        public string NotificationsPath
-        {
-            get { return (String)this["notificationsPath"]; }
-            set { this["notificationsPath"] = value; }
-        }
+       public string NotificationsPath { get; set; }
 
         /// <summary>
         /// Whether to receive notifications related to the customer company
         /// </summary>
-        [ConfigurationProperty("notificationsPath", DefaultValue = "/maestrano/connec/notifications", IsRequired = false)]
-        public string InitializationPath
-        {
-            get { return (String)this["initializationPath"]; }
-            set { this["initializationPath"] = value; }
-        }
+       public string InitializationPath { get; set; }
 
     }
 }

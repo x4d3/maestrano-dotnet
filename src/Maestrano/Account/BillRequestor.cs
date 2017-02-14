@@ -5,29 +5,19 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Maestrano.Configuration;
 
 namespace Maestrano.Account
 {
-    public class BillRequestor
+    public class BillRequestor : MnoClient<Bill>
     {
-        private string presetName;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="preset">Name of a preset</param>
-        public BillRequestor(string presetName = "maestrano") {
-            this.presetName = presetName;
+        public BillRequestor(Preset preset) : base(Bill.IndexPath(), Bill.ResourcePath(), preset)
+        {
         }
 
         public List<Bill> All(NameValueCollection filters = null)
         {
-            return MnoClient.All<Bill>(Bill.IndexPath(), filters, presetName);
-        }
-
-        public Bill Retrieve(string billId)
-        {
-            return MnoClient.Retrieve<Bill>(Bill.ResourcePath(), billId, presetName);
+            return All(Bill.IndexPath(), filters);
         }
 
         public Bill Create(String groupId, Int32 priceCents, String description, String currency = "AUD", Decimal? units = null, DateTime? periodStartedAt = null, DateTime? periodEndedAt = null, bool thirdParty = false)
@@ -45,7 +35,7 @@ namespace Maestrano.Account
                 att.Add("periodEndedAt", periodEndedAt.Value.ToString("s"));
             if (thirdParty)
                 att.Add("thirdParty", "true");
-            return MnoClient.Create<Bill>(Bill.IndexPath(), att, presetName);
+            return Create(att);
         }
     }
 }

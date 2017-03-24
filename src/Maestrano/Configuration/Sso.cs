@@ -44,15 +44,6 @@ namespace Maestrano.Configuration
         /// </summary>
         public String Marketplace { get; set; }
 
-        /// <summary>
-        /// Is Single Sign-On enabled - useful for debugging
-        /// </summary>
-        public bool Enabled { get; set; }
-
-        /// <summary>
-        /// Is Single Logout enabled - useful for debugging
-        /// </summary>
-        public bool SloEnabled { get; set; }
 
         /// <summary>
         /// Path to init action

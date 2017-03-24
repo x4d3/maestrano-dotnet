@@ -13,19 +13,19 @@ namespace Maestrano.Configuration
         public static WebhookAccount LoadFromJson(JObject obj)
         {
             var config = new WebhookAccount();
-            config.GroupsPath = obj["group_path"].Value<string>();
-            config.GroupUsersPath = obj["group_user_path"].Value<string>();
+            config.GroupPath = obj["group_path"].Value<string>();
+            config.GroupUserPath = obj["group_user_path"].Value<string>();
             return config;
         }
 
         /// <summary>
         /// Application REST endpoint for groups
         /// </summary>
-        public String GroupsPath { get; set; }
+        public String GroupPath { get; set; }
 
         /// <summary>
         /// Application REST endpoint for group > users
         /// </summary>
-        public String GroupUsersPath { get; set; }
+        public String GroupUserPath { get; set; }
     }
 }

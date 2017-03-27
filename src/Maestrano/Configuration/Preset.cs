@@ -44,7 +44,7 @@ namespace Maestrano.Configuration
             Api = Api.LoadFromJson(obj["api"].Value<JObject>());
             Connec = Connec.LoadFromJson(obj["connec"].Value<JObject>());
             Webhook = Webhook.LoadFromJson(obj["webhooks"].Value<JObject>());
-            Sso = Sso.LoadFromJson(Marketplace, Api, obj["sso"].Value<JObject>());
+            Sso = Sso.LoadFromJson(Marketplace, App, Api, obj["sso"].Value<JObject>());
         }
 
         /// <summary>

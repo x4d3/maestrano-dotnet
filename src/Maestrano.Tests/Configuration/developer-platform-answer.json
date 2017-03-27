@@ -15,7 +15,7 @@
 		"base": "/api/v1/"
 	},
 	"sso": {
-		"idm": "http://localhost:63705",
+		"idm": "",
 		"init_path": "/maestrano/init/?marketplace=maestrano-uat",
 		"consume_path": "/maestrano/consume/?marketplace=maestrano-uat",
 		"idp": "https://api-hub-uat.maestrano.io",

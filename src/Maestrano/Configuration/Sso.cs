@@ -238,5 +238,19 @@ namespace Maestrano.Configuration
         {
             httpSessionObj.Remove(Marketplace);
         }
+
+
+        /// <summary>
+        /// Is Single Sign-On enabled - useful for debugging
+        /// </summary>
+        [Obsolete("Enabled is deprecated, this will always return true")]
+        public bool Enabled { get { return true; } set { } }
+
+        /// <summary>
+        /// Is Single Logout enabled - useful for debugging
+        /// </summary>
+        [Obsolete("SloEnabled is deprecated, this will always return true")]
+        public bool SloEnabled { get { return true; } set {} }
+
     }
 }
